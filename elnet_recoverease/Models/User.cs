@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace elnet_recoverease.Models
 {
@@ -11,6 +7,7 @@ namespace elnet_recoverease.Models
         public int UserID { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-        public string Role { get; set; }
+        public string Role { get; set; } // Admin, Doctor, Nurse, Patient
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

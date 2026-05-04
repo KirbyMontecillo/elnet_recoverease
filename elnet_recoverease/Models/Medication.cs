@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace elnet_recoverease.Models
 {
@@ -10,6 +6,9 @@ namespace elnet_recoverease.Models
     {
         public int MedicationID { get; set; }
         public string MedicationName { get; set; }
+        public string Category { get; set; }
+        public string DosageUnit { get; set; }
+        public string Status { get; set; } // Available, Out of Stock, Discontinued
         public string Description { get; set; }
     }
 }

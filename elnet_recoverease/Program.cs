@@ -11,7 +11,7 @@ namespace elnet_recoverease
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Medication_Schedule());
+            Application.Run(new Register());
         }
     }
 }

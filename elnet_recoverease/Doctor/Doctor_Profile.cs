@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,11 +10,12 @@ using System.Windows.Forms;
 
 namespace elnet_recoverease.Doctor
 {
-    public partial class Medication_Schedule_Form : Form
+    public partial class Doctor_Profile : Form
     {
-        public Medication_Schedule_Form()
+        public Doctor_Profile()
         {
             InitializeComponent();
+            try { this.picLogo.Image = System.Drawing.Image.FromFile(@"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png"); } catch { }
         }
     }
 }

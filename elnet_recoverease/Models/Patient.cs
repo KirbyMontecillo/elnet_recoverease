@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace elnet_recoverease.Models
 {
@@ -13,6 +9,7 @@ namespace elnet_recoverease.Models
         public DateTime DateOfBirth { get; set; }
         public string ContactNumber { get; set; }
         public string Address { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string Status { get; set; } // Active, Discharged, Archived
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
