@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using elnet_recoverease.Data;
 
@@ -11,9 +12,11 @@ using elnet_recoverease.Data;
 namespace elnet_recoverease.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260505154354_AddEmergencyRelationship")]
+    partial class AddEmergencyRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,10 +132,6 @@ namespace elnet_recoverease.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AttendingDoctor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("BloodType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -147,10 +146,6 @@ namespace elnet_recoverease.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EmergencyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -163,10 +158,6 @@ namespace elnet_recoverease.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -175,19 +166,31 @@ namespace elnet_recoverease.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GroupNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Height")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("InsuranceProvider")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MiddleName")
+                    b.Property<string>("PCPClinic")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PatientCode")
+                    b.Property<string>("PCPContact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PCPName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PolicyNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -251,10 +254,6 @@ namespace elnet_recoverease.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -289,8 +288,7 @@ namespace elnet_recoverease.Migrations
                         {
                             StaffID = 1,
                             ContactNumber = "000-000-0000",
-                            CreatedAt = new DateTime(2026, 5, 6, 1, 53, 33, 542, DateTimeKind.Local).AddTicks(560),
-                            Email = "admin@recoverease.com",
+                            CreatedAt = new DateTime(2026, 5, 5, 23, 43, 51, 980, DateTimeKind.Local).AddTicks(4627),
                             FullName = "System Administrator",
                             LicenseNumber = "ADMIN-001",
                             Role = "Admin",
@@ -340,9 +338,6 @@ namespace elnet_recoverease.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsFirstLogin")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -363,8 +358,7 @@ namespace elnet_recoverease.Migrations
                         new
                         {
                             UserID = 1,
-                            CreatedAt = new DateTime(2026, 5, 6, 1, 53, 33, 542, DateTimeKind.Local).AddTicks(437),
-                            IsFirstLogin = false,
+                            CreatedAt = new DateTime(2026, 5, 5, 23, 43, 51, 980, DateTimeKind.Local).AddTicks(4519),
                             PasswordHash = "admin123",
                             Role = "Admin",
                             Username = "admin"

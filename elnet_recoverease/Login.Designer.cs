@@ -1,4 +1,4 @@
-﻿namespace elnet_recoverease
+namespace elnet_recoverease
 {
     partial class Login
     {
@@ -32,16 +32,14 @@
             txtEmail = new TextBox();
             lblPassLabel = new Label();
             txtPassword = new TextBox();
-            btnForgot = new Button();
             lblError = new Label();
             btnLogin = new Button();
-            lblNoAccount = new Label();
-            btnCreateAccount = new Button();
 
             ((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
             pnlLeft.SuspendLayout();
             pnlRight.SuspendLayout();
             SuspendLayout();
+
 
             // ── FORM ──────────────────────────────────────────────
             this.Text = "RecoverEase — Login";
@@ -59,18 +57,17 @@
             pnlLeft.Location = new Point(0, 0);
             pnlLeft.BackColor = ColorTranslator.FromHtml("#EEF3F7");
 
-            pnlLogoCard.Size = new Size(290, 100);
-            pnlLogoCard.Location = new Point(35, 35);
-            pnlLogoCard.BackColor = Color.White;
-            pnlLogoCard.BorderStyle = BorderStyle.FixedSingle;
-
-            picLogo.Size = new Size(286, 96);
-            picLogo.Location = new Point(0, 0);
-            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            picLogo.BackColor = Color.White;
-            picLogo.Image = Properties.Resources.recoverease_logo_removebg_preview;
-
+            pnlLogoCard.BackColor = Color.Transparent;
+            pnlLogoCard.BorderStyle = BorderStyle.None;
             pnlLogoCard.Controls.Add(picLogo);
+            pnlLogoCard.Location = new Point(35, 35);
+            pnlLogoCard.Size = new Size(290, 100);
+
+            picLogo.BackColor = Color.Transparent;
+            picLogo.Image = Properties.Resources.recoverease_logo_removebg_preview;
+            picLogo.Location = new Point(0, 0);
+            picLogo.Size = new Size(286, 96);
+            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
 
             pnlDivider.Size = new Size(290, 1);
             pnlDivider.Location = new Point(35, 150);
@@ -167,15 +164,6 @@
             txtPassword.BorderStyle = BorderStyle.FixedSingle;
             txtPassword.BackColor = Color.White;
 
-            btnForgot.Text = "Forgot password?";
-            btnForgot.Size = new Size(160, 24);
-            btnForgot.Location = new Point(500, 346);
-            btnForgot.ForeColor = ColorTranslator.FromHtml("#1a7a6e");
-            btnForgot.BackColor = Color.White;
-            btnForgot.FlatStyle = FlatStyle.Flat;
-            btnForgot.FlatAppearance.BorderSize = 0;
-            btnForgot.Font = new Font("Segoe UI", 9F);
-            btnForgot.Cursor = Cursors.Hand;
 
             lblError.Text = "";
             lblError.Size = new Size(580, 18);
@@ -195,30 +183,13 @@
             btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnLogin.Cursor = Cursors.Hand;
 
-            lblNoAccount.Text = "Don't have an account?";
-            lblNoAccount.Size = new Size(210, 22);
-            lblNoAccount.Location = new Point(150, 472);
-            lblNoAccount.ForeColor = Color.Gray;
-            lblNoAccount.Font = new Font("Segoe UI", 10F);
-
-            btnCreateAccount.Text = "Create one here";
-            btnCreateAccount.Size = new Size(160, 34);
-            btnCreateAccount.Location = new Point(365, 466);
-            btnCreateAccount.BackColor = Color.White;
-            btnCreateAccount.ForeColor = ColorTranslator.FromHtml("#1B3A6B");
-            btnCreateAccount.FlatStyle = FlatStyle.Flat;
-            btnCreateAccount.FlatAppearance.BorderColor = ColorTranslator.FromHtml("#1B3A6B");
-            btnCreateAccount.FlatAppearance.BorderSize = 1;
-            btnCreateAccount.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnCreateAccount.Cursor = Cursors.Hand;
-
             pnlRight.Controls.AddRange(new Control[] {
                 lblWelcome, lblSubtitle,
                 lblEmailLabel, txtEmail,
                 lblPassLabel, txtPassword,
-                btnForgot, lblError,
-                btnLogin, lblNoAccount, btnCreateAccount
+                lblError, btnLogin
             });
+
 
             this.Controls.Add(pnlLeft);
             this.Controls.Add(pnlRight);
@@ -248,10 +219,7 @@
         private TextBox txtEmail;
         private Label lblPassLabel;
         private TextBox txtPassword;
-        private Button btnForgot;
         private Label lblError;
         private Button btnLogin;
-        private Label lblNoAccount;
-        private Button btnCreateAccount;
     }
 }

@@ -214,6 +214,10 @@ namespace elnet_recoverease.Admin
 
             // Form Card
             this.pnlFormCard.BackColor = clrWhite;
+            this.pnlFormCard.Controls.Add(this.lblEmailLabel);
+            this.pnlFormCard.Controls.Add(this.txtEmail);
+            this.pnlFormCard.Controls.Add(this.lblUsernameLabel);
+            this.pnlFormCard.Controls.Add(this.txtUsername);
             this.pnlFormCard.Controls.Add(this.btnCancel);
             this.pnlFormCard.Controls.Add(this.btnSave);
             this.pnlFormCard.Controls.Add(this.lblStatusLabel);
@@ -254,11 +258,43 @@ namespace elnet_recoverease.Admin
             this.txtFullName.Size = new System.Drawing.Size(570, 38);
             this.txtFullName.TabIndex = 1;
 
+            // Username
+            this.lblUsernameLabel = new System.Windows.Forms.Label();
+            this.txtUsername = new System.Windows.Forms.TextBox();
+            this.lblUsernameLabel.AutoSize = true;
+            this.lblUsernameLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblUsernameLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
+            this.lblUsernameLabel.Location = new System.Drawing.Point(40, 190);
+            this.lblUsernameLabel.Text = "USERNAME (FOR LOGIN)";
+            this.txtUsername.BackColor = clrBg;
+            this.txtUsername.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtUsername.Location = new System.Drawing.Point(40, 215);
+            this.txtUsername.Name = "txtUsername";
+            this.txtUsername.Size = new System.Drawing.Size(270, 38);
+            this.txtUsername.TabIndex = 2;
+
+            // Email
+            this.lblEmailLabel = new System.Windows.Forms.Label();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.lblEmailLabel.AutoSize = true;
+            this.lblEmailLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblEmailLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
+            this.lblEmailLabel.Location = new System.Drawing.Point(340, 190);
+            this.lblEmailLabel.Text = "EMAIL ADDRESS (OPTIONAL)";
+            this.txtEmail.BackColor = clrBg;
+            this.txtEmail.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtEmail.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtEmail.Location = new System.Drawing.Point(340, 215);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(270, 38);
+            this.txtEmail.TabIndex = 3;
+
             // Role
             this.lblRoleLabel.AutoSize = true;
             this.lblRoleLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblRoleLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblRoleLabel.Location = new System.Drawing.Point(40, 190);
+            this.lblRoleLabel.Location = new System.Drawing.Point(40, 280);
             this.lblRoleLabel.Text = "STAFF ROLE";
 
             this.cmbRole.BackColor = clrBg;
@@ -266,46 +302,46 @@ namespace elnet_recoverease.Admin
             this.cmbRole.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbRole.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.cmbRole.Items.AddRange(new object[] { "Doctor", "Nurse", "Pharmacist", "Administrator", "Support Staff" });
-            this.cmbRole.Location = new System.Drawing.Point(40, 215);
+            this.cmbRole.Location = new System.Drawing.Point(40, 305);
             this.cmbRole.Name = "cmbRole";
             this.cmbRole.Size = new System.Drawing.Size(570, 38);
-            this.cmbRole.TabIndex = 2;
+            this.cmbRole.TabIndex = 4;
 
             // Specialty
             this.lblSpecialtyLabel.AutoSize = true;
             this.lblSpecialtyLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblSpecialtyLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblSpecialtyLabel.Location = new System.Drawing.Point(40, 280);
+            this.lblSpecialtyLabel.Location = new System.Drawing.Point(40, 370);
             this.lblSpecialtyLabel.Text = "SPECIALTY / DEPARTMENT";
 
             this.txtSpecialty.BackColor = clrBg;
             this.txtSpecialty.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtSpecialty.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtSpecialty.Location = new System.Drawing.Point(40, 305);
+            this.txtSpecialty.Location = new System.Drawing.Point(40, 395);
             this.txtSpecialty.Name = "txtSpecialty";
             this.txtSpecialty.Size = new System.Drawing.Size(570, 38);
-            this.txtSpecialty.TabIndex = 3;
+            this.txtSpecialty.TabIndex = 5;
 
             // License
             this.lblLicenseLabel.AutoSize = true;
             this.lblLicenseLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblLicenseLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblLicenseLabel.Location = new System.Drawing.Point(40, 370);
+            this.lblLicenseLabel.Location = new System.Drawing.Point(40, 460);
             this.lblLicenseLabel.Text = "LICENSE NUMBER / STAFF ID";
 
             this.txtLicense.BackColor = clrBg;
             this.txtLicense.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtLicense.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtLicense.Location = new System.Drawing.Point(40, 395);
+            this.txtLicense.Location = new System.Drawing.Point(40, 485);
             this.txtLicense.Name = "txtLicense";
             this.txtLicense.Size = new System.Drawing.Size(570, 38);
-            this.txtLicense.TabIndex = 4;
+            this.txtLicense.TabIndex = 6;
 
             // Status
             this.lblStatusLabel.AutoSize = true;
             this.lblStatusLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatusLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblStatusLabel.Location = new System.Drawing.Point(40, 460);
+            this.lblStatusLabel.Location = new System.Drawing.Point(40, 550);
             this.lblStatusLabel.Text = "EMPLOYMENT STATUS";
 
             this.cmbStatus.BackColor = clrBg;
@@ -313,10 +349,10 @@ namespace elnet_recoverease.Admin
             this.cmbStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbStatus.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.cmbStatus.Items.AddRange(new object[] { "Active", "On Leave", "Inactive", "Terminated" });
-            this.cmbStatus.Location = new System.Drawing.Point(40, 485);
+            this.cmbStatus.Location = new System.Drawing.Point(40, 575);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(570, 38);
-            this.cmbStatus.TabIndex = 5;
+            this.cmbStatus.TabIndex = 7;
 
             // Buttons
             this.btnSave.BackColor = clrTeal;
@@ -324,10 +360,10 @@ namespace elnet_recoverease.Admin
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
             this.btnSave.ForeColor = clrWhite;
-            this.btnSave.Location = new System.Drawing.Point(40, 580);
+            this.btnSave.Location = new System.Drawing.Point(40, 650);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(570, 48);
-            this.btnSave.TabIndex = 6;
+            this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save Staff Profile";
             this.btnSave.UseVisualStyleBackColor = false;
 
@@ -335,10 +371,10 @@ namespace elnet_recoverease.Admin
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.btnCancel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.btnCancel.Location = new System.Drawing.Point(40, 640);
+            this.btnCancel.Location = new System.Drawing.Point(40, 710);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(570, 36);
-            this.btnCancel.TabIndex = 7;
+            this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "Cancel and Return to Directory";
 
             // Form
@@ -415,6 +451,10 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.TextBox txtLicense;
         private System.Windows.Forms.Label lblStatusLabel;
         private System.Windows.Forms.ComboBox cmbStatus;
+        private System.Windows.Forms.TextBox txtUsername;
+        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.Label lblUsernameLabel;
+        private System.Windows.Forms.Label lblEmailLabel;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
     }

@@ -17,7 +17,7 @@ namespace elnet_recoverease
 
         private void InitializeComponent()
         {
-            // ── Sidebar Controls ──────────────────────────────────────────────
+            // -- Sidebar Controls --
                         this.pnlSidebar = new System.Windows.Forms.Panel();
             this.pnlLogoArea = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
@@ -44,7 +44,7 @@ namespace elnet_recoverease
             this.lblSidebarFooter = new System.Windows.Forms.Label();
             this.btnLogout = new System.Windows.Forms.Button();
 
-            // ── Main Layout ──────────────────────────────────────────────
+            // -- Main Layout --
             this.pnlMain = new System.Windows.Forms.Panel();
             this.pnlTopBar = new System.Windows.Forms.Panel();
             this.lblPageTitle = new System.Windows.Forms.Label();
@@ -56,7 +56,7 @@ namespace elnet_recoverease
             this.lblAvatarInitials = new System.Windows.Forms.Label();
             this.pnlContent = new System.Windows.Forms.Panel();
 
-            // ── Profile Components ──────────────────────────────────────
+            // -- Profile Components --────
             this.pnlHeaderCard = new System.Windows.Forms.Panel();
             this.pnlAvatarLarge = new System.Windows.Forms.Panel();
             this.lblAvatarLargeInitials = new System.Windows.Forms.Label();
@@ -75,8 +75,15 @@ namespace elnet_recoverease
             this.lblEmailVal = new System.Windows.Forms.Label();
             this.lblAddressLbl = new System.Windows.Forms.Label();
             this.lblAddressVal = new System.Windows.Forms.Label();
+            
             this.lblEmergencyLbl = new System.Windows.Forms.Label();
-            this.lblEmergencyVal = new System.Windows.Forms.Label();
+            this.lblEmergencyNameLbl = new System.Windows.Forms.Label();
+            this.lblEmergencyNameVal = new System.Windows.Forms.Label();
+            this.lblEmergencyRelLbl = new System.Windows.Forms.Label();
+            this.lblEmergencyRelVal = new System.Windows.Forms.Label();
+            this.lblEmergencyPhoneLbl = new System.Windows.Forms.Label();
+            this.lblEmergencyPhoneVal = new System.Windows.Forms.Label();
+            this.btnEditPersonal = new System.Windows.Forms.Button();
 
             // Medical Overview Card
             this.cardMedicalOverview = new System.Windows.Forms.Panel();
@@ -90,26 +97,6 @@ namespace elnet_recoverease
             this.lblAllergiesLbl = new System.Windows.Forms.Label();
             this.lblAllergiesVal = new System.Windows.Forms.Label();
 
-            // Insurance Card
-            this.cardInsurance = new System.Windows.Forms.Panel();
-            this.lblInsTitle = new System.Windows.Forms.Label();
-            this.lblProviderLbl = new System.Windows.Forms.Label();
-            this.lblProviderVal = new System.Windows.Forms.Label();
-            this.lblPolicyLbl = new System.Windows.Forms.Label();
-            this.lblPolicyVal = new System.Windows.Forms.Label();
-            this.lblGroupLbl = new System.Windows.Forms.Label();
-            this.lblGroupVal = new System.Windows.Forms.Label();
-
-            // PCP Card
-            this.cardPcp = new System.Windows.Forms.Panel();
-            this.lblPcpTitle = new System.Windows.Forms.Label();
-            this.lblPcpNameLbl = new System.Windows.Forms.Label();
-            this.lblPcpNameVal = new System.Windows.Forms.Label();
-            this.lblPcpContactLbl = new System.Windows.Forms.Label();
-            this.lblPcpContactVal = new System.Windows.Forms.Label();
-            this.lblPcpClinicLbl = new System.Windows.Forms.Label();
-            this.lblPcpClinicVal = new System.Windows.Forms.Label();
-
             this.SuspendLayout();
             this.pnlSidebar.SuspendLayout();
             this.pnlLogoArea.SuspendLayout();
@@ -122,12 +109,8 @@ namespace elnet_recoverease
             this.tlpProfileCards.SuspendLayout();
             this.cardPersonalInfo.SuspendLayout();
             this.cardMedicalOverview.SuspendLayout();
-            this.cardInsurance.SuspendLayout();
-            this.cardPcp.SuspendLayout();
             
-            // ══════════════════════════════════════════════════════════
-            // COLORS
-            // ══════════════════════════════════════════════════════════
+            // ==========================================================
             System.Drawing.Color clrTeal = System.Drawing.Color.FromArgb(0, 168, 168);
             System.Drawing.Color clrNavy = System.Drawing.ColorTranslator.FromHtml("#EEF3F7");
             System.Drawing.Color clrNavyLight = System.Drawing.ColorTranslator.FromHtml("#D0DBE8");
@@ -139,10 +122,8 @@ namespace elnet_recoverease
             System.Drawing.Color clrTextLight = System.Drawing.ColorTranslator.FromHtml("#94A3B8");
             System.Drawing.Color clrRed = System.Drawing.Color.FromArgb(192, 57, 43);
 
-            // ══════════════════════════════════════════════════════════
-            // FORM
-            // ══════════════════════════════════════════════════════════
-            this.Text = "RecoverEase — Patient Profile";
+            // ==========================================================
+            this.Text = "RecoverEase - Patient Profile";
             this.ClientSize = new System.Drawing.Size(1600, 900);
             this.MinimumSize = new System.Drawing.Size(1000, 620);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -152,9 +133,7 @@ namespace elnet_recoverease
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 
-            // ══════════════════════════════════════════════════════════
-            // SIDEBAR
-            // ══════════════════════════════════════════════════════════
+            // ==========================================================
             this.pnlSidebar.BackColor = clrNavy;
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Width = 260;
@@ -173,114 +152,78 @@ namespace elnet_recoverease
             this.pnlNavDivider.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlNavDivider.Height = 1;
 
-            // ── Dashboard
+            // -- Dashboard
             this.btnNavDashboard.Size = new System.Drawing.Size(260, 48);
             this.btnNavDashboard.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavDashboard.BackColor = clrNavy;
             this.btnNavDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavDashIcon.Text = "\u229E";
-            this.lblNavDashIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavDashIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavDashIcon.AutoSize = true;
-            this.lblNavDashIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavDashText.Text = "Dashboard";
             this.lblNavDashText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavDashText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavDashText.AutoSize = true;
-            this.lblNavDashText.Location = new System.Drawing.Point(64, 13);
-            this.btnNavDashboard.Controls.Add(this.lblNavDashIcon);
+            this.lblNavDashText.Location = new System.Drawing.Point(20, 13);
             this.btnNavDashboard.Controls.Add(this.lblNavDashText);
 
-            // ── Profile
+            // -- Profile
             this.btnNavProfile.Size = new System.Drawing.Size(260, 48);
             this.btnNavProfile.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavProfile.BackColor = clrNavyActive;
             this.btnNavProfile.Cursor = System.Windows.Forms.Cursors.Hand;
             var acc_prof = new System.Windows.Forms.Panel { BackColor = clrTeal, Width = 4, Dock = System.Windows.Forms.DockStyle.Left };
-            this.lblNavProfileIcon.Text = "\U0001F464";
-            this.lblNavProfileIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavProfileIcon.ForeColor = clrWhite;
-            this.lblNavProfileIcon.AutoSize = true;
-            this.lblNavProfileIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavProfileText.Text = "My Profile";
             this.lblNavProfileText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavProfileText.ForeColor = clrWhite;
             this.lblNavProfileText.AutoSize = true;
-            this.lblNavProfileText.Location = new System.Drawing.Point(64, 13);
+            this.lblNavProfileText.Location = new System.Drawing.Point(20, 13);
             this.btnNavProfile.Controls.Add(acc_prof);
-            this.btnNavProfile.Controls.Add(this.lblNavProfileIcon);
             this.btnNavProfile.Controls.Add(this.lblNavProfileText);
 
-            // ── Meds
+            // -- Meds
             this.btnNavMeds.Size = new System.Drawing.Size(260, 48);
             this.btnNavMeds.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavMeds.BackColor = clrNavy;
             this.btnNavMeds.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavMedsIcon.Text = "\U0001F48A";
-            this.lblNavMedsIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedsIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedsIcon.AutoSize = true;
-            this.lblNavMedsIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavMedsText.Text = "Medications";
             this.lblNavMedsText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavMedsText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavMedsText.AutoSize = true;
-            this.lblNavMedsText.Location = new System.Drawing.Point(64, 13);
-            this.btnNavMeds.Controls.Add(this.lblNavMedsIcon);
+            this.lblNavMedsText.Location = new System.Drawing.Point(20, 13);
             this.btnNavMeds.Controls.Add(this.lblNavMedsText);
 
-            // ── Medication Schedule
+            // -- Medication Schedule
             this.btnNavMedSchedule.Size = new System.Drawing.Size(260, 48);
             this.btnNavMedSchedule.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavMedSchedule.BackColor = clrNavy;
             this.btnNavMedSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavMedSchedIcon.Text = "\U0001F552";
-            this.lblNavMedSchedIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedSchedIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedSchedIcon.AutoSize = true;
-            this.lblNavMedSchedIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavMedSchedText.Text = "Medication Schedule";
             this.lblNavMedSchedText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavMedSchedText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavMedSchedText.AutoSize = true;
-            this.lblNavMedSchedText.Location = new System.Drawing.Point(64, 13);
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedIcon);
+            this.lblNavMedSchedText.Location = new System.Drawing.Point(20, 13);
             this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedText);
 
-            // ── Appointments
+            // -- Appointments
             this.btnNavAppointments.Size = new System.Drawing.Size(260, 48);
             this.btnNavAppointments.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavAppointments.BackColor = clrNavy;
             this.btnNavAppointments.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavApptIcon.Text = "\U0001F4C5";
-            this.lblNavApptIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavApptIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavApptIcon.AutoSize = true;
-            this.lblNavApptIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavApptText.Text = "Appointments";
             this.lblNavApptText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavApptText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavApptText.AutoSize = true;
-            this.lblNavApptText.Location = new System.Drawing.Point(64, 13);
-            this.btnNavAppointments.Controls.Add(this.lblNavApptIcon);
+            this.lblNavApptText.Location = new System.Drawing.Point(20, 13);
             this.btnNavAppointments.Controls.Add(this.lblNavApptText);
 
-            // ── Treatment Plans
+            // -- Treatment Plans
             this.btnNavTreatment.Size = new System.Drawing.Size(260, 48);
             this.btnNavTreatment.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnNavTreatment.BackColor = clrNavy;
             this.btnNavTreatment.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavTreatmentIcon.Text = "\U0001F4DD";
-            this.lblNavTreatmentIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavTreatmentIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavTreatmentIcon.AutoSize = true;
-            this.lblNavTreatmentIcon.Location = new System.Drawing.Point(20, 11);
             this.lblNavTreatmentText.Text = "Treatment Plans";
             this.lblNavTreatmentText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavTreatmentText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavTreatmentText.AutoSize = true;
-            this.lblNavTreatmentText.Location = new System.Drawing.Point(64, 13);
-            this.btnNavTreatment.Controls.Add(this.lblNavTreatmentIcon);
+            this.lblNavTreatmentText.Location = new System.Drawing.Point(20, 13);
             this.btnNavTreatment.Controls.Add(this.lblNavTreatmentText);
 
             // Sidebar bottom
@@ -293,7 +236,7 @@ namespace elnet_recoverease
             this.lblSidebarFooter.ForeColor = clrTextMid;
             this.lblSidebarFooter.AutoSize = true;
             this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
-            this.btnLogout.Text = "⇠  Sign Out";
+            this.btnLogout.Text = "Sign Out";
             this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5f, System.Drawing.FontStyle.Bold);
             this.btnLogout.ForeColor = System.Drawing.ColorTranslator.FromHtml("#444444");
             this.btnLogout.BackColor = System.Drawing.Color.Transparent;
@@ -317,13 +260,11 @@ namespace elnet_recoverease
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
             this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
 
-            // ══════════════════════════════════════════════════════════
-            // MAIN AREA
-            // ══════════════════════════════════════════════════════════
+            // ==========================================================
             this.pnlMain.BackColor = clrBg;
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
 
-            // ── Top Bar
+            // -- Top Bar --
             this.pnlTopBar.BackColor = clrWhite;
             this.pnlTopBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTopBar.Height = 96;
@@ -349,7 +290,7 @@ namespace elnet_recoverease
             this.pnlNotifBell.BackColor = clrBg;
             this.pnlNotifBell.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.pnlNotifBell.Location = new System.Drawing.Point(880, 13);
-            this.lblBellIcon.Text = "🔔";
+            this.lblBellIcon.Text = "";
             this.lblBellIcon.Font = new System.Drawing.Font("Segoe UI", 16f);
             this.lblBellIcon.AutoSize = true;
             this.lblBellIcon.Location = new System.Drawing.Point(2, 2);
@@ -379,49 +320,50 @@ namespace elnet_recoverease
             this.pnlTopBar.Controls.Add(this.pnlNotifBell);
             this.pnlTopBar.Controls.Add(this.pnlAvatarTop);
 
-            // ── Content area
+            // -- Content area --
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlContent.BackColor = clrBg;
             this.pnlContent.Padding = new System.Windows.Forms.Padding(32);
             this.pnlContent.AutoScroll = true;
 
-            // ══════════════════════════════════════════════════════════
+            // **********************************************************
             // PROFILE COMPONENTS
-            // ══════════════════════════════════════════════════════════
+            // **********************************************************
             
-            // ── Header Card
+            // -- Header Card --
             this.pnlHeaderCard.BackColor = clrWhite;
             this.pnlHeaderCard.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeaderCard.Height = 120;
+            this.pnlHeaderCard.Height = 140;
             this.pnlHeaderCard.Padding = new System.Windows.Forms.Padding(24);
+            this.pnlHeaderCard.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
             
-            this.pnlAvatarLarge.Size = new System.Drawing.Size(72, 72);
-            this.pnlAvatarLarge.Location = new System.Drawing.Point(24, 24);
-            this.pnlAvatarLarge.BackColor = clrNavyLight;
-            this.lblAvatarLargeInitials.Text = "👤";
-            this.lblAvatarLargeInitials.Font = new System.Drawing.Font("Segoe UI", 32f);
-            this.lblAvatarLargeInitials.ForeColor = clrTextMid;
+            this.pnlAvatarLarge.Size = new System.Drawing.Size(80, 80);
+            this.pnlAvatarLarge.Location = new System.Drawing.Point(24, 30);
+            this.pnlAvatarLarge.BackColor = clrTeal;
+            this.lblAvatarLargeInitials.Text = "";
+            this.lblAvatarLargeInitials.Font = new System.Drawing.Font("Segoe UI", 40f);
+            this.lblAvatarLargeInitials.ForeColor = clrWhite;
             this.lblAvatarLargeInitials.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAvatarLargeInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.pnlAvatarLarge.Controls.Add(this.lblAvatarLargeInitials);
 
             this.lblPatientName.Text = "--------------------";
-            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI", 22f, System.Drawing.FontStyle.Bold);
-            this.lblPatientName.ForeColor = clrTextDark;
+            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI", 24f, System.Drawing.FontStyle.Bold);
+            this.lblPatientName.ForeColor = clrNavyActive;
             this.lblPatientName.AutoSize = true;
             this.lblPatientName.Location = new System.Drawing.Point(120, 24);
 
             this.lblPatientId.Text = "Patient ID: --";
-            this.lblPatientId.Font = new System.Drawing.Font("Segoe UI Semibold", 10f, System.Drawing.FontStyle.Bold);
-            this.lblPatientId.ForeColor = clrTextMid;
+            this.lblPatientId.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
+            this.lblPatientId.ForeColor = clrTeal;
             this.lblPatientId.AutoSize = true;
-            this.lblPatientId.Location = new System.Drawing.Point(124, 68);
+            this.lblPatientId.Location = new System.Drawing.Point(124, 72);
 
-            this.lblPatientAge.Text = "DOB: --  |  Gender: --";
-            this.lblPatientAge.Font = new System.Drawing.Font("Segoe UI Semibold", 10f, System.Drawing.FontStyle.Bold);
+            this.lblPatientAge.Text = "Birth Date: --  |  Gender: --";
+            this.lblPatientAge.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblPatientAge.ForeColor = clrTextMid;
             this.lblPatientAge.AutoSize = true;
-            this.lblPatientAge.Location = new System.Drawing.Point(280, 68);
+            this.lblPatientAge.Location = new System.Drawing.Point(124, 100);
 
             this.pnlHeaderCard.Controls.Add(this.pnlAvatarLarge);
             this.pnlHeaderCard.Controls.Add(this.lblPatientName);
@@ -430,19 +372,18 @@ namespace elnet_recoverease
 
             var pnlSpacer = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 24 };
 
-            // ── Grid Layout for Cards
+            // -- Grid Layout for Cards --
             this.tlpProfileCards.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpProfileCards.ColumnCount = 2;
-            this.tlpProfileCards.RowCount = 2;
+            this.tlpProfileCards.RowCount = 1;
             this.tlpProfileCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpProfileCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpProfileCards.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpProfileCards.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpProfileCards.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 
             // Helper function logic inline for creating standard labels
             System.Drawing.Font fntTitle = new System.Drawing.Font("Segoe UI", 12f, System.Drawing.FontStyle.Bold);
             System.Drawing.Font fntLbl = new System.Drawing.Font("Segoe UI Semibold", 9f, System.Drawing.FontStyle.Bold);
-            System.Drawing.Font fntVal = new System.Drawing.Font("Segoe UI", 10f);
+            System.Drawing.Font fntVal = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
 
             // Card 1: Personal Info
             this.cardPersonalInfo.BackColor = clrWhite;
@@ -455,6 +396,17 @@ namespace elnet_recoverease
             this.lblPInfoTitle.Location = new System.Drawing.Point(24, 24);
             this.lblPInfoTitle.AutoSize = true;
 
+            this.btnEditPersonal.Text = "Edit";
+            this.btnEditPersonal.Font = new System.Drawing.Font("Segoe UI", 9f, System.Drawing.FontStyle.Bold);
+            this.btnEditPersonal.ForeColor = clrWhite;
+            this.btnEditPersonal.BackColor = clrNavyActive;
+            this.btnEditPersonal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEditPersonal.FlatAppearance.BorderSize = 0;
+            this.btnEditPersonal.Size = new System.Drawing.Size(80, 30);
+            this.btnEditPersonal.Location = new System.Drawing.Point(250, 30);
+            this.btnEditPersonal.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.btnEditPersonal.Cursor = System.Windows.Forms.Cursors.Hand;
+
             this.lblPhoneLbl.Text = "Phone Number"; this.lblPhoneLbl.Font = fntLbl; this.lblPhoneLbl.ForeColor = clrTextLight; this.lblPhoneLbl.Location = new System.Drawing.Point(24, 70); this.lblPhoneLbl.AutoSize = true;
             this.lblPhoneVal.Text = "--"; this.lblPhoneVal.Font = fntVal; this.lblPhoneVal.ForeColor = clrTextDark; this.lblPhoneVal.Location = new System.Drawing.Point(24, 90); this.lblPhoneVal.AutoSize = true;
 
@@ -464,10 +416,29 @@ namespace elnet_recoverease
             this.lblAddressLbl.Text = "Home Address"; this.lblAddressLbl.Font = fntLbl; this.lblAddressLbl.ForeColor = clrTextLight; this.lblAddressLbl.Location = new System.Drawing.Point(24, 140); this.lblAddressLbl.AutoSize = true;
             this.lblAddressVal.Text = "--"; this.lblAddressVal.Font = fntVal; this.lblAddressVal.ForeColor = clrTextDark; this.lblAddressVal.Location = new System.Drawing.Point(24, 160); this.lblAddressVal.AutoSize = true;
 
-            this.lblEmergencyLbl.Text = "Emergency Contact"; this.lblEmergencyLbl.Font = fntLbl; this.lblEmergencyLbl.ForeColor = clrTextLight; this.lblEmergencyLbl.Location = new System.Drawing.Point(24, 210); this.lblEmergencyLbl.AutoSize = true;
-            this.lblEmergencyVal.Text = "--"; this.lblEmergencyVal.Font = fntVal; this.lblEmergencyVal.ForeColor = clrTextDark; this.lblEmergencyVal.Location = new System.Drawing.Point(24, 230); this.lblEmergencyVal.AutoSize = true;
+            this.lblEmergencyLbl.Text = "EMERGENCY CONTACT";
+            this.lblEmergencyLbl.Font = fntLbl;
+            this.lblEmergencyLbl.ForeColor = clrTeal;
+            this.lblEmergencyLbl.Location = new System.Drawing.Point(24, 210);
+            this.lblEmergencyLbl.AutoSize = true;
 
-            this.cardPersonalInfo.Controls.AddRange(new System.Windows.Forms.Control[] { accP1, this.lblPInfoTitle, this.lblPhoneLbl, this.lblPhoneVal, this.lblEmailLbl, this.lblEmailVal, this.lblAddressLbl, this.lblAddressVal, this.lblEmergencyLbl, this.lblEmergencyVal });
+            this.lblEmergencyNameLbl.Text = "Name"; this.lblEmergencyNameLbl.Font = fntLbl; this.lblEmergencyNameLbl.ForeColor = clrTextLight; this.lblEmergencyNameLbl.Location = new System.Drawing.Point(24, 235); this.lblEmergencyNameLbl.AutoSize = true;
+            this.lblEmergencyNameVal.Text = "--"; this.lblEmergencyNameVal.Font = fntVal; this.lblEmergencyNameVal.ForeColor = clrTextDark; this.lblEmergencyNameVal.Location = new System.Drawing.Point(24, 255); this.lblEmergencyNameVal.AutoSize = true;
+
+            this.lblEmergencyRelLbl.Text = "Relationship"; this.lblEmergencyRelLbl.Font = fntLbl; this.lblEmergencyRelLbl.ForeColor = clrTextLight; this.lblEmergencyRelLbl.Location = new System.Drawing.Point(180, 235); this.lblEmergencyRelLbl.AutoSize = true;
+            this.lblEmergencyRelVal.Text = "--"; this.lblEmergencyRelVal.Font = fntVal; this.lblEmergencyRelVal.ForeColor = clrTextDark; this.lblEmergencyRelVal.Location = new System.Drawing.Point(180, 255); this.lblEmergencyRelVal.AutoSize = true;
+
+            this.lblEmergencyPhoneLbl.Text = "Phone"; this.lblEmergencyPhoneLbl.Font = fntLbl; this.lblEmergencyPhoneLbl.ForeColor = clrTextLight; this.lblEmergencyPhoneLbl.Location = new System.Drawing.Point(340, 235); this.lblEmergencyPhoneLbl.AutoSize = true;
+            this.lblEmergencyPhoneVal.Text = "--"; this.lblEmergencyPhoneVal.Font = fntVal; this.lblEmergencyPhoneVal.ForeColor = clrTextDark; this.lblEmergencyPhoneVal.Location = new System.Drawing.Point(340, 255); this.lblEmergencyPhoneVal.AutoSize = true;
+
+            this.cardPersonalInfo.Controls.AddRange(new System.Windows.Forms.Control[] { 
+                accP1, this.lblPInfoTitle, this.btnEditPersonal, this.lblPhoneLbl, this.lblPhoneVal, this.lblEmailLbl, this.lblEmailVal, 
+                this.lblAddressLbl, this.lblAddressVal, this.lblEmergencyLbl, 
+                this.lblEmergencyNameLbl, this.lblEmergencyNameVal, 
+                this.lblEmergencyRelLbl, this.lblEmergencyRelVal, 
+                this.lblEmergencyPhoneLbl, this.lblEmergencyPhoneVal 
+            });
+            this.btnEditPersonal.BringToFront();
 
             // Card 2: Medical Overview
             this.cardMedicalOverview.BackColor = clrWhite;
@@ -494,54 +465,8 @@ namespace elnet_recoverease
 
             this.cardMedicalOverview.Controls.AddRange(new System.Windows.Forms.Control[] { accP2, this.lblMedOverviewTitle, this.lblBloodLbl, this.lblBloodVal, this.lblHeightLbl, this.lblHeightVal, this.lblWeightLbl, this.lblWeightVal, this.lblAllergiesLbl, this.lblAllergiesVal });
 
-            // Card 3: Insurance
-            this.cardInsurance.BackColor = clrWhite;
-            this.cardInsurance.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cardInsurance.Margin = new System.Windows.Forms.Padding(0, 12, 12, 0);
-            var accP3 = new System.Windows.Forms.Panel { BackColor = clrNavyActive, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
-            this.lblInsTitle.Text = "Insurance Details";
-            this.lblInsTitle.Font = fntTitle;
-            this.lblInsTitle.ForeColor = clrNavyActive;
-            this.lblInsTitle.Location = new System.Drawing.Point(24, 24);
-            this.lblInsTitle.AutoSize = true;
-
-            this.lblProviderLbl.Text = "Insurance Provider"; this.lblProviderLbl.Font = fntLbl; this.lblProviderLbl.ForeColor = clrTextLight; this.lblProviderLbl.Location = new System.Drawing.Point(24, 70); this.lblProviderLbl.AutoSize = true;
-            this.lblProviderVal.Text = "--"; this.lblProviderVal.Font = fntVal; this.lblProviderVal.ForeColor = clrTextDark; this.lblProviderVal.Location = new System.Drawing.Point(24, 90); this.lblProviderVal.AutoSize = true;
-
-            this.lblPolicyLbl.Text = "Policy Number"; this.lblPolicyLbl.Font = fntLbl; this.lblPolicyLbl.ForeColor = clrTextLight; this.lblPolicyLbl.Location = new System.Drawing.Point(24, 140); this.lblPolicyLbl.AutoSize = true;
-            this.lblPolicyVal.Text = "--"; this.lblPolicyVal.Font = fntVal; this.lblPolicyVal.ForeColor = clrTextDark; this.lblPolicyVal.Location = new System.Drawing.Point(24, 160); this.lblPolicyVal.AutoSize = true;
-
-            this.lblGroupLbl.Text = "Group Number"; this.lblGroupLbl.Font = fntLbl; this.lblGroupLbl.ForeColor = clrTextLight; this.lblGroupLbl.Location = new System.Drawing.Point(250, 140); this.lblGroupLbl.AutoSize = true;
-            this.lblGroupVal.Text = "--"; this.lblGroupVal.Font = fntVal; this.lblGroupVal.ForeColor = clrTextDark; this.lblGroupVal.Location = new System.Drawing.Point(250, 160); this.lblGroupVal.AutoSize = true;
-
-            this.cardInsurance.Controls.AddRange(new System.Windows.Forms.Control[] { accP3, this.lblInsTitle, this.lblProviderLbl, this.lblProviderVal, this.lblPolicyLbl, this.lblPolicyVal, this.lblGroupLbl, this.lblGroupVal });
-
-            // Card 4: PCP
-            this.cardPcp.BackColor = clrWhite;
-            this.cardPcp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cardPcp.Margin = new System.Windows.Forms.Padding(12, 12, 0, 0);
-            var accP4 = new System.Windows.Forms.Panel { BackColor = clrTeal, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
-            this.lblPcpTitle.Text = "Primary Care Physician";
-            this.lblPcpTitle.Font = fntTitle;
-            this.lblPcpTitle.ForeColor = clrNavyActive;
-            this.lblPcpTitle.Location = new System.Drawing.Point(24, 24);
-            this.lblPcpTitle.AutoSize = true;
-
-            this.lblPcpNameLbl.Text = "Physician Name"; this.lblPcpNameLbl.Font = fntLbl; this.lblPcpNameLbl.ForeColor = clrTextLight; this.lblPcpNameLbl.Location = new System.Drawing.Point(24, 70); this.lblPcpNameLbl.AutoSize = true;
-            this.lblPcpNameVal.Text = "--"; this.lblPcpNameVal.Font = fntVal; this.lblPcpNameVal.ForeColor = clrTextDark; this.lblPcpNameVal.Location = new System.Drawing.Point(24, 90); this.lblPcpNameVal.AutoSize = true;
-
-            this.lblPcpContactLbl.Text = "Contact Number"; this.lblPcpContactLbl.Font = fntLbl; this.lblPcpContactLbl.ForeColor = clrTextLight; this.lblPcpContactLbl.Location = new System.Drawing.Point(24, 140); this.lblPcpContactLbl.AutoSize = true;
-            this.lblPcpContactVal.Text = "--"; this.lblPcpContactVal.Font = fntVal; this.lblPcpContactVal.ForeColor = clrTextDark; this.lblPcpContactVal.Location = new System.Drawing.Point(24, 160); this.lblPcpContactVal.AutoSize = true;
-
-            this.lblPcpClinicLbl.Text = "Clinic / Hospital"; this.lblPcpClinicLbl.Font = fntLbl; this.lblPcpClinicLbl.ForeColor = clrTextLight; this.lblPcpClinicLbl.Location = new System.Drawing.Point(250, 140); this.lblPcpClinicLbl.AutoSize = true;
-            this.lblPcpClinicVal.Text = "--"; this.lblPcpClinicVal.Font = fntVal; this.lblPcpClinicVal.ForeColor = clrTextDark; this.lblPcpClinicVal.Location = new System.Drawing.Point(250, 160); this.lblPcpClinicVal.AutoSize = true;
-
-            this.cardPcp.Controls.AddRange(new System.Windows.Forms.Control[] { accP4, this.lblPcpTitle, this.lblPcpNameLbl, this.lblPcpNameVal, this.lblPcpContactLbl, this.lblPcpContactVal, this.lblPcpClinicLbl, this.lblPcpClinicVal });
-
             this.tlpProfileCards.Controls.Add(this.cardPersonalInfo, 0, 0);
             this.tlpProfileCards.Controls.Add(this.cardMedicalOverview, 1, 0);
-            this.tlpProfileCards.Controls.Add(this.cardInsurance, 0, 1);
-            this.tlpProfileCards.Controls.Add(this.cardPcp, 1, 1);
 
             this.pnlContent.Controls.Add(this.tlpProfileCards);
             this.pnlContent.Controls.Add(pnlSpacer);
@@ -574,10 +499,6 @@ namespace elnet_recoverease
             this.cardPersonalInfo.PerformLayout();
             this.cardMedicalOverview.ResumeLayout(false);
             this.cardMedicalOverview.PerformLayout();
-            this.cardInsurance.ResumeLayout(false);
-            this.cardInsurance.PerformLayout();
-            this.cardPcp.ResumeLayout(false);
-            this.cardPcp.PerformLayout();
             this.btnNavDashboard.ResumeLayout(false);
             this.btnNavProfile.ResumeLayout(false);
             this.btnNavMeds.ResumeLayout(false);
@@ -589,7 +510,7 @@ namespace elnet_recoverease
 
         #endregion
 
-        // ── Field declarations ────────────────────────────────────────
+        // -- Field declarations --
         private System.Windows.Forms.PictureBox picLogo;
         private System.Windows.Forms.Panel pnlSidebar;
         private System.Windows.Forms.Panel pnlLogoArea;
@@ -644,8 +565,15 @@ namespace elnet_recoverease
         private System.Windows.Forms.Label lblEmailVal;
         private System.Windows.Forms.Label lblAddressLbl;
         private System.Windows.Forms.Label lblAddressVal;
+
         private System.Windows.Forms.Label lblEmergencyLbl;
-        private System.Windows.Forms.Label lblEmergencyVal;
+        private System.Windows.Forms.Label lblEmergencyNameLbl;
+        private System.Windows.Forms.Label lblEmergencyNameVal;
+        private System.Windows.Forms.Label lblEmergencyRelLbl;
+        private System.Windows.Forms.Label lblEmergencyRelVal;
+        private System.Windows.Forms.Label lblEmergencyPhoneLbl;
+        private System.Windows.Forms.Label lblEmergencyPhoneVal;
+        private System.Windows.Forms.Button btnEditPersonal;
 
         private System.Windows.Forms.Panel cardMedicalOverview;
         private System.Windows.Forms.Label lblMedOverviewTitle;
@@ -657,23 +585,5 @@ namespace elnet_recoverease
         private System.Windows.Forms.Label lblWeightVal;
         private System.Windows.Forms.Label lblAllergiesLbl;
         private System.Windows.Forms.Label lblAllergiesVal;
-
-        private System.Windows.Forms.Panel cardInsurance;
-        private System.Windows.Forms.Label lblInsTitle;
-        private System.Windows.Forms.Label lblProviderLbl;
-        private System.Windows.Forms.Label lblProviderVal;
-        private System.Windows.Forms.Label lblPolicyLbl;
-        private System.Windows.Forms.Label lblPolicyVal;
-        private System.Windows.Forms.Label lblGroupLbl;
-        private System.Windows.Forms.Label lblGroupVal;
-
-        private System.Windows.Forms.Panel cardPcp;
-        private System.Windows.Forms.Label lblPcpTitle;
-        private System.Windows.Forms.Label lblPcpNameLbl;
-        private System.Windows.Forms.Label lblPcpNameVal;
-        private System.Windows.Forms.Label lblPcpContactLbl;
-        private System.Windows.Forms.Label lblPcpContactVal;
-        private System.Windows.Forms.Label lblPcpClinicLbl;
-        private System.Windows.Forms.Label lblPcpClinicVal;
     }
 }

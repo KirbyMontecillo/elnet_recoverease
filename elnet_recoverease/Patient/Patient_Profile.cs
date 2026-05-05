@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using elnet_recoverease.Core;
+using elnet_recoverease.Models;
 
 namespace elnet_recoverease
 {
@@ -17,6 +10,42 @@ namespace elnet_recoverease
             InitializeComponent();
             LoadLogo();
             WireNavigation();
+            LoadPatientData();
+        }
+
+        private void LoadPatientData()
+        {
+            var patient = UserSession.CurrentPatient;
+            var user = UserSession.CurrentUser;
+
+            if (patient == null) return;
+
+            // Header info
+            lblPatientName.Text = patient.FullName;
+            lblPatientId.Text = $"Patient ID: P-{patient.PatientID:D4}";
+            lblPatientAge.Text = $"Birth Date: {patient.DateOfBirth:MMM dd, yyyy}  |  Gender: {patient.Gender ?? "Not Specified"}";
+            
+            // Avatar initials
+            string initials = "";
+            var names = patient.FullName.Split(' ');
+            if (names.Length > 0) initials += names[0][0];
+            if (names.Length > 1) initials += names[names.Length - 1][0];
+            lblAvatarInitials.Text = initials.ToUpper();
+            lblAvatarLargeInitials.Text = initials.ToUpper();
+
+            // Personal Info
+            lblPhoneVal.Text = patient.ContactNumber ?? "--";
+            lblEmailVal.Text = user?.Username ?? "--";
+            lblAddressVal.Text = patient.Address ?? "--";
+            lblEmergencyNameVal.Text = patient.EmergencyName ?? "--";
+            lblEmergencyRelVal.Text = patient.EmergencyRelationship ?? "--";
+            lblEmergencyPhoneVal.Text = patient.EmergencyPhone ?? "--";
+
+            // Medical Overview
+            lblBloodVal.Text = patient.BloodType ?? "--";
+            lblHeightVal.Text = patient.Height ?? "--";
+            lblWeightVal.Text = patient.Weight ?? "--";
+            lblAllergiesVal.Text = patient.Allergies ?? "None Reported";
         }
 
         private void WireNavigation()
@@ -29,8 +58,19 @@ namespace elnet_recoverease
             RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
 
             btnLogout.Click += (s, e) => {
+                UserSession.Logout();
                 new Login().Show();
                 this.Close();
+            };
+
+            btnEditPersonal.Click += (s, e) => {
+                using (var editForm = new Edit_Patient_Profile())
+                {
+                    if (editForm.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadPatientData(); // Refresh labels
+                    }
+                }
             };
         }
 

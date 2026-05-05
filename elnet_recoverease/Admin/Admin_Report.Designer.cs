@@ -129,32 +129,11 @@ namespace elnet_recoverease.Admin
             this.pnlNavDivider.Size = new System.Drawing.Size(260, 1);
             this.pnlNavDivider.TabIndex = 1;
 
-            // Nav Build Helper
-            void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive)
-            {
-                pnl.Cursor = System.Windows.Forms.Cursors.Hand;
-                pnl.Dock = System.Windows.Forms.DockStyle.Top;
-                pnl.Size = new System.Drawing.Size(260, 48);
-                if (isActive) pnl.BackColor = clrNavyActive;
-                ico.AutoSize = true;
-                ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
-                ico.ForeColor = isActive ? clrWhite : System.Drawing.Color.FromArgb(45, 55, 72);
-                ico.Location = new System.Drawing.Point(20, 11);
-                ico.Text = icoChar;
-                txt.AutoSize = true;
-                txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-                txt.ForeColor = isActive ? clrWhite : System.Drawing.Color.FromArgb(45, 55, 72);
-                txt.Location = new System.Drawing.Point(64, 13);
-                txt.Text = label;
-                pnl.Controls.Add(ico);
-                pnl.Controls.Add(txt);
-            }
-
-            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false);
-            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false);
-            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false);
-            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "👥", "Global Patient List", false);
-            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", true);
+            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", true, clrNavyActive, clrWhite);
 
             // Sidebar Bottom
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
@@ -237,29 +216,9 @@ namespace elnet_recoverease.Admin
             this.pnlMetrics.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.pnlMetrics.Size = new System.Drawing.Size(1292, 150);
             this.pnlMetrics.TabIndex = 0;
-
-            void SetupMetricCard(System.Windows.Forms.Panel card, System.Windows.Forms.Label title, System.Windows.Forms.Label val, string sTitle, string sVal)
-            {
-                card.BackColor = clrWhite;
-                card.Dock = System.Windows.Forms.DockStyle.Fill;
-                card.Margin = new System.Windows.Forms.Padding(12, 0, 12, 0);
-                title.AutoSize = true;
-                title.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-                title.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-                title.Location = new System.Drawing.Point(24, 24);
-                title.Text = sTitle.ToUpper();
-                val.AutoSize = true;
-                val.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-                val.ForeColor = clrNavyActive;
-                val.Location = new System.Drawing.Point(24, 55);
-                val.Text = sVal;
-                card.Controls.Add(title);
-                card.Controls.Add(val);
-            }
-
-            SetupMetricCard(this.cardMetrics1, this.lblMetricTitle1, this.lblMetricVal1, "Total Active Users", "0");
-            SetupMetricCard(this.cardMetrics2, this.lblMetricTitle2, this.lblMetricVal2, "Global Appointments", "0");
-            SetupMetricCard(this.cardMetrics3, this.lblMetricTitle3, this.lblMetricVal3, "System Health Score", "100%");
+            SetupMetricCard(this.cardMetrics1, this.lblMetricTitle1, this.lblMetricVal1, "Total Active Users", "0", clrWhite, clrNavyActive);
+            SetupMetricCard(this.cardMetrics2, this.lblMetricTitle2, this.lblMetricVal2, "Global Appointments", "0", clrWhite, clrNavyActive);
+            SetupMetricCard(this.cardMetrics3, this.lblMetricTitle3, this.lblMetricVal3, "System Health Score", "100%", clrWhite, clrNavyActive);
 
             // Log Section
             this.pnlLogSection.BackColor = clrWhite;
@@ -341,6 +300,7 @@ namespace elnet_recoverease.Admin
             this.Controls.Add(this.pnlSidebar);
             this.Name = "Admin_Report";
             this.Text = "RecoverEase - System Reports";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.pnlSidebar.ResumeLayout(false);
             this.pnlLogoArea.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
@@ -374,6 +334,45 @@ namespace elnet_recoverease.Admin
         }
 
         #endregion
+
+        private void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive, System.Drawing.Color activeColor, System.Drawing.Color whiteColor)
+        {
+            pnl.Cursor = System.Windows.Forms.Cursors.Hand;
+            pnl.Dock = System.Windows.Forms.DockStyle.Top;
+            pnl.Size = new System.Drawing.Size(260, 48);
+            if (isActive) pnl.BackColor = activeColor;
+            ico.AutoSize = true;
+            ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
+            ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
+            ico.Location = new System.Drawing.Point(20, 11);
+            ico.Text = icoChar;
+            txt.AutoSize = true;
+            txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
+            txt.Location = new System.Drawing.Point(64, 13);
+            txt.Text = label;
+            pnl.Controls.Add(ico);
+            pnl.Controls.Add(txt);
+        }
+
+        private void SetupMetricCard(System.Windows.Forms.Panel card, System.Windows.Forms.Label title, System.Windows.Forms.Label val, string sTitle, string sVal, System.Drawing.Color whiteColor, System.Drawing.Color navyColor)
+        {
+            card.BackColor = whiteColor;
+            card.Dock = System.Windows.Forms.DockStyle.Fill;
+            card.Margin = new System.Windows.Forms.Padding(12, 0, 12, 0);
+            title.AutoSize = true;
+            title.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            title.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
+            title.Location = new System.Drawing.Point(24, 24);
+            title.Text = sTitle.ToUpper();
+            val.AutoSize = true;
+            val.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            val.ForeColor = navyColor;
+            val.Location = new System.Drawing.Point(24, 55);
+            val.Text = sVal;
+            card.Controls.Add(title);
+            card.Controls.Add(val);
+        }
 
         private System.Windows.Forms.Panel pnlSidebar;
         private System.Windows.Forms.Panel pnlLogoArea;

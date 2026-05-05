@@ -11,6 +11,7 @@ namespace elnet_recoverease.Models
         public string LicenseNumber { get; set; }
         public string ContactNumber { get; set; }
         public string Status { get; set; } // Active, Inactive, On Leave
+        public string Email { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Optional: Link to User account for login

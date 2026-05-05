@@ -118,32 +118,11 @@ namespace elnet_recoverease.Admin
             this.pnlNavDivider.Size = new System.Drawing.Size(260, 1);
             this.pnlNavDivider.TabIndex = 1;
 
-            // Nav Build Helper
-            void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive)
-            {
-                pnl.Cursor = System.Windows.Forms.Cursors.Hand;
-                pnl.Dock = System.Windows.Forms.DockStyle.Top;
-                pnl.Size = new System.Drawing.Size(260, 48);
-                if (isActive) pnl.BackColor = clrNavyActive;
-                ico.AutoSize = true;
-                ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
-                ico.ForeColor = isActive ? clrWhite : System.Drawing.Color.FromArgb(45, 55, 72);
-                ico.Location = new System.Drawing.Point(20, 11);
-                ico.Text = icoChar;
-                txt.AutoSize = true;
-                txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-                txt.ForeColor = isActive ? clrWhite : System.Drawing.Color.FromArgb(45, 55, 72);
-                txt.Location = new System.Drawing.Point(64, 13);
-                txt.Text = label;
-                pnl.Controls.Add(ico);
-                pnl.Controls.Add(txt);
-            }
-
-            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false);
-            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", true);
-            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false);
-            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "👥", "Global Patient List", false);
-            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", false);
+            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", true, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", false, clrNavyActive, clrWhite);
 
             // Sidebar Bottom
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
@@ -324,6 +303,7 @@ namespace elnet_recoverease.Admin
             this.Controls.Add(this.pnlSidebar);
             this.Name = "Staff_List";
             this.Text = "RecoverEase - Staff Management";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.pnlSidebar.ResumeLayout(false);
             this.pnlLogoArea.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
@@ -350,6 +330,26 @@ namespace elnet_recoverease.Admin
         }
 
         #endregion
+
+        private void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive, System.Drawing.Color activeColor, System.Drawing.Color whiteColor)
+        {
+            pnl.Cursor = System.Windows.Forms.Cursors.Hand;
+            pnl.Dock = System.Windows.Forms.DockStyle.Top;
+            pnl.Size = new System.Drawing.Size(260, 48);
+            if (isActive) pnl.BackColor = activeColor;
+            ico.AutoSize = true;
+            ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
+            ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
+            ico.Location = new System.Drawing.Point(20, 11);
+            ico.Text = icoChar;
+            txt.AutoSize = true;
+            txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
+            txt.Location = new System.Drawing.Point(64, 13);
+            txt.Text = label;
+            pnl.Controls.Add(ico);
+            pnl.Controls.Add(txt);
+        }
 
         private System.Windows.Forms.Panel pnlSidebar;
         private System.Windows.Forms.Panel pnlLogoArea;

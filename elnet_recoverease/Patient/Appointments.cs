@@ -21,6 +21,7 @@ namespace elnet_recoverease
 
         private void WireNavigation()
         {
+            // Register click events for panels and their children
             RegisterNavClick(btnNavDashboard, (s, e) => OpenForm(new Patient_Dashboard()));
             RegisterNavClick(btnNavProfile, (s, e) => OpenForm(new Patient_Profile()));
             RegisterNavClick(btnNavMeds, (s, e) => OpenForm(new Medications()));
@@ -37,7 +38,10 @@ namespace elnet_recoverease
         private void RegisterNavClick(Panel panel, EventHandler handler)
         {
             panel.Click += handler;
-            foreach (Control c in panel.Controls) c.Click += (s, e) => handler(panel, e);
+            foreach (Control c in panel.Controls)
+            {
+                c.Click += (s, e) => handler(panel, e);
+            }
         }
 
         private void OpenForm(Form childForm)

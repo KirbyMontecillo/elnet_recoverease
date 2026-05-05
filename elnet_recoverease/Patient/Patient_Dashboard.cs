@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
+using elnet_recoverease.Core;
+using elnet_recoverease.Models;
 
 namespace elnet_recoverease
 {
@@ -10,6 +13,52 @@ namespace elnet_recoverease
             InitializeComponent();
             LoadLogo();
             WireNavigation();
+            LoadDashboardData();
+        }
+
+        private void LoadDashboardData()
+        {
+            var patient = UserSession.CurrentPatient;
+            if (patient == null) return;
+
+            // Welcome Message
+            lblWelcome.Text = $"Welcome back, {patient.FullName}! Manage your health seamlessly.";
+
+            // Avatar Initials
+            string initials = "";
+            var names = patient.FullName.Split(' ');
+            if (names.Length > 0 && !string.IsNullOrEmpty(names[0])) initials += names[0][0];
+            if (names.Length > 1 && !string.IsNullOrEmpty(names[names.Length - 1])) initials += names[names.Length - 1][0];
+            lblAvatarInitials.Text = initials.ToUpper();
+
+            // Load Stats from Database
+            try
+            {
+                using (var db = new elnet_recoverease.Data.AppDbContext())
+                {
+                    // 1. Medications Today
+                    var today = DateOnly.FromDateTime(DateTime.Today);
+                    int medCount = db.MedicationSchedules
+                        .Count(ms => ms.PatientID == patient.PatientID && ms.ScheduledDate == today);
+                    lblCardMedsValue.Text = medCount.ToString();
+
+                    // 2. Next Appointment
+                    var nextAppt = db.Appointments
+                        .Where(a => a.PatientID == patient.PatientID && a.AppointmentDate >= DateTime.Now)
+                        .OrderBy(a => a.AppointmentDate)
+                        .FirstOrDefault();
+                    
+                    if (nextAppt != null)
+                        lblCardApptValue.Text = nextAppt.AppointmentDate.ToString("MMM dd");
+                    else
+                        lblCardApptValue.Text = "None";
+
+                    // 3. Adherence (Mock logic for now)
+                    lblCardAdhrValue.Text = "94%";
+                    lblCardMissValue.Text = "1";
+                }
+            }
+            catch { }
         }
 
         private void WireNavigation()
@@ -23,6 +72,7 @@ namespace elnet_recoverease
             RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
 
             btnLogout.Click += (s, e) => {
+                UserSession.Logout();
                 new Login().Show();
                 this.Close();
             };

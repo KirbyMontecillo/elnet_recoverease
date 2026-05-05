@@ -16,6 +16,23 @@ namespace elnet_recoverease.Doctor
         {
             InitializeComponent();
             try { this.picLogo.Image = System.Drawing.Image.FromFile(@"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png"); } catch { }
+
+            this.btnAddPatient.Click += (s, e) => {
+                using (var regForm = new Register_Patient())
+                {
+                    if (regForm.ShowDialog() == DialogResult.OK)
+                    {
+                        // Refresh grid or something if needed
+                        LoadPatients();
+                    }
+                }
+            };
         }
+
+        private void LoadPatients()
+        {
+            // Implementation for loading patients into the grid
+        }
+
     }
 }

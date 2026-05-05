@@ -28,7 +28,8 @@ namespace elnet_recoverease.Data
                 UserID = 1,
                 Username = "admin",
                 PasswordHash = "admin123", // In a real app, use BCrypt or similar hashing
-                Role = "Admin"
+                Role = "Admin",
+                IsFirstLogin = false
             });
 
             // Seed Initial Staff Profile for Admin
@@ -41,6 +42,7 @@ namespace elnet_recoverease.Data
                 LicenseNumber = "ADMIN-001",
                 ContactNumber = "000-000-0000",
                 Status = "Active",
+                Email = "admin@recoverease.com",
                 UserID = 1
             });
         }
