@@ -17,7 +17,6 @@ namespace elnet_recoverease.Admin
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlSidebar = new System.Windows.Forms.Panel();
             this.pnlLogoArea = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
@@ -28,9 +27,6 @@ namespace elnet_recoverease.Admin
             this.btnNavStaff = new System.Windows.Forms.Panel();
             this.lblNavStaffIcon = new System.Windows.Forms.Label();
             this.lblNavStaffText = new System.Windows.Forms.Label();
-            this.btnNavUsers = new System.Windows.Forms.Panel();
-            this.lblNavUsersIcon = new System.Windows.Forms.Label();
-            this.lblNavUsersText = new System.Windows.Forms.Label();
             this.btnNavPatients = new System.Windows.Forms.Panel();
             this.lblNavPatientsIcon = new System.Windows.Forms.Label();
             this.lblNavPatientsText = new System.Windows.Forms.Label();
@@ -45,41 +41,28 @@ namespace elnet_recoverease.Admin
             this.pnlAvatarTop = new System.Windows.Forms.Panel();
             this.lblAvatarInitials = new System.Windows.Forms.Label();
             this.pnlContent = new System.Windows.Forms.Panel();
-            this.pnlMetrics = new System.Windows.Forms.TableLayoutPanel();
-            this.cardMetrics1 = new System.Windows.Forms.Panel();
-            this.lblMetricVal1 = new System.Windows.Forms.Label();
-            this.lblMetricTitle1 = new System.Windows.Forms.Label();
-            this.cardMetrics2 = new System.Windows.Forms.Panel();
-            this.lblMetricVal2 = new System.Windows.Forms.Label();
-            this.lblMetricTitle2 = new System.Windows.Forms.Label();
-            this.cardMetrics3 = new System.Windows.Forms.Panel();
-            this.lblMetricVal3 = new System.Windows.Forms.Label();
-            this.lblMetricTitle3 = new System.Windows.Forms.Label();
-            this.pnlLogSection = new System.Windows.Forms.Panel();
-            this.lblLogTitle = new System.Windows.Forms.Label();
-            this.dgvLogs = new System.Windows.Forms.DataGridView();
-            this.colTimestamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colUser = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colAction = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDetails = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pnlReportSelection = new System.Windows.Forms.TableLayoutPanel();
+            this.pnlFilters = new System.Windows.Forms.Panel();
+            this.pnlPreview = new System.Windows.Forms.Panel();
+            this.lblSelectReportTitle = new System.Windows.Forms.Label();
+            this.lblFiltersTitle = new System.Windows.Forms.Label();
+            this.lblPreviewTitle = new System.Windows.Forms.Label();
+            this.dtpFrom = new System.Windows.Forms.DateTimePicker();
+            this.dtpTo = new System.Windows.Forms.DateTimePicker();
+            this.cmbDoctor = new System.Windows.Forms.ComboBox();
+            this.btnPreview = new System.Windows.Forms.Button();
+            this.btnGenerateReport = new System.Windows.Forms.Button();
+            this.btnPrintReport = new System.Windows.Forms.Button();
+
             this.pnlSidebar.SuspendLayout();
             this.pnlLogoArea.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
-            this.btnNavDashboard.SuspendLayout();
-            this.btnNavStaff.SuspendLayout();
-            this.btnNavUsers.SuspendLayout();
-            this.btnNavPatients.SuspendLayout();
-            this.btnNavReports.SuspendLayout();
             this.pnlSidebarBottom.SuspendLayout();
             this.pnlTopBar.SuspendLayout();
             this.pnlAvatarTop.SuspendLayout();
             this.pnlContent.SuspendLayout();
-            this.pnlMetrics.SuspendLayout();
-            this.cardMetrics1.SuspendLayout();
-            this.cardMetrics2.SuspendLayout();
-            this.cardMetrics3.SuspendLayout();
-            this.pnlLogSection.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvLogs)).BeginInit();
+            this.pnlFilters.SuspendLayout();
+            this.pnlPreview.SuspendLayout();
             this.SuspendLayout();
 
             // Colors
@@ -93,7 +76,6 @@ namespace elnet_recoverease.Admin
             this.pnlSidebar.BackColor = clrNavy;
             this.pnlSidebar.Controls.Add(this.btnNavReports);
             this.pnlSidebar.Controls.Add(this.btnNavPatients);
-            this.pnlSidebar.Controls.Add(this.btnNavUsers);
             this.pnlSidebar.Controls.Add(this.btnNavStaff);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlNavDivider);
@@ -131,7 +113,6 @@ namespace elnet_recoverease.Admin
 
             SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
             SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false, clrNavyActive, clrWhite);
             SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
             SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", true, clrNavyActive, clrWhite);
 
@@ -181,6 +162,7 @@ namespace elnet_recoverease.Admin
             this.pnlAvatarTop.Name = "pnlAvatarTop";
             this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
             this.pnlAvatarTop.TabIndex = 2;
+            this.pnlAvatarTop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
             this.lblAvatarInitials.ForeColor = clrWhite;
@@ -189,107 +171,105 @@ namespace elnet_recoverease.Admin
             this.lblAvatarInitials.Size = new System.Drawing.Size(40, 40);
             this.lblAvatarInitials.Text = "AD";
             this.lblAvatarInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
+            
             // Content
             this.pnlContent.BackColor = clrBg;
-            this.pnlContent.Controls.Add(this.pnlLogSection);
-            this.pnlContent.Controls.Add(this.pnlMetrics);
+            this.pnlContent.Controls.Add(this.pnlPreview);
+            this.pnlContent.Controls.Add(this.pnlFilters);
+            this.pnlContent.Controls.Add(this.pnlReportSelection);
+            this.pnlContent.Controls.Add(this.lblSelectReportTitle);
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlContent.Location = new System.Drawing.Point(260, 80);
             this.pnlContent.Name = "pnlContent";
-            this.pnlContent.Padding = new System.Windows.Forms.Padding(24);
+            this.pnlContent.Padding = new System.Windows.Forms.Padding(30);
             this.pnlContent.Size = new System.Drawing.Size(1340, 820);
             this.pnlContent.TabIndex = 2;
 
-            // Metrics Grid
-            this.pnlMetrics.ColumnCount = 3;
-            this.pnlMetrics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlMetrics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlMetrics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlMetrics.Controls.Add(this.cardMetrics1, 0, 0);
-            this.pnlMetrics.Controls.Add(this.cardMetrics2, 1, 0);
-            this.pnlMetrics.Controls.Add(this.cardMetrics3, 2, 0);
-            this.pnlMetrics.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlMetrics.Location = new System.Drawing.Point(24, 24);
-            this.pnlMetrics.Name = "pnlMetrics";
-            this.pnlMetrics.RowCount = 1;
-            this.pnlMetrics.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.pnlMetrics.Size = new System.Drawing.Size(1292, 150);
-            this.pnlMetrics.TabIndex = 0;
-            SetupMetricCard(this.cardMetrics1, this.lblMetricTitle1, this.lblMetricVal1, "Total Active Users", "0", clrWhite, clrNavyActive);
-            SetupMetricCard(this.cardMetrics2, this.lblMetricTitle2, this.lblMetricVal2, "Global Appointments", "0", clrWhite, clrNavyActive);
-            SetupMetricCard(this.cardMetrics3, this.lblMetricTitle3, this.lblMetricVal3, "System Health Score", "100%", clrWhite, clrNavyActive);
+            this.lblSelectReportTitle.Text = "SELECT A REPORT TO GENERATE";
+            this.lblSelectReportTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
+            this.lblSelectReportTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
+            this.lblSelectReportTitle.Location = new System.Drawing.Point(30, 20);
+            this.lblSelectReportTitle.AutoSize = true;
 
-            // Log Section
-            this.pnlLogSection.BackColor = clrWhite;
-            this.pnlLogSection.Controls.Add(this.dgvLogs);
-            this.pnlLogSection.Controls.Add(this.lblLogTitle);
-            this.pnlLogSection.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlLogSection.Location = new System.Drawing.Point(24, 194);
-            this.pnlLogSection.Margin = new System.Windows.Forms.Padding(0, 20, 0, 0);
-            this.pnlLogSection.Name = "pnlLogSection";
-            this.pnlLogSection.Padding = new System.Windows.Forms.Padding(24);
-            this.pnlLogSection.Size = new System.Drawing.Size(1292, 602);
-            this.pnlLogSection.TabIndex = 1;
+            this.pnlReportSelection.Location = new System.Drawing.Point(30, 50);
+            this.pnlReportSelection.Size = new System.Drawing.Size(1280, 320);
+            this.pnlReportSelection.BackColor = System.Drawing.Color.Transparent;
+            this.pnlReportSelection.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.pnlReportSelection.ColumnCount = 3;
+            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.pnlReportSelection.RowCount = 2;
+            this.pnlReportSelection.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.pnlReportSelection.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
 
-            this.lblLogTitle.AutoSize = true;
-            this.lblLogTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 14F, System.Drawing.FontStyle.Bold);
-            this.lblLogTitle.ForeColor = clrNavyActive;
-            this.lblLogTitle.Location = new System.Drawing.Point(24, 24);
-            this.lblLogTitle.Text = "Recent System Activity Logs";
+            // Report Selection Cards
+            AddReportCard("Patient Adherence Report", "Shows how well patients are following medication schedules.", "📈", System.Drawing.Color.FromArgb(236, 253, 245), System.Drawing.Color.FromArgb(5, 150, 105));
+            AddReportCard("Missed Medication Report", "Lists all patients who missed medications within a range.", "🚫", System.Drawing.Color.FromArgb(254, 242, 242), System.Drawing.Color.FromArgb(220, 38, 38));
+            AddReportCard("Appointment Summary", "Overview of scheduled, completed, and missed appointments.", "📅", System.Drawing.Color.FromArgb(239, 246, 255), System.Drawing.Color.FromArgb(37, 99, 235));
+            AddReportCard("Treatment Plan Progress", "Tracks recovery and treatment status of all patients.", "📋", System.Drawing.Color.FromArgb(255, 251, 235), System.Drawing.Color.FromArgb(217, 119, 6));
+            AddReportCard("Patient Master List", "Comprehensive directory of all registered patients.", "👥", System.Drawing.Color.FromArgb(245, 243, 255), System.Drawing.Color.FromArgb(124, 58, 237));
+            AddReportCard("Staff Directory", "Complete roster of all hospital staff and their respective roles.", "🏢", System.Drawing.Color.FromArgb(236, 254, 255), System.Drawing.Color.FromArgb(8, 145, 178));
 
-            this.dgvLogs.AllowUserToAddRows = false;
-            this.dgvLogs.AllowUserToDeleteRows = false;
-            this.dgvLogs.BackgroundColor = clrBg;
-            this.dgvLogs.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvLogs.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = clrNavy;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = clrNavyActive;
-            dataGridViewCellStyle1.SelectionBackColor = clrNavy;
-            dataGridViewCellStyle1.SelectionForeColor = clrNavyActive;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvLogs.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvLogs.ColumnHeadersHeight = 50;
-            this.dgvLogs.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colTimestamp,
-            this.colUser,
-            this.colAction,
-            this.colDetails});
-            this.dgvLogs.EnableHeadersVisualStyles = false;
-            this.dgvLogs.GridColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            this.dgvLogs.Location = new System.Drawing.Point(24, 75);
-            this.dgvLogs.Name = "dgvLogs";
-            this.dgvLogs.ReadOnly = true;
-            this.dgvLogs.RowHeadersVisible = false;
-            this.dgvLogs.RowTemplate.Height = 45;
-            this.dgvLogs.Size = new System.Drawing.Size(1244, 503);
-            this.dgvLogs.TabIndex = 1;
+            // Filters Section
+            this.pnlFilters.BackColor = clrWhite;
+            this.pnlFilters.Location = new System.Drawing.Point(30, 390);
+            this.pnlFilters.Size = new System.Drawing.Size(1280, 100);
+            this.pnlFilters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlFilters.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 
-            // colTimestamp
-            this.colTimestamp.HeaderText = "TIMESTAMP";
-            this.colTimestamp.Name = "colTimestamp";
-            this.colTimestamp.ReadOnly = true;
-            this.colTimestamp.Width = 200;
+            this.lblFiltersTitle.Text = "FILTERS";
+            this.lblFiltersTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFiltersTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
+            this.lblFiltersTitle.Location = new System.Drawing.Point(24, 10);
+            this.lblFiltersTitle.AutoSize = true;
 
-            // colUser
-            this.colUser.HeaderText = "USER";
-            this.colUser.Name = "colUser";
-            this.colUser.ReadOnly = true;
-            this.colUser.Width = 150;
+            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
+            this.dtpFrom.Location = new System.Drawing.Point(24, 55);
+            this.dtpFrom.Width = 200;
 
-            // colAction
-            this.colAction.HeaderText = "ACTION";
-            this.colAction.Name = "colAction";
-            this.colAction.ReadOnly = true;
-            this.colAction.Width = 200;
+            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(250, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
+            this.dtpTo.Location = new System.Drawing.Point(250, 55);
+            this.dtpTo.Width = 200;
 
-            // colDetails
-            this.colDetails.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colDetails.HeaderText = "ACTIVITY DETAILS";
-            this.colDetails.Name = "colDetails";
-            this.colDetails.ReadOnly = true;
+            System.Windows.Forms.Label lblDoc = new System.Windows.Forms.Label { Text = "Doctor", Location = new System.Drawing.Point(480, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
+            this.cmbDoctor.Location = new System.Drawing.Point(480, 55);
+            this.cmbDoctor.Width = 250;
+            this.cmbDoctor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+
+            this.btnPreview.Text = "👁️ Preview";
+            this.btnPreview.BackColor = clrWhite;
+            this.btnPreview.FlatStyle = FlatStyle.Flat;
+            this.btnPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.btnPreview.Size = new System.Drawing.Size(120, 35);
+            this.btnPreview.Location = new System.Drawing.Point(1000, 50);
+            this.btnPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.btnPreview.Click += (s, e) => UpdateInstantPreview();
+
+            this.btnGenerateReport.Text = "🖨️ Generate";
+            this.btnGenerateReport.BackColor = clrWhite;
+            this.btnGenerateReport.FlatStyle = FlatStyle.Flat;
+            this.btnGenerateReport.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.btnGenerateReport.Size = new System.Drawing.Size(120, 35);
+            this.btnGenerateReport.Location = new System.Drawing.Point(1130, 50);
+            this.btnGenerateReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+
+            this.pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { this.lblFiltersTitle, lblFrom, this.dtpFrom, lblTo, this.dtpTo, lblDoc, this.cmbDoctor, this.btnPreview, this.btnGenerateReport });
+
+            // Preview Section
+            this.pnlPreview.BackColor = clrWhite;
+            this.pnlPreview.Location = new System.Drawing.Point(30, 510);
+            this.pnlPreview.Size = new System.Drawing.Size(1280, 280);
+            this.pnlPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+
+            this.wvPreview = new Microsoft.Web.WebView2.WinForms.WebView2();
+            ((System.ComponentModel.ISupportInitialize)(this.wvPreview)).BeginInit();
+            this.wvPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.wvPreview.Name = "wvPreview";
+            
+            this.pnlPreview.Controls.Add(this.wvPreview);
+            ((System.ComponentModel.ISupportInitialize)(this.wvPreview)).EndInit();
 
             // Form
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -304,32 +284,16 @@ namespace elnet_recoverease.Admin
             this.pnlSidebar.ResumeLayout(false);
             this.pnlLogoArea.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-            this.btnNavDashboard.ResumeLayout(false);
-            this.btnNavDashboard.PerformLayout();
-            this.btnNavStaff.ResumeLayout(false);
-            this.btnNavStaff.PerformLayout();
-            this.btnNavUsers.ResumeLayout(false);
-            this.btnNavUsers.PerformLayout();
-            this.btnNavPatients.ResumeLayout(false);
-            this.btnNavPatients.PerformLayout();
-            this.btnNavReports.ResumeLayout(false);
-            this.btnNavReports.PerformLayout();
             this.pnlSidebarBottom.ResumeLayout(false);
             this.pnlSidebarBottom.PerformLayout();
             this.pnlTopBar.ResumeLayout(false);
             this.pnlTopBar.PerformLayout();
             this.pnlAvatarTop.ResumeLayout(false);
             this.pnlContent.ResumeLayout(false);
-            this.pnlMetrics.ResumeLayout(false);
-            this.cardMetrics1.ResumeLayout(false);
-            this.cardMetrics1.PerformLayout();
-            this.cardMetrics2.ResumeLayout(false);
-            this.cardMetrics2.PerformLayout();
-            this.cardMetrics3.ResumeLayout(false);
-            this.cardMetrics3.PerformLayout();
-            this.pnlLogSection.ResumeLayout(false);
-            this.pnlLogSection.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvLogs)).EndInit();
+            this.pnlFilters.ResumeLayout(false);
+            this.pnlFilters.PerformLayout();
+            this.pnlPreview.ResumeLayout(false);
+            this.pnlPreview.PerformLayout();
             this.ResumeLayout(false);
         }
 
@@ -342,12 +306,12 @@ namespace elnet_recoverease.Admin
             pnl.Size = new System.Drawing.Size(260, 48);
             if (isActive) pnl.BackColor = activeColor;
             ico.AutoSize = true;
-            ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
+            ico.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
             ico.Location = new System.Drawing.Point(20, 11);
             ico.Text = icoChar;
             txt.AutoSize = true;
-            txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            txt.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
             txt.Location = new System.Drawing.Point(64, 13);
             txt.Text = label;
@@ -355,23 +319,82 @@ namespace elnet_recoverease.Admin
             pnl.Controls.Add(txt);
         }
 
-        private void SetupMetricCard(System.Windows.Forms.Panel card, System.Windows.Forms.Label title, System.Windows.Forms.Label val, string sTitle, string sVal, System.Drawing.Color whiteColor, System.Drawing.Color navyColor)
+        private int _cardCount = 0;
+        private void AddReportCard(string title, string desc, string icon, System.Drawing.Color bgColor, System.Drawing.Color iconColor)
         {
-            card.BackColor = whiteColor;
-            card.Dock = System.Windows.Forms.DockStyle.Fill;
-            card.Margin = new System.Windows.Forms.Padding(12, 0, 12, 0);
-            title.AutoSize = true;
-            title.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            title.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            title.Location = new System.Drawing.Point(24, 24);
-            title.Text = sTitle.ToUpper();
-            val.AutoSize = true;
-            val.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-            val.ForeColor = navyColor;
-            val.Location = new System.Drawing.Point(24, 55);
-            val.Text = sVal;
-            card.Controls.Add(title);
-            card.Controls.Add(val);
+            System.Windows.Forms.Panel card = new System.Windows.Forms.Panel {
+                Size = new System.Drawing.Size(350, 140),
+                BackColor = System.Drawing.Color.White,
+                BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle,
+                Margin = new System.Windows.Forms.Padding(0, 0, 20, 20),
+                Cursor = System.Windows.Forms.Cursors.Hand,
+                Dock = System.Windows.Forms.DockStyle.Fill
+            };
+
+            System.Windows.Forms.Label lblIcon = new System.Windows.Forms.Label {
+                Text = icon,
+                Font = new System.Drawing.Font("Segoe UI", 20F),
+                BackColor = bgColor,
+                ForeColor = iconColor,
+                Size = new System.Drawing.Size(50, 50),
+                Location = new System.Drawing.Point(15, 15),
+                TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+            };
+
+            System.Windows.Forms.Label lblTitle = new System.Windows.Forms.Label {
+                Text = title,
+                Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold),
+                Location = new System.Drawing.Point(15, 75),
+                AutoSize = true
+            };
+
+            System.Windows.Forms.Label lblDesc = new System.Windows.Forms.Label {
+                Text = desc,
+                Font = new System.Drawing.Font("Segoe UI", 8F),
+                ForeColor = System.Drawing.Color.FromArgb(100, 116, 139),
+                Location = new System.Drawing.Point(15, 100),
+                Size = new System.Drawing.Size(320, 35)
+            };
+
+            card.Controls.AddRange(new System.Windows.Forms.Control[] { lblIcon, lblTitle, lblDesc });
+            
+            int row = _cardCount / 3;
+            int col = _cardCount % 3;
+            this.pnlReportSelection.Controls.Add(card, col, row);
+            _cardCount++;
+            
+            card.Tag = title;
+            card.Click += (s, e) => SelectCard(card);
+            
+            foreach (System.Windows.Forms.Control child in card.Controls)
+            {
+                child.Click += (s, e) => SelectCard(card);
+            }
+        }
+
+        private void SelectCard(System.Windows.Forms.Panel card)
+        {
+            System.Drawing.Color clrDefault = System.Drawing.Color.White;
+            System.Drawing.Color clrSelected = System.Drawing.Color.FromArgb(204, 251, 241);
+
+            foreach (System.Windows.Forms.Control c in pnlReportSelection.Controls) 
+                if (c is System.Windows.Forms.Panel p) p.BackColor = clrDefault;
+            
+            card.BackColor = clrSelected;
+            this._selectedReport = card.Tag?.ToString() ?? "";
+
+            // Show Live Preview Instantly on Dashboard
+            UpdateInstantPreview();
+        }
+
+        private async void UpdateInstantPreview()
+        {
+            if (wvPreview.CoreWebView2 == null) await wvPreview.EnsureCoreWebView2Async(null);
+            
+            // We use a temporary viewer instance just to get the HTML
+            Report_Viewer temp = new Report_Viewer();
+            string html = temp.GetReportHtml(this._selectedReport, dtpFrom.Value, dtpTo.Value, cmbDoctor.SelectedItem?.ToString() ?? "All Doctors");
+            wvPreview.CoreWebView2.NavigateToString(html);
         }
 
         private System.Windows.Forms.Panel pnlSidebar;
@@ -384,9 +407,6 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Panel btnNavStaff;
         private System.Windows.Forms.Label lblNavStaffIcon;
         private System.Windows.Forms.Label lblNavStaffText;
-        private System.Windows.Forms.Panel btnNavUsers;
-        private System.Windows.Forms.Label lblNavUsersIcon;
-        private System.Windows.Forms.Label lblNavUsersText;
         private System.Windows.Forms.Panel btnNavPatients;
         private System.Windows.Forms.Label lblNavPatientsIcon;
         private System.Windows.Forms.Label lblNavPatientsText;
@@ -401,22 +421,19 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Panel pnlAvatarTop;
         private System.Windows.Forms.Label lblAvatarInitials;
         private System.Windows.Forms.Panel pnlContent;
-        private System.Windows.Forms.TableLayoutPanel pnlMetrics;
-        private System.Windows.Forms.Panel cardMetrics1;
-        private System.Windows.Forms.Label lblMetricTitle1;
-        private System.Windows.Forms.Label lblMetricVal1;
-        private System.Windows.Forms.Panel cardMetrics2;
-        private System.Windows.Forms.Label lblMetricTitle2;
-        private System.Windows.Forms.Label lblMetricVal2;
-        private System.Windows.Forms.Panel cardMetrics3;
-        private System.Windows.Forms.Label lblMetricTitle3;
-        private System.Windows.Forms.Label lblMetricVal3;
-        private System.Windows.Forms.Panel pnlLogSection;
-        private System.Windows.Forms.Label lblLogTitle;
-        private System.Windows.Forms.DataGridView dgvLogs;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colTimestamp;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colUser;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colAction;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colDetails;
+        private System.Windows.Forms.Label lblPreviewTitle;
+
+        private System.Windows.Forms.TableLayoutPanel pnlReportSelection;
+        private System.Windows.Forms.Panel pnlFilters;
+        private System.Windows.Forms.Panel pnlPreview;
+        private System.Windows.Forms.Label lblSelectReportTitle;
+        private System.Windows.Forms.Label lblFiltersTitle;
+        private System.Windows.Forms.DateTimePicker dtpFrom;
+        private System.Windows.Forms.DateTimePicker dtpTo;
+        private System.Windows.Forms.ComboBox cmbDoctor;
+        private System.Windows.Forms.Button btnPreview;
+        private System.Windows.Forms.Button btnGenerateReport;
+        private System.Windows.Forms.Button btnPrintReport;
+        private Microsoft.Web.WebView2.WinForms.WebView2 wvPreview;
     }
 }

@@ -49,7 +49,7 @@ namespace elnet_recoverease
                         .FirstOrDefault();
                     
                     if (nextAppt != null)
-                        lblCardApptValue.Text = nextAppt.AppointmentDate.ToString("MMM dd");
+                        lblCardApptValue.Text = nextAppt.AppointmentDate?.ToString("MMM dd") ?? "N/A";
                     else
                         lblCardApptValue.Text = "None";
 

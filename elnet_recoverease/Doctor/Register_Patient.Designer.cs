@@ -98,7 +98,10 @@ namespace elnet_recoverease.Doctor
 
             // DOB & Gender row
             var lblDOB = new System.Windows.Forms.Label(); lblDOB.Text = "DATE OF BIRTH"; lblDOB.Location = new System.Drawing.Point(50, 340); lblDOB.AutoSize = true; lblDOB.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold); lblDOB.ForeColor = System.Drawing.Color.DimGray;
-            this.dtpDOB.Location = new System.Drawing.Point(50, 360); this.dtpDOB.Size = new System.Drawing.Size(265, 32); this.dtpDOB.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.dtpDOB.Location = new System.Drawing.Point(50, 360); 
+            this.dtpDOB.Size = new System.Drawing.Size(265, 32); 
+            this.dtpDOB.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.dtpDOB.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             
             var lblAge = new System.Windows.Forms.Label(); lblAge.Text = "AGE"; lblAge.Location = new System.Drawing.Point(335, 340); lblAge.AutoSize = true; lblAge.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold); lblAge.ForeColor = System.Drawing.Color.DimGray;
             this.txtAge.Location = new System.Drawing.Point(335, 360); this.txtAge.Size = new System.Drawing.Size(120, 32); this.txtAge.Font = new System.Drawing.Font("Segoe UI", 11F); this.txtAge.ReadOnly = true; this.txtAge.BackColor = System.Drawing.Color.White;

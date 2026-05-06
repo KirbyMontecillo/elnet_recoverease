@@ -571,33 +571,33 @@ namespace elnet_recoverease.Doctor
             this.lblActionsTitle.AutoSize = true;
 
             this.btnUpdatePlan.Text = "📝 Update Treatment Plan";
-            this.btnUpdatePlan.Font = new System.Drawing.Font("Segoe UI", 10f);
-            this.btnUpdatePlan.BackColor = clrNavyLight;
-            this.btnUpdatePlan.ForeColor = clrNavyActive;
+            this.btnUpdatePlan.Font = new System.Drawing.Font("Segoe UI Semibold", 10f, System.Drawing.FontStyle.Bold);
+            this.btnUpdatePlan.BackColor = clrTeal;
+            this.btnUpdatePlan.ForeColor = clrWhite;
             this.btnUpdatePlan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdatePlan.FlatAppearance.BorderSize = 0;
             this.btnUpdatePlan.Location = new System.Drawing.Point(16, 50);
-            this.btnUpdatePlan.Size = new System.Drawing.Size(250, 40);
+            this.btnUpdatePlan.Size = new System.Drawing.Size(250, 42);
             this.btnUpdatePlan.Cursor = System.Windows.Forms.Cursors.Hand;
 
             this.btnPrescribe.Text = "💊 Prescribe Medication";
-            this.btnPrescribe.Font = new System.Drawing.Font("Segoe UI", 10f);
-            this.btnPrescribe.BackColor = clrNavyLight;
-            this.btnPrescribe.ForeColor = clrNavyActive;
+            this.btnPrescribe.Font = new System.Drawing.Font("Segoe UI Semibold", 10f, System.Drawing.FontStyle.Bold);
+            this.btnPrescribe.BackColor = clrTeal;
+            this.btnPrescribe.ForeColor = clrWhite;
             this.btnPrescribe.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrescribe.FlatAppearance.BorderSize = 0;
             this.btnPrescribe.Location = new System.Drawing.Point(16, 100);
-            this.btnPrescribe.Size = new System.Drawing.Size(250, 40);
+            this.btnPrescribe.Size = new System.Drawing.Size(250, 42);
             this.btnPrescribe.Cursor = System.Windows.Forms.Cursors.Hand;
 
             this.btnAddNote.Text = "📋 Add Clinical Note";
-            this.btnAddNote.Font = new System.Drawing.Font("Segoe UI", 10f);
-            this.btnAddNote.BackColor = clrNavyLight;
-            this.btnAddNote.ForeColor = clrNavyActive;
+            this.btnAddNote.Font = new System.Drawing.Font("Segoe UI Semibold", 10f, System.Drawing.FontStyle.Bold);
+            this.btnAddNote.BackColor = clrTeal;
+            this.btnAddNote.ForeColor = clrWhite;
             this.btnAddNote.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAddNote.FlatAppearance.BorderSize = 0;
             this.btnAddNote.Location = new System.Drawing.Point(16, 150);
-            this.btnAddNote.Size = new System.Drawing.Size(250, 40);
+            this.btnAddNote.Size = new System.Drawing.Size(250, 42);
             this.btnAddNote.Cursor = System.Windows.Forms.Cursors.Hand;
 
             this.pnlActions.Controls.Add(this.lblActionsTitle);

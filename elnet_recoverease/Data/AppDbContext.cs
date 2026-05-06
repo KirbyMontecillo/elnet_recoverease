@@ -13,11 +13,68 @@ namespace elnet_recoverease.Data
         public DbSet<MedicationSchedule> MedicationSchedules { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<PatientAttachment> PatientAttachments { get; set; }
+        public DbSet<ClinicalNote> ClinicalNotes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Update the connection string if your SQL Server instance name is different
             optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=RecoverEaseDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        }
+
+        public void EnsureSchemaUpdated()
+        {
+            try
+            {
+                this.Database.OpenConnection();
+                using (var command = this.Database.GetDbConnection().CreateCommand())
+                {
+                    // Add DoctorName
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'DoctorName') " +
+                                         "ALTER TABLE Appointments ADD DoctorName NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Add AppointmentType
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'AppointmentType') " +
+                                         "ALTER TABLE Appointments ADD AppointmentType NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Add CreatedAt
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'CreatedAt') " +
+                                         "ALTER TABLE Appointments ADD CreatedAt DATETIME2 NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Add RecoveryProgress
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'RecoveryProgress') " +
+                                         "ALTER TABLE Appointments ADD RecoveryProgress INT DEFAULT 0;";
+                    command.ExecuteNonQuery();
+
+                    // Add Vitals
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'BloodPressure') " +
+                                         "ALTER TABLE Appointments ADD BloodPressure NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Temperature') " +
+                                         "ALTER TABLE Appointments ADD Temperature NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'HeartRate') " +
+                                         "ALTER TABLE Appointments ADD HeartRate NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Weight') " +
+                                         "ALTER TABLE Appointments ADD Weight NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'FinalizedAt') " +
+                                         "ALTER TABLE Appointments ADD FinalizedAt DATETIME2 NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'Notes') " +
+                                         "ALTER TABLE MedicationSchedules ADD Notes NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch { }
+            finally { this.Database.CloseConnection(); }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

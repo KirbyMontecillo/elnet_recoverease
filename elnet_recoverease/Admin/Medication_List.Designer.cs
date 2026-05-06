@@ -1,3 +1,6 @@
+using System.Windows.Forms;
+using System.Drawing;
+
 namespace elnet_recoverease.Admin
 {
     partial class Medication_List
@@ -17,7 +20,6 @@ namespace elnet_recoverease.Admin
 
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlSidebar = new System.Windows.Forms.Panel();
             this.pnlLogoArea = new System.Windows.Forms.Panel();
             this.picLogo = new System.Windows.Forms.PictureBox();
@@ -28,9 +30,6 @@ namespace elnet_recoverease.Admin
             this.btnNavStaff = new System.Windows.Forms.Panel();
             this.lblNavStaffIcon = new System.Windows.Forms.Label();
             this.lblNavStaffText = new System.Windows.Forms.Label();
-            this.btnNavUsers = new System.Windows.Forms.Panel();
-            this.lblNavUsersIcon = new System.Windows.Forms.Label();
-            this.lblNavUsersText = new System.Windows.Forms.Label();
             this.btnNavPatients = new System.Windows.Forms.Panel();
             this.lblNavPatientsIcon = new System.Windows.Forms.Label();
             this.lblNavPatientsText = new System.Windows.Forms.Label();
@@ -42,33 +41,66 @@ namespace elnet_recoverease.Admin
             this.btnLogout = new System.Windows.Forms.Button();
             this.pnlTopBar = new System.Windows.Forms.Panel();
             this.lblPageTitle = new System.Windows.Forms.Label();
+            this.lblPageSubtitle = new System.Windows.Forms.Label();
+            this.pnlTopIcons = new System.Windows.Forms.FlowLayoutPanel();
+            this.lblNotifIcon = new System.Windows.Forms.Label();
             this.pnlAvatarTop = new System.Windows.Forms.Panel();
             this.lblAvatarInitials = new System.Windows.Forms.Label();
             this.pnlContent = new System.Windows.Forms.Panel();
-            this.pnlActionHeader = new System.Windows.Forms.Panel();
+            this.tlpStats = new System.Windows.Forms.TableLayoutPanel();
+            this.pnlStatTotal = new System.Windows.Forms.Panel();
+            this.lblStatTotalVal = new System.Windows.Forms.Label();
+            this.lblStatTotalTitle = new System.Windows.Forms.Label();
+            this.lblStatTotalSub = new System.Windows.Forms.Label();
+            this.pnlStatMost = new System.Windows.Forms.Panel();
+            this.lblStatMostVal = new System.Windows.Forms.Label();
+            this.lblStatMostTitle = new System.Windows.Forms.Label();
+            this.lblStatMostSub = new System.Windows.Forms.Label();
+            this.pnlStatRecent = new System.Windows.Forms.Panel();
+            this.lblStatRecentVal = new System.Windows.Forms.Label();
+            this.lblStatRecentTitle = new System.Windows.Forms.Label();
+            this.lblStatRecentSub = new System.Windows.Forms.Label();
+            this.pnlListCard = new System.Windows.Forms.Panel();
+            this.dgvMeds = new System.Windows.Forms.DataGridView();
+            this.pnlPagination = new System.Windows.Forms.Panel();
+            this.lblShowingCount = new System.Windows.Forms.Label();
+            this.pnlFilters = new System.Windows.Forms.Panel();
             this.lblSearchLabel = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
+            this.cmbFormFilter = new System.Windows.Forms.ComboBox();
+            this.pnlListHeader = new System.Windows.Forms.Panel();
             this.btnAddMed = new System.Windows.Forms.Button();
-            this.dgvMeds = new System.Windows.Forms.DataGridView();
-            this.colDrugName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colCategory = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colDosageUnit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colAction = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.lblListTitle = new System.Windows.Forms.Label();
+
+            // Columns
+            this.colMed = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDosage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colForm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colFrequency = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEdit = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.colDelete = new System.Windows.Forms.DataGridViewButtonColumn();
+
             this.pnlSidebar.SuspendLayout();
             this.pnlLogoArea.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.btnNavDashboard.SuspendLayout();
             this.btnNavStaff.SuspendLayout();
-            this.btnNavUsers.SuspendLayout();
             this.btnNavPatients.SuspendLayout();
             this.btnNavReports.SuspendLayout();
             this.pnlSidebarBottom.SuspendLayout();
             this.pnlTopBar.SuspendLayout();
+            this.pnlTopIcons.SuspendLayout();
             this.pnlAvatarTop.SuspendLayout();
             this.pnlContent.SuspendLayout();
-            this.pnlActionHeader.SuspendLayout();
+            this.tlpStats.SuspendLayout();
+            this.pnlStatTotal.SuspendLayout();
+            this.pnlStatMost.SuspendLayout();
+            this.pnlStatRecent.SuspendLayout();
+            this.pnlListCard.SuspendLayout();
+            this.pnlFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMeds)).BeginInit();
+            this.pnlPagination.SuspendLayout();
+            this.pnlListHeader.SuspendLayout();
             this.SuspendLayout();
 
             // Colors
@@ -77,316 +109,192 @@ namespace elnet_recoverease.Admin
             System.Drawing.Color clrNavyActive = System.Drawing.ColorTranslator.FromHtml("#1B3A6B");
             System.Drawing.Color clrBg = System.Drawing.Color.FromArgb(242, 247, 250);
             System.Drawing.Color clrWhite = System.Drawing.Color.White;
+            System.Drawing.Color clrTextMain = System.Drawing.Color.FromArgb(45, 55, 72);
+            System.Drawing.Color clrTextSec = System.Drawing.Color.FromArgb(113, 128, 150);
+            System.Drawing.Color clrBorder = System.Drawing.Color.FromArgb(226, 232, 240);
 
             // Sidebar
             this.pnlSidebar.BackColor = clrNavy;
-            this.pnlSidebar.Controls.Add(this.btnNavReports);
-            this.pnlSidebar.Controls.Add(this.btnNavPatients);
-            this.pnlSidebar.Controls.Add(this.btnNavUsers);
-            this.pnlSidebar.Controls.Add(this.btnNavStaff);
-            this.pnlSidebar.Controls.Add(this.btnNavDashboard);
-            this.pnlSidebar.Controls.Add(this.pnlNavDivider);
-            this.pnlSidebar.Controls.Add(this.pnlLogoArea);
-            this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlSidebar.Location = new System.Drawing.Point(0, 0);
-            this.pnlSidebar.Name = "pnlSidebar";
-            this.pnlSidebar.Size = new System.Drawing.Size(260, 900);
-            this.pnlSidebar.TabIndex = 0;
+            this.pnlSidebar.Width = 260;
+            this.pnlSidebar.Controls.AddRange(new Control[] { this.btnNavReports, this.btnNavPatients, this.btnNavStaff, this.btnNavDashboard, this.pnlNavDivider, this.pnlLogoArea, this.pnlSidebarBottom });
 
-            // Logo Area
+            this.pnlLogoArea.Dock = System.Windows.Forms.DockStyle.Top; this.pnlLogoArea.Height = 90;
             this.pnlLogoArea.Controls.Add(this.picLogo);
-            this.pnlLogoArea.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlLogoArea.Location = new System.Drawing.Point(0, 0);
-            this.pnlLogoArea.Name = "pnlLogoArea";
-            this.pnlLogoArea.Padding = new System.Windows.Forms.Padding(16, 18, 8, 8);
-            this.pnlLogoArea.Size = new System.Drawing.Size(260, 90);
-            this.pnlLogoArea.TabIndex = 0;
+            this.picLogo.Dock = System.Windows.Forms.DockStyle.Fill; this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pnlNavDivider.BackColor = System.Drawing.Color.FromArgb(208, 219, 232); this.pnlNavDivider.Dock = System.Windows.Forms.DockStyle.Top; this.pnlNavDivider.Height = 1;
 
-            this.picLogo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picLogo.Location = new System.Drawing.Point(16, 18);
-            this.picLogo.Name = "picLogo";
-            this.picLogo.Size = new System.Drawing.Size(236, 64);
-            this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.TabIndex = 0;
-            this.picLogo.TabStop = false;
+            this.SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
+            this.SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
+            this.SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", true, clrNavyActive, clrWhite);
+            this.SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", false, clrNavyActive, clrWhite);
 
-            this.pnlNavDivider.BackColor = System.Drawing.Color.FromArgb(208, 219, 232);
-            this.pnlNavDivider.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlNavDivider.Location = new System.Drawing.Point(0, 90);
-            this.pnlNavDivider.Name = "pnlNavDivider";
-            this.pnlNavDivider.Size = new System.Drawing.Size(260, 1);
-            this.pnlNavDivider.TabIndex = 1;
+            this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom; this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Controls.AddRange(new Control[] { this.lblSidebarFooter, this.btnLogout });
+            this.lblSidebarFooter.Text = "RecoverEase Admin Portal"; this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10); this.lblSidebarFooter.AutoSize = true;
+            this.btnLogout.Text = "⇠  Sign Out"; this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnLogout.FlatAppearance.BorderSize = 0; this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold); this.btnLogout.Location = new System.Drawing.Point(16, 32); this.btnLogout.Size = new System.Drawing.Size(188, 26); this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
-            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavUsers, this.lblNavUsersIcon, this.lblNavUsersText, "🔑", "User Accounts", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", true, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", false, clrNavyActive, clrWhite);
-
-            // Sidebar Bottom
-            this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
-            this.pnlSidebarBottom.Controls.Add(this.btnLogout);
-            this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Location = new System.Drawing.Point(0, 830);
-            this.pnlSidebarBottom.Name = "pnlSidebarBottom";
-            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 70);
-            this.pnlSidebarBottom.TabIndex = 7;
-            this.lblSidebarFooter.AutoSize = true;
-            this.lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
-            this.lblSidebarFooter.Text = "RecoverEase Admin Portal";
-            this.btnLogout.FlatAppearance.BorderSize = 0;
-            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
-            this.btnLogout.ForeColor = System.Drawing.Color.FromArgb(68, 68, 68);
-            this.btnLogout.Location = new System.Drawing.Point(16, 32);
-            this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(188, 26);
-            this.btnLogout.TabIndex = 1;
-            this.btnLogout.Text = "⇠  Sign Out";
-            this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            // TopBar
-            this.pnlTopBar.BackColor = clrWhite;
-            this.pnlTopBar.Controls.Add(this.lblPageTitle);
-            this.pnlTopBar.Controls.Add(this.pnlAvatarTop);
-            this.pnlTopBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTopBar.Location = new System.Drawing.Point(260, 0);
-            this.pnlTopBar.Name = "pnlTopBar";
-            this.pnlTopBar.Size = new System.Drawing.Size(1340, 80);
-            this.pnlTopBar.TabIndex = 1;
-
-            this.lblPageTitle.AutoSize = true;
-            this.lblPageTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblPageTitle.ForeColor = clrNavyActive;
-            this.lblPageTitle.Location = new System.Drawing.Point(24, 22);
-            this.lblPageTitle.Text = "System Medication Repository";
-
-            this.pnlAvatarTop.BackColor = clrTeal;
+            // Top Bar
+            this.pnlTopBar.BackColor = clrWhite; this.pnlTopBar.Dock = System.Windows.Forms.DockStyle.Top; this.pnlTopBar.Height = 90;
+            this.pnlTopBar.Controls.AddRange(new Control[] { this.pnlTopIcons, this.lblPageSubtitle, this.lblPageTitle });
+            this.lblPageTitle.Text = "Medication List"; this.lblPageTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold); this.lblPageTitle.Location = new System.Drawing.Point(24, 15); this.lblPageTitle.AutoSize = true;
+            this.lblPageSubtitle.Text = "Master reference list for treatment plans"; this.lblPageSubtitle.Font = new System.Drawing.Font("Segoe UI", 10F); this.lblPageSubtitle.ForeColor = clrTextSec; this.lblPageSubtitle.Location = new System.Drawing.Point(26, 50); this.lblPageSubtitle.AutoSize = true;
+            this.pnlTopIcons.Anchor = AnchorStyles.Right | AnchorStyles.Top; this.pnlTopIcons.Location = new Point(1100, 20); this.pnlTopIcons.Size = new Size(220, 50);
+            this.pnlTopIcons.FlowDirection = FlowDirection.RightToLeft;
+            this.lblNotifIcon.Text = "🔔"; this.lblNotifIcon.Font = new Font("Segoe UI", 16F);
+            this.pnlAvatarTop.BackColor = Color.FromArgb(226, 232, 240); this.pnlAvatarTop.Size = new Size(40, 40);
+            this.lblAvatarInitials.Text = "AD"; this.lblAvatarInitials.Dock = DockStyle.Fill; this.lblAvatarInitials.TextAlign = ContentAlignment.MiddleCenter;
             this.pnlAvatarTop.Controls.Add(this.lblAvatarInitials);
-            this.pnlAvatarTop.Location = new System.Drawing.Point(1270, 20);
-            this.pnlAvatarTop.Name = "pnlAvatarTop";
-            this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
-            this.pnlAvatarTop.TabIndex = 2;
-            this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-            this.lblAvatarInitials.ForeColor = clrWhite;
-            this.lblAvatarInitials.Location = new System.Drawing.Point(0, 0);
-            this.lblAvatarInitials.Name = "lblAvatarInitials";
-            this.lblAvatarInitials.Size = new System.Drawing.Size(40, 40);
-            this.lblAvatarInitials.Text = "AD";
-            this.lblAvatarInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.pnlTopIcons.Controls.AddRange(new Control[] { this.pnlAvatarTop, this.lblNotifIcon });
 
             // Content
-            this.pnlContent.BackColor = clrBg;
-            this.pnlContent.Controls.Add(this.dgvMeds);
-            this.pnlContent.Controls.Add(this.pnlActionHeader);
-            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContent.Location = new System.Drawing.Point(260, 80);
-            this.pnlContent.Name = "pnlContent";
-            this.pnlContent.Padding = new System.Windows.Forms.Padding(24);
-            this.pnlContent.Size = new System.Drawing.Size(1340, 820);
-            this.pnlContent.TabIndex = 2;
+            this.pnlContent.BackColor = clrBg; this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill; this.pnlContent.Padding = new System.Windows.Forms.Padding(24);
+            this.pnlContent.Controls.AddRange(new Control[] { this.pnlListCard, this.tlpStats });
 
-            // Action Header
-            this.pnlActionHeader.BackColor = clrWhite;
-            this.pnlActionHeader.Controls.Add(this.lblSearchLabel);
-            this.pnlActionHeader.Controls.Add(this.btnAddMed);
-            this.pnlActionHeader.Controls.Add(this.txtSearch);
-            this.pnlActionHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlActionHeader.Location = new System.Drawing.Point(24, 24);
-            this.pnlActionHeader.Name = "pnlActionHeader";
-            this.pnlActionHeader.Size = new System.Drawing.Size(1292, 80);
-            this.pnlActionHeader.TabIndex = 0;
+            // Stats Cards (Consistent with rest)
+            this.tlpStats.Dock = System.Windows.Forms.DockStyle.Top; this.tlpStats.Height = 150;
+            this.tlpStats.ColumnCount = 3;
+            this.tlpStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.tlpStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
+            this.tlpStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.tlpStats.Padding = new System.Windows.Forms.Padding(0, 0, 0, 24);
+            this.tlpStats.Controls.Add(this.pnlStatTotal, 0, 0);
+            this.tlpStats.Controls.Add(this.pnlStatMost, 1, 0);
+            this.tlpStats.Controls.Add(this.pnlStatRecent, 2, 0);
 
+            this.pnlStatTotal.BackColor = clrWhite; this.pnlStatTotal.Dock = System.Windows.Forms.DockStyle.Fill; this.pnlStatTotal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle; this.pnlStatTotal.Margin = new Padding(0,0,12,0);
+            this.lblStatTotalVal.Text = "48"; this.lblStatTotalVal.Font = new Font("Segoe UI Bold", 26F, FontStyle.Bold); this.lblStatTotalVal.Location = new Point(18, 42); this.lblStatTotalVal.AutoSize = true;
+            this.lblStatTotalTitle.Text = "Total medications"; this.lblStatTotalTitle.Font = new Font("Segoe UI", 10F); this.lblStatTotalTitle.ForeColor = clrTextSec; this.lblStatTotalTitle.Location = new Point(20, 15); this.lblStatTotalTitle.AutoSize = true;
+            this.lblStatTotalSub.Text = "in master list"; this.lblStatTotalSub.Font = new Font("Segoe UI Semibold", 9.5F); this.lblStatTotalSub.ForeColor = clrTeal; this.lblStatTotalSub.Location = new Point(20, 95); this.lblStatTotalSub.AutoSize = true;
+            this.pnlStatTotal.Controls.AddRange(new Control[] { this.lblStatTotalVal, this.lblStatTotalTitle, this.lblStatTotalSub });
+
+            this.pnlStatMost.BackColor = clrWhite; this.pnlStatMost.Dock = System.Windows.Forms.DockStyle.Fill; this.pnlStatMost.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle; this.pnlStatMost.Margin = new Padding(12,0,12,0);
+            this.lblStatMostVal.Text = "Amoxicillin"; this.lblStatMostVal.Font = new Font("Segoe UI Bold", 20F, FontStyle.Bold); this.lblStatMostVal.Location = new Point(18, 50); this.lblStatMostVal.AutoSize = true;
+            this.lblStatMostTitle.Text = "Most assigned"; this.lblStatMostTitle.Font = new Font("Segoe UI", 10F); this.lblStatMostTitle.ForeColor = clrTextSec; this.lblStatMostTitle.Location = new Point(20, 15); this.lblStatMostTitle.AutoSize = true;
+            this.lblStatMostSub.Text = "this month"; this.lblStatMostSub.Font = new Font("Segoe UI Semibold", 9.5F); this.lblStatMostSub.ForeColor = clrTeal; this.lblStatMostSub.Location = new Point(20, 95); this.lblStatMostSub.AutoSize = true;
+            this.pnlStatMost.Controls.AddRange(new Control[] { this.lblStatMostVal, this.lblStatMostTitle, this.lblStatMostSub });
+
+            this.pnlStatRecent.BackColor = clrWhite; this.pnlStatRecent.Dock = System.Windows.Forms.DockStyle.Fill; this.pnlStatRecent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle; this.pnlStatRecent.Margin = new Padding(12,0,0,0);
+            this.lblStatRecentVal.Text = "Insulin Glargine"; this.lblStatRecentVal.Font = new Font("Segoe UI Bold", 20F, FontStyle.Bold); this.lblStatRecentVal.Location = new Point(18, 50); this.lblStatRecentVal.AutoSize = true;
+            this.lblStatRecentTitle.Text = "Recently added"; this.lblStatRecentTitle.Font = new Font("Segoe UI", 10F); this.lblStatRecentTitle.ForeColor = clrTextSec; this.lblStatRecentTitle.Location = new Point(20, 15); this.lblStatRecentTitle.AutoSize = true;
+            this.lblStatRecentSub.Text = "May 5, 2026"; this.lblStatRecentSub.Font = new Font("Segoe UI Semibold", 9.5F); this.lblStatRecentSub.ForeColor = clrTeal; this.lblStatRecentSub.Location = new Point(20, 95); this.lblStatRecentSub.AutoSize = true;
+            this.pnlStatRecent.Controls.AddRange(new Control[] { this.lblStatRecentVal, this.lblStatRecentTitle, this.lblStatRecentSub });
+
+            // List Card
+            this.pnlListCard.BackColor = clrWhite; this.pnlListCard.Dock = System.Windows.Forms.DockStyle.Fill; this.pnlListCard.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlListCard.Controls.AddRange(new Control[] { this.dgvMeds, this.pnlPagination, this.pnlFilters, this.pnlListHeader });
+
+            this.pnlListHeader.Dock = System.Windows.Forms.DockStyle.Top; this.pnlListHeader.Height = 80; this.pnlListHeader.Padding = new Padding(24, 15, 24, 15);
+            this.lblListTitle.Text = "Medication list"; this.lblListTitle.Font = new Font("Segoe UI Bold", 14F, FontStyle.Bold); this.lblListTitle.Location = new Point(24, 25); this.lblListTitle.AutoSize = true;
+            this.btnAddMed.Text = "+ Add medication"; this.btnAddMed.BackColor = clrTeal; this.btnAddMed.ForeColor = clrWhite; this.btnAddMed.FlatStyle = FlatStyle.Flat; this.btnAddMed.FlatAppearance.BorderSize = 0; this.btnAddMed.Font = new Font("Segoe UI Bold", 10F, FontStyle.Bold); this.btnAddMed.Size = new Size(160, 45); this.btnAddMed.Dock = DockStyle.Right;
+            this.pnlListHeader.Controls.AddRange(new Control[] { this.lblListTitle, this.btnAddMed });
+
+            // Filters
+            this.pnlFilters.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlFilters.Height = 65;
+            
+            this.lblSearchLabel.Text = "Search:";
+            this.lblSearchLabel.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            this.lblSearchLabel.ForeColor = clrTextMain;
+            this.lblSearchLabel.Location = new Point(24, 18);
             this.lblSearchLabel.AutoSize = true;
-            this.lblSearchLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.lblSearchLabel.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblSearchLabel.Location = new System.Drawing.Point(20, 14);
-            this.lblSearchLabel.Text = "SEARCH MEDICATION DATABASE";
 
-            this.txtSearch.BackColor = clrBg;
-            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtSearch.Location = new System.Drawing.Point(20, 38);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(400, 25);
-            this.txtSearch.TabIndex = 0;
+            this.txtSearch.Font = new Font("Segoe UI", 10.5F);
+            this.txtSearch.Location = new Point(100, 15);
+            this.txtSearch.Width = 200;
+            this.txtSearch.BorderStyle = BorderStyle.FixedSingle;
 
-            this.btnAddMed.BackColor = clrTeal;
-            this.btnAddMed.FlatAppearance.BorderSize = 0;
-            this.btnAddMed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddMed.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.btnAddMed.ForeColor = clrWhite;
-            this.btnAddMed.Location = new System.Drawing.Point(1100, 20);
-            this.btnAddMed.Name = "btnAddMed";
-            this.btnAddMed.Size = new System.Drawing.Size(172, 40);
-            this.btnAddMed.TabIndex = 1;
-            this.btnAddMed.Text = "+ Add New Medication";
-            this.btnAddMed.UseVisualStyleBackColor = false;
-            this.btnAddMed.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.cmbFormFilter.DropDownStyle = ComboBoxStyle.DropDownList; 
+            this.cmbFormFilter.Size = new Size(200, 40); 
+            this.cmbFormFilter.Location = new Point(330, 15); 
+            this.cmbFormFilter.Font = new Font("Segoe UI", 10.5F);
+            this.cmbFormFilter.Items.AddRange(new object[] { "All forms", "Tablet", "Capsule", "Syrup", "Injection" }); this.cmbFormFilter.SelectedIndex = 0;
+
+            this.pnlFilters.Controls.AddRange(new Control[] { this.lblSearchLabel, this.txtSearch, this.cmbFormFilter });
 
             // DataGridView
+            this.dgvMeds.BackgroundColor = clrWhite; this.dgvMeds.BorderStyle = BorderStyle.None; this.dgvMeds.Dock = DockStyle.Fill;
+            this.dgvMeds.EnableHeadersVisualStyles = false; this.dgvMeds.RowHeadersVisible = false;
             this.dgvMeds.AllowUserToAddRows = false;
-            this.dgvMeds.AllowUserToDeleteRows = false;
-            this.dgvMeds.BackgroundColor = clrWhite;
-            this.dgvMeds.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvMeds.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = clrNavy;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewCellStyle1.ForeColor = clrNavyActive;
-            dataGridViewCellStyle1.SelectionBackColor = clrNavy;
-            dataGridViewCellStyle1.SelectionForeColor = clrNavyActive;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvMeds.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvMeds.ColumnHeadersHeight = 50;
-            this.dgvMeds.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colDrugName,
-            this.colCategory,
-            this.colDosageUnit,
-            this.colStatus,
-            this.colAction});
-            this.dgvMeds.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvMeds.EnableHeadersVisualStyles = false;
-            this.dgvMeds.GridColor = System.Drawing.Color.FromArgb(226, 232, 240);
-            this.dgvMeds.Location = new System.Drawing.Point(24, 104);
-            this.dgvMeds.Name = "dgvMeds";
-            this.dgvMeds.ReadOnly = true;
-            this.dgvMeds.RowHeadersVisible = false;
-            this.dgvMeds.RowTemplate.Height = 50;
-            this.dgvMeds.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvMeds.Size = new System.Drawing.Size(1292, 692);
-            this.dgvMeds.TabIndex = 1;
+            this.dgvMeds.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; this.dgvMeds.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dgvMeds.ColumnHeadersHeight = 50; this.dgvMeds.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            this.dgvMeds.ColumnHeadersDefaultCellStyle.BackColor = Color.White;
+            this.dgvMeds.ColumnHeadersDefaultCellStyle.ForeColor = clrTextSec;
+            this.dgvMeds.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            this.dgvMeds.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.White;
+            this.dgvMeds.DefaultCellStyle.Font = new Font("Segoe UI", 10.5F);
+            this.dgvMeds.DefaultCellStyle.SelectionBackColor = Color.FromArgb(242, 247, 250);
+            this.dgvMeds.DefaultCellStyle.SelectionForeColor = clrTextMain;
+            this.dgvMeds.RowTemplate.Height = 65;
+            this.dgvMeds.GridColor = Color.FromArgb(237, 242, 247);
 
-            // colDrugName
-            this.colDrugName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.colDrugName.HeaderText = "DRUG NAME";
-            this.colDrugName.Name = "colDrugName";
-            this.colDrugName.ReadOnly = true;
+            this.colMed.HeaderText = "Medication"; this.colDosage.HeaderText = "Dosage"; this.colForm.HeaderText = "Form"; this.colFrequency.HeaderText = "Frequency";
+            this.colEdit.HeaderText = "Actions"; this.colEdit.Text = "✏ Edit"; this.colEdit.UseColumnTextForButtonValue = true; this.colEdit.Width = 85; this.colEdit.FlatStyle = FlatStyle.Flat;
+            this.colDelete.HeaderText = ""; this.colDelete.Text = "🗑 Delete"; this.colDelete.UseColumnTextForButtonValue = true; this.colDelete.Width = 85; this.colDelete.FlatStyle = FlatStyle.Flat;
+            this.dgvMeds.Columns.AddRange(new DataGridViewColumn[] { this.colMed, this.colDosage, this.colForm, this.colFrequency, this.colEdit, this.colDelete });
 
-            // colCategory
-            this.colCategory.HeaderText = "CATEGORY";
-            this.colCategory.Name = "colCategory";
-            this.colCategory.ReadOnly = true;
-            this.colCategory.Width = 200;
-
-            // colDosageUnit
-            this.colDosageUnit.HeaderText = "DOSAGE UNIT";
-            this.colDosageUnit.Name = "colDosageUnit";
-            this.colDosageUnit.ReadOnly = true;
-            this.colDosageUnit.Width = 150;
-
-            // colStatus
-            this.colStatus.HeaderText = "AVAILABILITY";
-            this.colStatus.Name = "colStatus";
-            this.colStatus.ReadOnly = true;
-            this.colStatus.Width = 150;
-
-            // colAction
-            this.colAction.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colAction.HeaderText = "ACTION";
-            this.colAction.Name = "colAction";
-            this.colAction.ReadOnly = true;
-            this.colAction.Text = "Edit / Inventory";
-            this.colAction.UseColumnTextForButtonValue = true;
-            this.colAction.Width = 150;
+            // Pagination
+            this.pnlPagination.Dock = DockStyle.Bottom; this.pnlPagination.Height = 50;
+            this.lblShowingCount.ForeColor = clrTextSec; this.lblShowingCount.Location = new Point(24, 15); this.lblShowingCount.AutoSize = true;
+            this.pnlPagination.Controls.Add(this.lblShowingCount);
 
             // Form
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1600, 900);
-            this.Controls.Add(this.pnlContent);
-            this.Controls.Add(this.pnlTopBar);
-            this.Controls.Add(this.pnlSidebar);
-            this.Name = "Medication_List";
-            this.Text = "RecoverEase - Medication Database";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.ClientSize = new Size(1600, 900);
+            this.Controls.AddRange(new Control[] { this.pnlContent, this.pnlTopBar, this.pnlSidebar });
+            this.WindowState = FormWindowState.Maximized;
+            this.Text = "RecoverEase - Medication List";
+
             this.pnlSidebar.ResumeLayout(false);
             this.pnlLogoArea.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-            this.btnNavDashboard.ResumeLayout(false);
-            this.btnNavDashboard.PerformLayout();
-            this.btnNavStaff.ResumeLayout(false);
-            this.btnNavStaff.PerformLayout();
-            this.btnNavUsers.ResumeLayout(false);
-            this.btnNavUsers.PerformLayout();
-            this.btnNavPatients.ResumeLayout(false);
-            this.btnNavPatients.PerformLayout();
-            this.btnNavReports.ResumeLayout(false);
-            this.btnNavReports.PerformLayout();
-            this.pnlSidebarBottom.ResumeLayout(false);
-            this.pnlSidebarBottom.PerformLayout();
-            this.pnlTopBar.ResumeLayout(false);
-            this.pnlTopBar.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)this.picLogo).EndInit();
+            this.btnNavDashboard.ResumeLayout(false); this.btnNavDashboard.PerformLayout();
+            this.btnNavStaff.ResumeLayout(false); this.btnNavStaff.PerformLayout();
+            this.btnNavPatients.ResumeLayout(false); this.btnNavPatients.PerformLayout();
+            this.btnNavReports.ResumeLayout(false); this.btnNavReports.PerformLayout();
+            this.pnlSidebarBottom.ResumeLayout(false); this.pnlSidebarBottom.PerformLayout();
+            this.pnlTopBar.ResumeLayout(false); this.pnlTopBar.PerformLayout();
+            this.pnlTopIcons.ResumeLayout(false);
             this.pnlAvatarTop.ResumeLayout(false);
             this.pnlContent.ResumeLayout(false);
-            this.pnlActionHeader.ResumeLayout(false);
-            this.pnlActionHeader.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvMeds)).EndInit();
+            this.tlpStats.ResumeLayout(false);
+            this.pnlStatTotal.ResumeLayout(false); this.pnlStatTotal.PerformLayout();
+            this.pnlStatMost.ResumeLayout(false); this.pnlStatMost.PerformLayout();
+            this.pnlStatRecent.ResumeLayout(false); this.pnlStatRecent.PerformLayout();
+            this.pnlListCard.ResumeLayout(false);
+            this.pnlFilters.ResumeLayout(false); this.pnlFilters.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)this.dgvMeds).EndInit();
+            this.pnlPagination.ResumeLayout(false); this.pnlPagination.PerformLayout();
+            this.pnlListHeader.ResumeLayout(false); this.pnlListHeader.PerformLayout();
             this.ResumeLayout(false);
         }
 
         #endregion
 
-        private void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive, System.Drawing.Color activeColor, System.Drawing.Color whiteColor)
+        private void SetupNavItem(Panel pnl, Label ico, Label txt, string icoChar, string label, bool isActive, Color activeColor, Color whiteColor)
         {
-            pnl.Cursor = System.Windows.Forms.Cursors.Hand;
-            pnl.Dock = System.Windows.Forms.DockStyle.Top;
-            pnl.Size = new System.Drawing.Size(260, 48);
+            pnl.Cursor = Cursors.Hand; pnl.Dock = DockStyle.Top; pnl.Height = 48;
             if (isActive) pnl.BackColor = activeColor;
-            ico.AutoSize = true;
-            ico.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
-            ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            ico.Location = new System.Drawing.Point(20, 11);
-            ico.Text = icoChar;
-            txt.AutoSize = true;
-            txt.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-            txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            txt.Location = new System.Drawing.Point(64, 13);
-            txt.Text = label;
-            pnl.Controls.Add(ico);
-            pnl.Controls.Add(txt);
+            ico.AutoSize = true; ico.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            ico.ForeColor = isActive ? whiteColor : Color.FromArgb(45, 55, 72);
+            ico.Location = new Point(20, 11); ico.Text = icoChar;
+            txt.AutoSize = true; txt.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            txt.ForeColor = isActive ? whiteColor : Color.FromArgb(45, 55, 72);
+            txt.Location = new Point(64, 13); txt.Text = label;
+            pnl.Controls.AddRange(new Control[] { ico, txt });
         }
 
-        private System.Windows.Forms.Panel pnlSidebar;
-        private System.Windows.Forms.Panel pnlLogoArea;
-        private System.Windows.Forms.PictureBox picLogo;
-        private System.Windows.Forms.Panel pnlNavDivider;
-        private System.Windows.Forms.Panel btnNavDashboard;
-        private System.Windows.Forms.Label lblNavDashIcon;
-        private System.Windows.Forms.Label lblNavDashText;
-        private System.Windows.Forms.Panel btnNavStaff;
-        private System.Windows.Forms.Label lblNavStaffIcon;
-        private System.Windows.Forms.Label lblNavStaffText;
-        private System.Windows.Forms.Panel btnNavUsers;
-        private System.Windows.Forms.Label lblNavUsersIcon;
-        private System.Windows.Forms.Label lblNavUsersText;
-        private System.Windows.Forms.Panel btnNavPatients;
-        private System.Windows.Forms.Label lblNavPatientsIcon;
-        private System.Windows.Forms.Label lblNavPatientsText;
-        private System.Windows.Forms.Panel btnNavReports;
-        private System.Windows.Forms.Label lblNavReportsIcon;
-        private System.Windows.Forms.Label lblNavReportsText;
-        private System.Windows.Forms.Panel pnlSidebarBottom;
-        private System.Windows.Forms.Label lblSidebarFooter;
-        private System.Windows.Forms.Button btnLogout;
-        private System.Windows.Forms.Panel pnlTopBar;
-        private System.Windows.Forms.Label lblPageTitle;
-        private System.Windows.Forms.Panel pnlAvatarTop;
-        private System.Windows.Forms.Label lblAvatarInitials;
-        private System.Windows.Forms.Panel pnlContent;
-        private System.Windows.Forms.Panel pnlActionHeader;
-        private System.Windows.Forms.Label lblSearchLabel;
-        private System.Windows.Forms.TextBox txtSearch;
-        private System.Windows.Forms.Button btnAddMed;
-        private System.Windows.Forms.DataGridView dgvMeds;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colDrugName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colCategory;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colDosageUnit;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colStatus;
-        private System.Windows.Forms.DataGridViewButtonColumn colAction;
+        private Label lblNavDashIcon, lblNavDashText, lblNavStaffIcon, lblNavStaffText, lblNavPatientsIcon, lblNavPatientsText, lblNavReportsIcon, lblNavReportsText, lblSidebarFooter, lblPageTitle, lblPageSubtitle, lblStatTotalVal, lblStatTotalTitle, lblStatTotalSub, lblStatMostVal, lblStatMostTitle, lblStatMostSub, lblStatRecentVal, lblStatRecentTitle, lblStatRecentSub, lblShowingCount, lblSearchLabel, lblListTitle, lblNotifIcon, lblAvatarInitials;
+        private Panel pnlSidebar, pnlLogoArea, pnlNavDivider, btnNavDashboard, btnNavStaff, btnNavPatients, btnNavReports, pnlSidebarBottom, pnlTopBar, pnlContent, pnlStatTotal, pnlStatMost, pnlStatRecent, pnlListCard, pnlPagination, pnlFilters, pnlListHeader, pnlAvatarTop;
+        private Button btnLogout, btnAddMed;
+        private PictureBox picLogo;
+        private TableLayoutPanel tlpStats;
+        private FlowLayoutPanel pnlTopIcons;
+        private TextBox txtSearch;
+        private ComboBox cmbFormFilter;
+        private DataGridView dgvMeds;
+        private DataGridViewTextBoxColumn colMed, colDosage, colForm, colFrequency;
+        private DataGridViewButtonColumn colEdit, colDelete;
     }
 }

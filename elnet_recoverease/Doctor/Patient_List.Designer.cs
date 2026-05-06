@@ -74,6 +74,7 @@ namespace elnet_recoverease.Doctor
             this.colContact = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colLastVisit = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colAction = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.colSchedule = new System.Windows.Forms.DataGridViewButtonColumn();
 
             // ─────────────────────────────────────────────────────────
             // Suspend layout
@@ -428,15 +429,19 @@ namespace elnet_recoverease.Doctor
             this.colLastVisit.HeaderText = "LAST VISIT"; this.colLastVisit.FillWeight = 20;
             
             this.colAction.HeaderText = "ACTION"; 
-            this.colAction.FillWeight = 15;
-            this.colAction.Text = "View Details";
+            this.colAction.FillWeight = 10;
+            this.colAction.Text = "Details";
             this.colAction.UseColumnTextForButtonValue = true;
             this.colAction.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.colAction.DefaultCellStyle.BackColor = clrNavyLight;
-            this.colAction.DefaultCellStyle.ForeColor = clrTextDark;
+
+            this.colSchedule.HeaderText = "BOOKING";
+            this.colSchedule.FillWeight = 10;
+            this.colSchedule.Text = "Schedule";
+            this.colSchedule.UseColumnTextForButtonValue = true;
+            this.colSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 
             this.dgvPatients.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                this.colId, this.colName, this.colContact, this.colLastVisit, this.colAction
+                this.colId, this.colName, this.colContact, this.colLastVisit, this.colAction, this.colSchedule
             });
             
             this.pnlGridContainer.Controls.Add(this.dgvPatients);
@@ -531,5 +536,6 @@ namespace elnet_recoverease.Doctor
         private System.Windows.Forms.DataGridViewTextBoxColumn colContact;
         private System.Windows.Forms.DataGridViewTextBoxColumn colLastVisit;
         private System.Windows.Forms.DataGridViewButtonColumn colAction;
+        private System.Windows.Forms.DataGridViewButtonColumn colSchedule;
     }
 }

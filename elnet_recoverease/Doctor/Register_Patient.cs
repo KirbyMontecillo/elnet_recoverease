@@ -82,12 +82,17 @@ namespace elnet_recoverease.Doctor
                         ContactNumber = txtPhone.Text,
                         DateOfBirth = dtpDOB.Value,
                         Gender = cmbGender.SelectedItem?.ToString() ?? "Other",
+                        Address = "N/A", // Added missing required field
                         EmergencyName = txtEName.Text,
                         EmergencyRelationship = txtERelation.Text,
                         EmergencyPhone = txtEPhone.Text,
                         AttendingDoctor = txtAttendingDoctor.Text,
-                        PatientCode = GeneratePatientCode(db), // Use PatientCode for string
-                        Status = "Active"
+                        PatientCode = GeneratePatientCode(db),
+                        Status = "Active",
+                        BloodType = "N/A", // Added missing clinical field
+                        Height = "N/A",    // Added missing clinical field
+                        Weight = "N/A",    // Added missing clinical field
+                        Allergies = "None" // Added missing clinical field
                     };
 
                     db.Patients.Add(newPatient);

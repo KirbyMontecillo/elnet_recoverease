@@ -11,5 +11,6 @@ namespace elnet_recoverease.Models
         public bool IsTaken { get; set; }
         public DateOnly ScheduledDate { get; set; }
         public bool IsMissed { get; set; }
+        public string? Notes { get; set; }
     }
 }

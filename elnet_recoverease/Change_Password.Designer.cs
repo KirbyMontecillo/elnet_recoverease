@@ -2,15 +2,8 @@ namespace elnet_recoverease
 {
     partial class Change_Password
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,87 +15,98 @@ namespace elnet_recoverease
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.pnlHeader = new System.Windows.Forms.Panel();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.lblSubtitle = new System.Windows.Forms.Label();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.pnlDivider = new System.Windows.Forms.Panel();
+            this.lblOldPass = new System.Windows.Forms.Label();
             this.txtOldPass = new System.Windows.Forms.TextBox();
+            this.lblNewPass = new System.Windows.Forms.Label();
             this.txtNewPass = new System.Windows.Forms.TextBox();
+            this.lblConfirmPass = new System.Windows.Forms.Label();
             this.txtConfirmPass = new System.Windows.Forms.TextBox();
+            this.pnlFooter = new System.Windows.Forms.Panel();
             this.btnUpdate = new System.Windows.Forms.Button();
-
-            System.Drawing.Color clrNavy = System.Drawing.Color.FromArgb(20, 30, 70);
-            System.Drawing.Color clrTeal = System.Drawing.Color.FromArgb(0, 150, 150);
-            System.Drawing.Color clrBg = System.Drawing.Color.FromArgb(245, 247, 250);
-
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.pnlHeader.SuspendLayout();
+            this.pnlFooter.SuspendLayout();
             this.SuspendLayout();
 
+            // Colors (Base UI Palette)
+            System.Drawing.Color clrTeal = System.Drawing.Color.FromArgb(0, 168, 168);
+            System.Drawing.Color clrMain = System.Drawing.Color.FromArgb(45, 55, 72);
+            System.Drawing.Color clrSec = System.Drawing.Color.FromArgb(113, 128, 150);
+            System.Drawing.Color clrBorder = System.Drawing.Color.FromArgb(226, 232, 240);
+            System.Drawing.Font fntTitle = new System.Drawing.Font("Segoe UI Bold", 16F, System.Drawing.FontStyle.Bold);
+            System.Drawing.Font fntLabel = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            System.Drawing.Font fntInput = new System.Drawing.Font("Segoe UI", 11F);
+
+            // Header
+            this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlHeader.Height = 85;
+            this.lblTitle.Text = "Setup New Password"; this.lblTitle.Font = fntTitle; this.lblTitle.Location = new System.Drawing.Point(24, 18); this.lblTitle.AutoSize = true;
+            this.lblSubtitle.Text = "Please update your password for security"; this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F); this.lblSubtitle.ForeColor = clrSec; this.lblSubtitle.Location = new System.Drawing.Point(24, 48); this.lblSubtitle.AutoSize = true;
+            this.btnClose.Text = "✕"; this.btnClose.Size = new System.Drawing.Size(32, 32); this.btnClose.Location = new System.Drawing.Point(360, 18); this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnClose.FlatAppearance.BorderSize = 0; this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pnlHeader.Controls.AddRange(new System.Windows.Forms.Control[] { this.lblTitle, this.lblSubtitle, this.btnClose });
+            this.pnlDivider.Dock = System.Windows.Forms.DockStyle.Top; this.pnlDivider.Height = 1; this.pnlDivider.BackColor = clrBorder;
+
+            // Fields
+            this.lblOldPass.Text = "Current Password"; this.lblOldPass.Font = fntLabel; this.lblOldPass.ForeColor = clrMain; this.lblOldPass.Location = new System.Drawing.Point(24, 105); this.lblOldPass.AutoSize = true;
+            this.txtOldPass.Location = new System.Drawing.Point(24, 127); this.txtOldPass.Width = 350; this.txtOldPass.Font = fntInput; this.txtOldPass.UseSystemPasswordChar = true; this.txtOldPass.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            this.lblNewPass.Text = "New Password"; this.lblNewPass.Font = fntLabel; this.lblNewPass.ForeColor = clrMain; this.lblNewPass.Location = new System.Drawing.Point(24, 175); this.lblNewPass.AutoSize = true;
+            this.txtNewPass.Location = new System.Drawing.Point(24, 197); this.txtNewPass.Width = 350; this.txtNewPass.Font = fntInput; this.txtNewPass.UseSystemPasswordChar = true; this.txtNewPass.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            this.lblConfirmPass.Text = "Confirm New Password"; this.lblConfirmPass.Font = fntLabel; this.lblConfirmPass.ForeColor = clrMain; this.lblConfirmPass.Location = new System.Drawing.Point(24, 245); this.lblConfirmPass.AutoSize = true;
+            this.txtConfirmPass.Location = new System.Drawing.Point(24, 267); this.txtConfirmPass.Width = 350; this.txtConfirmPass.Font = fntInput; this.txtConfirmPass.UseSystemPasswordChar = true; this.txtConfirmPass.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            // Footer
+            this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom; this.pnlFooter.Height = 85;
+            this.btnUpdate.Text = "Update Password"; this.btnUpdate.BackColor = clrTeal; this.btnUpdate.ForeColor = System.Drawing.Color.White; this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnUpdate.FlatAppearance.BorderSize = 0; this.btnUpdate.Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold); this.btnUpdate.Location = new System.Drawing.Point(210, 22); this.btnUpdate.Size = new System.Drawing.Size(164, 40); this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCancel.Text = "Cancel"; this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnCancel.FlatAppearance.BorderColor = clrBorder; this.btnCancel.Location = new System.Drawing.Point(110, 22); this.btnCancel.Size = new System.Drawing.Size(90, 40); this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pnlFooter.Controls.AddRange(new System.Windows.Forms.Control[] { this.btnUpdate, this.btnCancel });
+
+            // Form Properties (Shrinked height)
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(450, 500);
-            this.Text = "Change Password";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.BackColor = clrBg;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-
-            // Title
-            var lblHeader = new System.Windows.Forms.Label();
-            lblHeader.Text = "Change Password";
-            lblHeader.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            lblHeader.ForeColor = clrNavy;
-            lblHeader.Location = new System.Drawing.Point(40, 30);
-            lblHeader.AutoSize = true;
-
-            var lblSub = new System.Windows.Forms.Label();
-            lblSub.Text = "You are using a temporary password. Please update it.";
-            lblSub.Font = new System.Drawing.Font("Segoe UI", 9F);
-            lblSub.ForeColor = System.Drawing.Color.DimGray;
-            lblSub.Location = new System.Drawing.Point(40, 60);
-            lblSub.AutoSize = true;
-
-            // Labels
-            var lblO = new System.Windows.Forms.Label(); lblO.Text = "CURRENT PASSWORD"; lblO.Location = new System.Drawing.Point(40, 110); lblO.AutoSize = true; lblO.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold); lblO.ForeColor = System.Drawing.Color.DimGray;
-            var lblN = new System.Windows.Forms.Label(); lblN.Text = "NEW PASSWORD"; lblN.Location = new System.Drawing.Point(40, 200); lblN.AutoSize = true; lblN.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold); lblN.ForeColor = System.Drawing.Color.DimGray;
-            var lblC = new System.Windows.Forms.Label(); lblC.Text = "CONFIRM NEW PASSWORD"; lblC.Location = new System.Drawing.Point(40, 290); lblC.AutoSize = true; lblC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold); lblC.ForeColor = System.Drawing.Color.DimGray;
-
-            // Textboxes
-            this.txtOldPass.Location = new System.Drawing.Point(40, 130); this.txtOldPass.Size = new System.Drawing.Size(370, 32); this.txtOldPass.Font = new System.Drawing.Font("Segoe UI", 11F); this.txtOldPass.PasswordChar = '●';
-            this.txtNewPass.Location = new System.Drawing.Point(40, 220); this.txtNewPass.Size = new System.Drawing.Size(370, 32); this.txtNewPass.Font = new System.Drawing.Font("Segoe UI", 11F); this.txtNewPass.PasswordChar = '●';
-            this.txtConfirmPass.Location = new System.Drawing.Point(40, 310); this.txtConfirmPass.Size = new System.Drawing.Size(370, 32); this.txtConfirmPass.Font = new System.Drawing.Font("Segoe UI", 11F); this.txtConfirmPass.PasswordChar = '●';
-
-            // Button
-            this.btnUpdate.Text = "Update Password";
-            this.btnUpdate.Location = new System.Drawing.Point(40, 390);
-            this.btnUpdate.Size = new System.Drawing.Size(370, 45);
-            this.btnUpdate.BackColor = clrTeal;
-            this.btnUpdate.ForeColor = System.Drawing.Color.White;
-            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnUpdate.FlatAppearance.BorderSize = 0;
-
-            this.Controls.Add(lblHeader);
-            this.Controls.Add(lblSub);
-            this.Controls.Add(lblO); this.Controls.Add(this.txtOldPass);
-            this.Controls.Add(lblN); this.Controls.Add(this.txtNewPass);
-            this.Controls.Add(lblC); this.Controls.Add(this.txtConfirmPass);
-            this.Controls.Add(this.btnUpdate);
-
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(400, 410);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Controls.Add(this.pnlFooter);
+            this.Controls.Add(this.lblConfirmPass);
+            this.Controls.Add(this.txtConfirmPass);
+            this.Controls.Add(this.lblNewPass);
+            this.Controls.Add(this.txtNewPass);
+            this.Controls.Add(this.lblOldPass);
+            this.Controls.Add(this.txtOldPass);
+            this.Controls.Add(this.pnlDivider);
+            this.Controls.Add(this.pnlHeader);
+            this.pnlHeader.ResumeLayout(false);
+            this.pnlHeader.PerformLayout();
+            this.pnlFooter.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
-
-
-        private System.Windows.Forms.TextBox txtOldPass;
-        private System.Windows.Forms.TextBox txtNewPass;
-        private System.Windows.Forms.TextBox txtConfirmPass;
-        private System.Windows.Forms.Button btnUpdate;
-
-
         #endregion
+
+        private System.Windows.Forms.Panel pnlHeader;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label lblSubtitle;
+        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Panel pnlDivider;
+        private System.Windows.Forms.Label lblOldPass;
+        private System.Windows.Forms.TextBox txtOldPass;
+        private System.Windows.Forms.Label lblNewPass;
+        private System.Windows.Forms.TextBox txtNewPass;
+        private System.Windows.Forms.Label lblConfirmPass;
+        private System.Windows.Forms.TextBox txtConfirmPass;
+        private System.Windows.Forms.Panel pnlFooter;
+        private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

@@ -11,6 +11,13 @@ namespace elnet_recoverease
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
+            // Ensure DB Schema is synced
+            using (var db = new elnet_recoverease.Data.AppDbContext())
+            {
+                db.EnsureSchemaUpdated();
+            }
+
             Application.Run(new Login());
 
             //         Application.Run(new Login());

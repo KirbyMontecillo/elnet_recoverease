@@ -379,10 +379,10 @@ namespace elnet_recoverease.Doctor
             var accForm = new System.Windows.Forms.Panel { BackColor = clrTeal, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
             this.pnlFormContainer.Controls.Add(accForm);
 
-            this.lblFormHeader.Text = "Treatment Details";
+            this.lblFormHeader.Text = "Treatment Roadmap Details";
             this.lblFormHeader.Font = new System.Drawing.Font("Segoe UI", 16f, System.Drawing.FontStyle.Bold);
             this.lblFormHeader.ForeColor = clrNavyActive;
-            this.lblFormHeader.Location = new System.Drawing.Point(40, 30);
+            this.lblFormHeader.Location = new System.Drawing.Point(40, 45); // Moved down slightly
             this.lblFormHeader.AutoSize = true;
 
             // Diagnosis
