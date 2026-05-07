@@ -62,7 +62,7 @@ namespace elnet_recoverease.Admin
                     LoadRecentPatients(db);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Silence or log
             }

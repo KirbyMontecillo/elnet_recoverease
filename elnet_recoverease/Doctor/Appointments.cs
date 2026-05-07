@@ -19,6 +19,7 @@ namespace elnet_recoverease.Doctor
     {
         private AppDbContext _db = new AppDbContext();
         private Staff _doctor;
+        private bool _userChangedDate = false;
 
         public Appointments()
         {
@@ -55,7 +56,10 @@ namespace elnet_recoverease.Doctor
             btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
 
             // Filter Handlers
-            dtpFilterDate.ValueChanged += (s, e) => LoadAppointments();
+            dtpFilterDate.ValueChanged += (s, e) => {
+                _userChangedDate = true;
+                LoadAppointments();
+            };
             cmbFilterStatus.SelectedIndexChanged += (s, e) => LoadAppointments();
 
             btnNewAppointment.Click += (s, e) => {
@@ -75,10 +79,19 @@ namespace elnet_recoverease.Doctor
             
             dgvAppointments.CellFormatting += DgvAppointments_CellFormatting;
             dgvAppointments.CellPainting += Dgv_CellPainting; // Stylized buttons
+            dgvAppointments.CellContentClick += (s, e) => {
+                if (e.RowIndex >= 0 && dgvAppointments.Columns[e.ColumnIndex].HeaderText == "ACTION") {
+                    string status = dgvAppointments.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                    if (status == "Scheduled") {
+                        var apptId = (int)dgvAppointments.Rows[e.RowIndex].Tag;
+                        StartConsultation(apptId);
+                    }
+                }
+            };
             dgvAppointments.CellDoubleClick += (s, e) => {
                 if (e.RowIndex >= 0) {
                     var apptId = (int)dgvAppointments.Rows[e.RowIndex].Tag;
-                    EditAppointment(apptId);
+                    StartConsultation(apptId);
                 }
             };
         }
@@ -111,28 +124,66 @@ namespace elnet_recoverease.Doctor
                     return;
                 }
 
-                DateTime dayStart = dtpFilterDate.Value.Date;
-                DateTime dayEnd = dayStart.AddDays(1);
+                DateTime now = DateTime.Now;
+                DateTime pastThreshold = now.AddMinutes(-30);
+
+                // Auto-mark missed for this doctor
+                var missedToUpdate = await _db.Appointments
+                    .Where(a => (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)) 
+                           && a.Status == "Scheduled" && a.AppointmentDate < pastThreshold)
+                    .ToListAsync();
+                
+                if (missedToUpdate.Any())
+                {
+                    foreach (var a in missedToUpdate) a.Status = "Missed";
+                    await _db.SaveChangesAsync();
+                }
+
+                // Cleanup: Revert any accidental 'InProgress' to 'Scheduled'
+                var stuckInProgress = await _db.Appointments.Where(a => a.Status == "InProgress").ToListAsync();
+                if (stuckInProgress.Any())
+                {
+                    foreach (var a in stuckInProgress) a.Status = "Scheduled";
+                    await _db.SaveChangesAsync();
+                }
+
                 string filterStatus = cmbFilterStatus.SelectedItem?.ToString() ?? "All";
 
-                // Use range-based filtering for maximum reliability in SQL
+                // Dynamic Filtering
                 var query = _db.Appointments
-                    .Where(a => a.AppointmentDate >= dayStart && a.AppointmentDate < dayEnd && (a.DoctorName == _doctor.FullName || a.DoctorName == null))
-                    .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p });
+                    .Where(a => (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)))
+                    .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p })
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName);
+
+                if (_userChangedDate)
+                {
+                    DateTime dayStart = dtpFilterDate.Value.Date;
+                    DateTime dayEnd = dayStart.AddDays(1);
+                    query = query.Where(x => x.a.AppointmentDate >= dayStart && x.a.AppointmentDate < dayEnd);
+                }
+                else
+                {
+                    // Default View: Show everything from "Today" onwards (and maybe 1 day past for 'Recent' context)
+                    DateTime defaultThreshold = DateTime.Now.Date.AddDays(-1);
+                    query = query.Where(x => x.a.AppointmentDate >= defaultThreshold);
+                }
 
                 if (filterStatus != "All")
                 {
                     query = query.Where(x => x.a.Status == filterStatus);
                 }
 
-                var list = await query.OrderBy(x => x.a.AppointmentDate).ToListAsync();
+                var list = await query
+                    .OrderBy(x => x.a.Status == "Scheduled" ? 0 : 1)
+                    .ThenBy(x => x.a.AppointmentDate)
+                    .ToListAsync();
 
                 dgvAppointments.Rows.Clear();
                 foreach (var item in list)
                 {
                     int rowIndex = dgvAppointments.Rows.Add(
                         item.p.FullName,
-                        item.a.AppointmentDate?.ToString("hh:mm tt") ?? "N/A",
+                        item.a.AppointmentDate?.ToString("MMM dd, yyyy | hh:mm tt") ?? "N/A",
                         item.a.Status,
                         item.a.Notes ?? "No clinical notes.",
                         "CONSULT"
@@ -156,10 +207,11 @@ namespace elnet_recoverease.Doctor
             }
         }
 
-        private void DgvAppointments_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void DgvAppointments_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
             if (dgvAppointments.Columns[e.ColumnIndex].HeaderText == "STATUS" && e.Value != null)
             {
+
                 string status = e.Value.ToString();
                 switch (status)
                 {
@@ -173,26 +225,57 @@ namespace elnet_recoverease.Doctor
                     case "Scheduled":
                         e.CellStyle.ForeColor = Color.FromArgb(41, 128, 185);
                         break;
+                    case "Missed":
+                        e.CellStyle.ForeColor = Color.FromArgb(192, 57, 43);
+                        e.CellStyle.Font = new Font(dgvAppointments.Font, FontStyle.Italic);
+                        break;
                 }
             }
         }
 
-        private void EditAppointment(int apptId)
+        private async void StartConsultation(int apptId)
         {
-            using (var sessionForm = new Clinical_Session(apptId))
+            try
             {
-                if (sessionForm.ShowDialog() == DialogResult.OK)
+                var appt = await _db.Appointments
+                    .Include(a => a.Patient)
+                    .FirstOrDefaultAsync(a => a.AppointmentID == apptId);
+
+                if (appt == null) return;
+
+                DateTime now = DateTime.Now;
+                DateTime apptTime = appt.AppointmentDate ?? DateTime.Now;
+
+                // Step 1 & 2: Check if appointment time has not started yet
+                if (now < apptTime)
                 {
-                    // Ensure the user sees the 'Completed' status by switching to 'All'
-                    if (cmbFilterStatus.SelectedItem?.ToString() == "Scheduled")
+                    string timeStr = apptTime.ToString("hh:mm tt");
+                    var result = MessageBox.Show(
+                        $"The appointment for {appt.PatientName} is scheduled at {timeStr}. The patient may have arrived early. Do you want to start the consultation now?",
+                        "Early Arrival",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.No) return;
+                }
+
+                // Step 3: Proceed to consultation
+                using (var sessionForm = new Clinical_Session(apptId))
+                {
+                    if (sessionForm.ShowDialog() == DialogResult.OK)
                     {
-                        cmbFilterStatus.SelectedItem = "All";
+                        // Status is updated to 'Completed' inside Clinical_Session finalize
                     }
+                    
                     LoadAppointments();
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error starting consultation: " + ex.Message);
+            }
         }
-        private void Dgv_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        private void Dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
@@ -204,15 +287,24 @@ namespace elnet_recoverease.Doctor
                 var rect = e.CellBounds;
                 rect.Inflate(-8, -6); // More button-like padding
 
-                // Draw Button Background (Teal)
-                using (var brush = new SolidBrush(Color.FromArgb(0, 140, 140)))
+                // Determine color based on status
+                string status = dgvAppointments.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                bool isScheduled = status == "Scheduled";
+                
+                Color btnColor = isScheduled ? Color.FromArgb(0, 140, 140) : Color.FromArgb(180, 190, 200);
+                if (status == "Missed") btnColor = Color.FromArgb(231, 76, 60); // Red for missed
+                
+                Color txtColor = (isScheduled || status == "Missed") ? Color.White : Color.FromArgb(100, 110, 120);
+
+                // Draw Button Background
+                using (var brush = new SolidBrush(btnColor))
                 {
-                    // Basic rounded look
                     e.Graphics.FillRectangle(brush, rect);
                 }
 
-                // Draw Button Text (White)
-                TextRenderer.DrawText(e.Graphics, "CONSULT", new Font("Segoe UI", 8.5f, FontStyle.Bold), rect, Color.White, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+                // Draw Button Text
+                string btnText = isScheduled ? "CONSULT" : status.ToUpper();
+                TextRenderer.DrawText(e.Graphics, btnText, new Font("Segoe UI", 8.5f, FontStyle.Bold), rect, txtColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
                 
                 e.Handled = true;
             }

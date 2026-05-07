@@ -20,13 +20,52 @@ namespace elnet_recoverease.Doctor
         private AppDbContext _db = new AppDbContext();
         private Staff _doctor;
 
+        private System.Windows.Forms.Timer _notifTimer;
+
         public Doctor_Dashboard()
         {
             InitializeComponent();
             _doctor = UserSession.CurrentStaff;
             
             InitializeDashboard();
+            InitializeAsyncData();
+            StartNotifTimer();
+        }
+
+        private async void InitializeAsyncData()
+        {
+            await CheckPastAppointments(); // Run once on login
             LoadData();
+        }
+
+        private void StartNotifTimer()
+        {
+            _notifTimer = new System.Windows.Forms.Timer();
+            _notifTimer.Interval = 60000; // 1 minute
+            _notifTimer.Tick += (s, e) => LoadData();
+            _notifTimer.Start();
+        }
+
+        private async Task CheckPastAppointments()
+        {
+            try
+            {
+                if (_doctor == null) return;
+                var now = DateTime.Now;
+                var pastThreshold = now.AddMinutes(-30);
+
+                var pastScheduled = await _db.Appointments
+                    .Where(a => (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)) 
+                           && a.Status == "Scheduled" && a.AppointmentDate < pastThreshold)
+                    .ToListAsync();
+
+                if (pastScheduled.Any())
+                {
+                    foreach (var appt in pastScheduled) appt.Status = "Missed";
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch { }
         }
 
         private void InitializeDashboard()
@@ -89,12 +128,30 @@ namespace elnet_recoverease.Doctor
                 int totalPatients = await _db.Patients.CountAsync(p => p.AttendingDoctor == _doctor.FullName);
                 lblCardPatValue.Text = totalPatients.ToString();
 
-                // 2. Appointments Today
+                // 2. Appointments Today - Filter by StaffID
                 var today = DateTime.Today;
                 var tomorrow = today.AddDays(1);
+                var dayAfter = today.AddDays(2);
+                var now = DateTime.Now;
+
+                // Auto-mark missed during refresh
+                var pastThreshold = now.AddMinutes(-30);
+                var missedToUpdate = await _db.Appointments
+                    .Where(a => (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)) 
+                           && a.Status == "Scheduled" && a.AppointmentDate < pastThreshold)
+                    .ToListAsync();
+                
+                if (missedToUpdate.Any())
+                {
+                    foreach (var a in missedToUpdate) a.Status = "Missed";
+                    await _db.SaveChangesAsync();
+                }
+
                 var apptsToday = await _db.Appointments
-                    .Where(a => a.AppointmentDate >= today && a.AppointmentDate < tomorrow && a.DoctorName == _doctor.FullName)
-                    .Join(_db.Patients, a => a.PatientID, p => p.PatientID, (a, p) => new { a, p })
+                    .Where(a => a.AppointmentDate >= today && a.AppointmentDate < tomorrow 
+                           && (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)))
+                    .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p })
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName) // Strict patient assignment check
                     .ToListAsync();
                 
                 lblCardApptValue.Text = apptsToday.Count.ToString();
@@ -123,16 +180,95 @@ namespace elnet_recoverease.Doctor
                     );
                 }
 
-                // 5. Load Recent Alerts in Sidebar
-                LoadAlerts(missedMeds.Take(3).ToList());
+                // 5. Generate Advanced Alerts
+                var doctorAlerts = new List<DoctorAlert>();
+
+                // A. Missed Meds
+                var groupedMissed = missedMeds.GroupBy(x => x.p.PatientID);
+                foreach (var group in groupedMissed)
+                {
+                    var patient = group.First().p;
+                    var uniqueDaysMissed = group.Select(x => x.s.ScheduledDate).Distinct().Count();
+                    
+                    if (uniqueDaysMissed >= 2)
+                    {
+                        doctorAlerts.Add(new DoctorAlert {
+                            Priority = "Urgent", Icon = "🔴",
+                            Title = $"{patient.FullName} missed medications for {uniqueDaysMissed} days",
+                            TimeText = "Action Required"
+                        });
+                    }
+                }
+
+                // B. Appointment Notifications Logic
+                var allUpcoming = await _db.Appointments
+                    .Where(a => a.AppointmentDate >= today && a.AppointmentDate < dayAfter 
+                           && (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)))
+                    .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p })
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName) // Strict patient assignment check
+                    .ToListAsync();
+
+                foreach (var item in allUpcoming)
+                {
+                    if (!item.a.AppointmentDate.HasValue) continue;
+                    var apptDate = item.a.AppointmentDate.Value;
+                    string timeStr = apptDate.ToString("hh:mm tt");
+
+                    // 1. Missed (Auto-updated above)
+                    if (item.a.Status == "Missed" && apptDate.Date == today)
+                    {
+                        doctorAlerts.Add(new DoctorAlert {
+                            Priority = "Urgent", Icon = "🔴",
+                            Title = $"{item.p.FullName}'s appointment was missed",
+                            TimeText = $"Scheduled for {timeStr}"
+                        });
+                    }
+                    // 2. 2 hours before
+                    else if (apptDate > now && apptDate <= now.AddHours(2) && apptDate.Date == today && item.a.Status == "Scheduled")
+                    {
+                        doctorAlerts.Add(new DoctorAlert {
+                            Priority = "Warning", Icon = "🟡",
+                            Title = $"{item.p.FullName} has an appointment in 2 hours at {timeStr}",
+                            TimeText = "Upcoming Today"
+                        });
+                    }
+                    // 3. 1 day before
+                    else if (apptDate.Date == today.AddDays(1) && item.a.Status == "Scheduled")
+                    {
+                        doctorAlerts.Add(new DoctorAlert {
+                            Priority = "Info", Icon = "🔵",
+                            Title = $"{item.p.FullName} has an appointment tomorrow at {timeStr}",
+                            TimeText = "Reminder"
+                        });
+                    }
+                }
+
+                // C. Treatment Plans ending soon
+                var endingPlans = await _db.TreatmentPlans
+                    .Where(tp => tp.EndDate >= today && tp.EndDate <= today.AddDays(3))
+                    .Join(_db.Patients, tp => tp.PatientID, p => p.PatientID, (tp, p) => new { tp, p })
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName)
+                    .ToListAsync();
+
+                foreach (var item in endingPlans)
+                {
+                    int daysLeft = (item.tp.EndDate.Date - today).Days;
+                    doctorAlerts.Add(new DoctorAlert {
+                        Priority = "Info",
+                        Icon = "🔵",
+                        Title = $"{item.p.FullName}'s treatment plan ends in {daysLeft} days",
+                        TimeText = $"Ends on {item.tp.EndDate:MMM dd}"
+                    });
+                }
+
+                // Sort by Priority (Urgent > Warning > Info)
+                var sortedAlerts = doctorAlerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList();
+                LoadAlerts(sortedAlerts);
             }
-            catch (Exception ex)
-            {
-                // Silent fail or log
-            }
+            catch (Exception) { }
         }
 
-        private void LoadAlerts(dynamic alerts)
+        private void LoadAlerts(List<DoctorAlert> alerts)
         {
             pnlAlert1.Visible = alerts.Count > 0;
             pnlAlert2.Visible = alerts.Count > 1;
@@ -140,19 +276,30 @@ namespace elnet_recoverease.Doctor
 
             if (alerts.Count > 0)
             {
-                lblAlert1Text.Text = $"Missed Med: {alerts[0].p.FullName}";
-                lblAlert1Time.Text = $"Scheduled: {alerts[0].s.ScheduledTime}";
+                lblAlert1Icon.Text = alerts[0].Icon;
+                lblAlert1Text.Text = alerts[0].Title;
+                lblAlert1Time.Text = alerts[0].TimeText;
             }
             if (alerts.Count > 1)
             {
-                lblAlert2Text.Text = $"Missed Med: {alerts[1].p.FullName}";
-                lblAlert2Time.Text = $"Scheduled: {alerts[1].s.ScheduledTime}";
+                lblAlert2Icon.Text = alerts[1].Icon;
+                lblAlert2Text.Text = alerts[1].Title;
+                lblAlert2Time.Text = alerts[1].TimeText;
             }
             if (alerts.Count > 2)
             {
-                lblAlert3Text.Text = $"Missed Med: {alerts[2].p.FullName}";
-                lblAlert3Time.Text = $"Scheduled: {alerts[2].s.ScheduledTime}";
+                lblAlert3Icon.Text = alerts[2].Icon;
+                lblAlert3Text.Text = alerts[2].Title;
+                lblAlert3Time.Text = alerts[2].TimeText;
             }
+        }
+
+        private class DoctorAlert
+        {
+            public string Priority { get; set; } = "Info";
+            public string Icon { get; set; } = "🔵";
+            public string Title { get; set; } = "";
+            public string TimeText { get; set; } = "";
         }
     }
 }

@@ -18,15 +18,9 @@ namespace elnet_recoverease.Doctor
             
             SetLogo();
             InitializeNavigation();
-            
-            if (!string.IsNullOrEmpty(_currentDoctorName))
-            {
-                var parts = _currentDoctorName.Split(' ');
-                if (parts.Length >= 2) lblAvatarInitials.Text = (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper();
-                else lblAvatarInitials.Text = _currentDoctorName.Substring(0, Math.Min(2, _currentDoctorName.Length)).ToUpper();
-            }
 
             btnGenerateReport.Click += (s, e) => GenerateReport();
+            btnPreview.Click += (s, e) => UpdateInstantPreview();
         }
 
         private void SetLogo()

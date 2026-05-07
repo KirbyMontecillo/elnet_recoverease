@@ -139,7 +139,7 @@ namespace elnet_recoverease
             lblSubtitle.ForeColor = Color.Gray;
             lblSubtitle.Font = new Font("Segoe UI", 10F);
 
-            lblEmailLabel.Text = "EMAIL ADDRESS";
+            lblEmailLabel.Text = "USERNAME";
             lblEmailLabel.Size = new Size(580, 18);
             lblEmailLabel.Location = new Point(80, 205);
             lblEmailLabel.ForeColor = Color.DimGray;

@@ -338,7 +338,7 @@ namespace elnet_recoverease.Doctor
             this.cmbFilterStatus.Size = new System.Drawing.Size(180, 32);
             this.cmbFilterStatus.Font = new System.Drawing.Font("Segoe UI", 10f);
             this.cmbFilterStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFilterStatus.Items.AddRange(new object[] { "All", "Scheduled", "Completed", "Cancelled" });
+            this.cmbFilterStatus.Items.AddRange(new object[] { "All", "Scheduled", "Completed", "Missed" });
             this.cmbFilterStatus.SelectedIndex = 0;
             this.pnlActionHeader.Controls.Add(this.cmbFilterStatus);
 

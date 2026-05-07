@@ -18,7 +18,14 @@ namespace elnet_recoverease.Core
         public static void SwitchForm(Form current, Form target)
         {
             target.Show();
-            current.Hide();
+            if (current is Login) 
+            {
+                current.Hide();
+            }
+            else 
+            {
+                current.Close();
+            }
             
             // Handle target form closure to exit application if it's the only one left
             target.FormClosed += (s, e) => {

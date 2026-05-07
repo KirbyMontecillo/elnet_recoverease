@@ -10,13 +10,13 @@ namespace elnet_recoverease
         }
 
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        private void btnLogin_Click(object? sender, EventArgs e)
         {
             lblError.Visible = false;
 
             if (string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
             {
-                ShowError("Please enter both email and password.");
+                ShowError("Please enter both username and password.");
                 return;
             }
 
@@ -25,9 +25,11 @@ namespace elnet_recoverease
                 using (var db = new elnet_recoverease.Data.AppDbContext())
                 {
                     // 1. Find user in database
-                    var user = db.Users.FirstOrDefault(u => u.Username == txtEmail.Text && u.PasswordHash == txtPassword.Text);
+                    // Note: We fetch by username first, then verify case-sensitivity in C#
+                    var user = db.Users.FirstOrDefault(u => u.Username == txtEmail.Text);
 
-                    if (user != null)
+                    // Enforce case-sensitivity for Username and verify Password
+                    if (user != null && user.Username == txtEmail.Text && user.PasswordHash == txtPassword.Text)
                     {
                         // 2. Success! Set Session
                         UserSession.CurrentUser = user;
@@ -68,22 +70,20 @@ namespace elnet_recoverease
                         // 5. Redirect based on Role
                         if (user.Role == "Admin")
                         {
-                            new Admin.Admin_Dashboard().Show();
+                            NavigationHelper.SwitchForm(this, new Admin.Admin_Dashboard());
                         }
                         else if (user.Role == "Doctor")
                         {
-                            new Doctor.Doctor_Dashboard().Show();
+                            NavigationHelper.SwitchForm(this, new Doctor.Doctor_Dashboard());
                         }
                         else
                         {
-                            new Patient_Dashboard().Show();
+                            NavigationHelper.SwitchForm(this, new Patient_Dashboard());
                         }
-
-                        this.Hide();
                     }
                     else
                     {
-                        ShowError("Invalid email or password.");
+                        ShowError("Invalid username or password.");
                     }
                 }
             }

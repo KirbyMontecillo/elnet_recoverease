@@ -224,17 +224,18 @@ namespace elnet_recoverease.Admin
             this.lblFiltersTitle.Location = new System.Drawing.Point(24, 10);
             this.lblFiltersTitle.AutoSize = true;
 
-            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
-            this.dtpFrom.Location = new System.Drawing.Point(24, 55);
-            this.dtpFrom.Width = 200;
+            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
+            this.dtpFrom.Location = new System.Drawing.Point(24, 42);
+            this.dtpFrom.Width = 220;
 
-            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(250, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
-            this.dtpTo.Location = new System.Drawing.Point(250, 55);
-            this.dtpTo.Width = 200;
+            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(265, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
+            this.dtpTo.Location = new System.Drawing.Point(265, 42);
+            this.dtpTo.Width = 220;
 
-            System.Windows.Forms.Label lblDoc = new System.Windows.Forms.Label { Text = "Doctor", Location = new System.Drawing.Point(480, 35), AutoSize = true, Font = new System.Drawing.Font("Segoe UI", 9F) };
-            this.cmbDoctor.Location = new System.Drawing.Point(480, 55);
-            this.cmbDoctor.Width = 250;
+            System.Windows.Forms.Label lblDoc = new System.Windows.Forms.Label { Text = "Doctor Filter", Location = new System.Drawing.Point(510, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
+            this.cmbDoctor.Location = new System.Drawing.Point(510, 42);
+            this.cmbDoctor.Width = 260;
+            this.cmbDoctor.Height = 35;
             this.cmbDoctor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 
             this.btnPreview.Text = "👁️ Preview";

@@ -14,6 +14,10 @@ namespace elnet_recoverease.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<PatientAttachment> PatientAttachments { get; set; }
         public DbSet<ClinicalNote> ClinicalNotes { get; set; }
+        public AppDbContext()
+        {
+            EnsureSchemaUpdated();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -64,12 +68,80 @@ namespace elnet_recoverease.Data
                                          "ALTER TABLE Appointments ADD Weight NVARCHAR(MAX) NULL;";
                     command.ExecuteNonQuery();
 
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Height') " +
+                                         "ALTER TABLE Appointments ADD Height NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'BMI') " +
+                                         "ALTER TABLE Appointments ADD BMI NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'ChiefComplaint') " +
+                                         "ALTER TABLE Appointments ADD ChiefComplaint NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Diagnosis') " +
+                                         "ALTER TABLE Appointments ADD Diagnosis NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PlanNotes') " +
+                                         "ALTER TABLE Appointments ADD PlanNotes NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
                     command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'FinalizedAt') " +
                                          "ALTER TABLE Appointments ADD FinalizedAt DATETIME2 NULL;";
                     command.ExecuteNonQuery();
 
                     command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'Notes') " +
                                          "ALTER TABLE MedicationSchedules ADD Notes NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Add ClinicalNotes Table
+                    command.CommandText = @"IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ClinicalNotes')
+                                          CREATE TABLE ClinicalNotes (
+                                              ClinicalNoteID INT PRIMARY KEY IDENTITY(1,1),
+                                              PatientID INT NOT NULL,
+                                              StaffID INT NOT NULL,
+                                              NoteContent NVARCHAR(MAX) NOT NULL,
+                                              CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+                                          );";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'DoctorID') ALTER TABLE Appointments ADD DoctorID INT NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'DurationMinutes') ALTER TABLE Appointments ADD DurationMinutes INT NOT NULL DEFAULT 30;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PatientName') ALTER TABLE Appointments ADD PatientName NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // MedicationSchedule Updates
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'MedicationName') ALTER TABLE MedicationSchedules ADD MedicationName NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'DosageUnit') ALTER TABLE MedicationSchedules ADD DosageUnit NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'Frequency') ALTER TABLE MedicationSchedules ADD Frequency NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'Status') ALTER TABLE MedicationSchedules ADD Status NVARCHAR(MAX) NULL DEFAULT 'Pending';";
+                    command.ExecuteNonQuery();
+
+                    // Add TreatmentGoals and DoctorNotes to Appointments
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'TreatmentGoals') ALTER TABLE Appointments ADD TreatmentGoals NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'DoctorNotes') ALTER TABLE Appointments ADD DoctorNotes NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Staff Profile Updates
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'Biography') ALTER TABLE Staff ADD Biography NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'YearsOfExperience') ALTER TABLE Staff ADD YearsOfExperience NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'Affiliations') ALTER TABLE Staff ADD Affiliations NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'ClinicAddress') ALTER TABLE Staff ADD ClinicAddress NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'ProfileImagePath') ALTER TABLE Staff ADD ProfileImagePath NVARCHAR(MAX) NULL;";
                     command.ExecuteNonQuery();
                 }
             }

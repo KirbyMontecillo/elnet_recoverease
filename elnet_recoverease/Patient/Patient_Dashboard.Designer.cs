@@ -31,9 +31,6 @@ namespace elnet_recoverease
             this.btnNavMeds = new System.Windows.Forms.Panel();
             this.lblNavMedsIcon = new System.Windows.Forms.Label();
             this.lblNavMedsText = new System.Windows.Forms.Label();
-            this.btnNavMedSchedule = new System.Windows.Forms.Panel();
-            this.lblNavMedSchedIcon = new System.Windows.Forms.Label();
-            this.lblNavMedSchedText = new System.Windows.Forms.Label();
             this.btnNavAppointments = new System.Windows.Forms.Panel();
             this.lblNavApptIcon = new System.Windows.Forms.Label();
             this.lblNavApptText = new System.Windows.Forms.Label();
@@ -230,7 +227,7 @@ namespace elnet_recoverease
             this.lblNavMedsIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavMedsIcon.AutoSize = true;
             this.lblNavMedsIcon.Location = new System.Drawing.Point(20, 11);
-            this.lblNavMedsText.Text = "Medications";
+            this.lblNavMedsText.Text = "Medications & Schedule";
             this.lblNavMedsText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavMedsText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
             this.lblNavMedsText.AutoSize = true;
@@ -238,23 +235,6 @@ namespace elnet_recoverease
             this.btnNavMeds.Controls.Add(this.lblNavMedsIcon);
             this.btnNavMeds.Controls.Add(this.lblNavMedsText);
 
-            // -- Medication Schedule
-            this.btnNavMedSchedule.Size = new System.Drawing.Size(260, 48);
-            this.btnNavMedSchedule.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnNavMedSchedule.BackColor = clrNavy;
-            this.btnNavMedSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavMedSchedIcon.Text = "";
-            this.lblNavMedSchedIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedSchedIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedSchedIcon.AutoSize = true;
-            this.lblNavMedSchedIcon.Location = new System.Drawing.Point(20, 11);
-            this.lblNavMedSchedText.Text = "Medication Schedule";
-            this.lblNavMedSchedText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedSchedText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedSchedText.AutoSize = true;
-            this.lblNavMedSchedText.Location = new System.Drawing.Point(20, 13);
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedIcon);
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedText);
 
             // -- Appointments
             this.btnNavAppointments.Size = new System.Drawing.Size(260, 48);
@@ -320,11 +300,10 @@ namespace elnet_recoverease
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
             // Add in reverse order of display from bottom-to-top so they dock correctly
+            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavTreatment);
             this.pnlSidebar.Controls.Add(this.btnNavAppointments);
-            this.pnlSidebar.Controls.Add(this.btnNavMedSchedule);
             this.pnlSidebar.Controls.Add(this.btnNavMeds);
-            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlNavDivider);
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
@@ -564,25 +543,27 @@ namespace elnet_recoverease
             // SCHEDULE TABLE
             // ==========================================================
             this.pnlSchedulePanel.BackColor = clrWhite;
+            this.pnlSchedulePanel.Padding = new System.Windows.Forms.Padding(16);
 
             this.lblScheduleTitle.Text = "Today's Medication Schedule";
             this.lblScheduleTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 12f, System.Drawing.FontStyle.Bold);
             this.lblScheduleTitle.ForeColor = System.Drawing.ColorTranslator.FromHtml("#1B3A6B");
-            this.lblScheduleTitle.AutoSize = true;
-            this.lblScheduleTitle.Location = new System.Drawing.Point(16, 14);
+            this.lblScheduleTitle.AutoSize = false;
+            this.lblScheduleTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblScheduleTitle.Height = 40;
 
             // DataGridView
-            this.dgvSchedule.Location = new System.Drawing.Point(16, 46);
-            this.dgvSchedule.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.dgvSchedule.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvSchedule.BackgroundColor = clrWhite;
             this.dgvSchedule.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dgvSchedule.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dgvSchedule.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dgvSchedule.RowHeadersVisible = false;
             this.dgvSchedule.AllowUserToAddRows = false;
             this.dgvSchedule.AllowUserToDeleteRows = false;
             this.dgvSchedule.ReadOnly = true;
             this.dgvSchedule.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvSchedule.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvSchedule.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.dgvSchedule.GridColor = System.Drawing.ColorTranslator.FromHtml("#E2E8F0");
             this.dgvSchedule.Font = new System.Drawing.Font("Segoe UI", 10f);
             this.dgvSchedule.RowTemplate.Height = 44;
@@ -598,10 +579,11 @@ namespace elnet_recoverease
             this.dgvSchedule.DefaultCellStyle.SelectionForeColor = clrTextDark;
 
             // Columns
-            this.colTime.HeaderText = "TIME"; this.colTime.FillWeight = 20;
-            this.colMedication.HeaderText = "MEDICATION"; this.colMedication.FillWeight = 35;
-            this.colDosage.HeaderText = "DOSAGE"; this.colDosage.FillWeight = 20;
+            this.colTime.HeaderText = "TIME"; this.colTime.FillWeight = 15;
+            this.colMedication.HeaderText = "MEDICATION"; this.colMedication.FillWeight = 45;
+            this.colDosage.HeaderText = "DOSAGE"; this.colDosage.FillWeight = 15;
             this.colStatus.HeaderText = "STATUS"; this.colStatus.FillWeight = 25;
+            this.colStatus.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
 
             this.dgvSchedule.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
                 this.colTime, this.colMedication, this.colDosage, this.colStatus
@@ -629,7 +611,7 @@ namespace elnet_recoverease
             tlpBottom.ColumnCount = 2;
             tlpBottom.RowCount = 1;
             tlpBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tlpBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 320F));
+            tlpBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 280F));
 
             tlpBottom.Controls.Add(this.pnlSchedulePanel, 0, 0);
             this.pnlSchedulePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -676,7 +658,6 @@ namespace elnet_recoverease
             this.btnNavDashboard.ResumeLayout(false);
             this.btnNavProfile.ResumeLayout(false);
             this.btnNavMeds.ResumeLayout(false);
-            this.btnNavMedSchedule.ResumeLayout(false);
             this.btnNavAppointments.ResumeLayout(false);
             
             this.cardMeds.ResumeLayout(false);
@@ -702,9 +683,6 @@ namespace elnet_recoverease
         private System.Windows.Forms.Panel btnNavMeds;
         private System.Windows.Forms.Label lblNavMedsIcon;
         private System.Windows.Forms.Label lblNavMedsText;
-        private System.Windows.Forms.Panel btnNavMedSchedule;
-        private System.Windows.Forms.Label lblNavMedSchedIcon;
-        private System.Windows.Forms.Label lblNavMedSchedText;
         private System.Windows.Forms.Panel btnNavAppointments;
         private System.Windows.Forms.Label lblNavApptIcon;
         private System.Windows.Forms.Label lblNavApptText;

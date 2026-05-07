@@ -45,7 +45,6 @@ namespace elnet_recoverease.Doctor
             
             this.pnlSidebarBottom = new System.Windows.Forms.Panel();
             this.lblSidebarFooter = new System.Windows.Forms.Label();
-            this.btnLogout = new System.Windows.Forms.Button();
 
             // ── Main Layout ──────────────────────────────────────────────
             this.pnlMain = new System.Windows.Forms.Panel();
@@ -255,20 +254,7 @@ namespace elnet_recoverease.Doctor
             this.lblSidebarFooter.AutoSize = true;
             this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
 
-            this.btnLogout.Text = "⇠  Sign Out";
-            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5f, System.Drawing.FontStyle.Bold);
-            this.btnLogout.ForeColor = clrSidebarText;
-            this.btnLogout.BackColor = System.Drawing.Color.Transparent;
-            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogout.FlatAppearance.BorderSize = 0;
-            this.btnLogout.FlatAppearance.MouseOverBackColor = clrNavyLight;
-            this.btnLogout.Size = new System.Drawing.Size(188, 26);
-            this.btnLogout.Location = new System.Drawing.Point(16, 32);
-            this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnLogout.Cursor = System.Windows.Forms.Cursors.Hand;
-
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
-            this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
             // Add in reverse order of display from bottom-to-top
             this.pnlSidebar.Controls.Add(this.btnNavProfile);
@@ -552,7 +538,6 @@ namespace elnet_recoverease.Doctor
         private System.Windows.Forms.Label lblNavProfileText;
         private System.Windows.Forms.Panel pnlSidebarBottom;
         private System.Windows.Forms.Label lblSidebarFooter;
-        private System.Windows.Forms.Button btnLogout;
         
         private System.Windows.Forms.Panel pnlMain;
         private System.Windows.Forms.Panel pnlTopBar;

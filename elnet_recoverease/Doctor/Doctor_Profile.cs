@@ -12,74 +12,77 @@ namespace elnet_recoverease.Doctor
     public partial class Doctor_Profile : Form
     {
         private bool _isEditMode = false;
-        private string _currentDoctorName = "";
+        private AppDbContext _db = new AppDbContext();
 
         public Doctor_Profile()
         {
             InitializeComponent();
-            _currentDoctorName = elnet_recoverease.Core.UserSession.CurrentStaff?.FullName ?? "Doctor";
-            
-            SetLogo();
             InitializeNavigation();
             LoadProfileData();
             
-            btnEditProfile.Click += BtnEditProfile_Click;
-            btnChangePassword.Click += BtnChangePassword_Click;
-
-            // Set initials for avatar
-            if (!string.IsNullOrEmpty(_currentDoctorName))
-            {
-                var parts = _currentDoctorName.Split(' ');
-                if (parts.Length >= 2) lblAvatarInitials.Text = (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper();
-                else lblAvatarInitials.Text = _currentDoctorName.Substring(0, Math.Min(2, _currentDoctorName.Length)).ToUpper();
-            }
+            btnEditProfile.Click += (s, e) => ToggleEditMode(true);
+            btnSaveProfile.Click += (s, e) => SaveProfile();
+            btnUploadPic.Click += BtnUploadPic_Click;
         }
 
         private void LoadProfileData()
         {
-            var staff = elnet_recoverease.Core.UserSession.CurrentStaff;
-            if (staff != null)
+            var staffId = elnet_recoverease.Core.UserSession.CurrentStaff?.StaffID;
+            if (!staffId.HasValue) return;
+
+            var staff = _db.Staff.Find(staffId.Value);
+            if (staff == null) return;
+
+            lblDoctorName.Text = staff.FullName;
+            lblSpecialty.Text = staff.Specialty ?? "General Practitioner";
+            lblBioContent.Text = staff.Biography ?? "No biography recorded.";
+            txtBioEdit.Text = staff.Biography;
+
+            txtLicense.Text = staff.LicenseNumber ?? "N/A";
+            txtExperience.Text = staff.YearsOfExperience ?? "Not specified";
+            txtAffiliations.Text = staff.Affiliations ?? "No clinical affiliations recorded";
+
+            txtPhone.Text = staff.ContactNumber ?? "Not specified";
+            txtEmail.Text = staff.Email ?? "Not specified";
+            txtAddress.Text = staff.ClinicAddress ?? "Not specified";
+
+            if (!string.IsNullOrEmpty(staff.ProfileImagePath) && System.IO.File.Exists(staff.ProfileImagePath))
             {
-                lblDoctorName.Text = staff.FullName;
-                lblSpecialty.Text = staff.Specialty ?? "General Practitioner";
-                txtLicense.Text = "LIC-" + staff.StaffID.ToString("D5"); // Placeholder for license
-                txtExperience.Text = "5 Years"; // Placeholder
-                txtPhone.Text = staff.ContactNumber ?? "Not Set";
-                txtAddress.Text = "RecoverEase Medical Center, Suite 402";
-                
-                using (var db = new AppDbContext())
-                {
-                    var user = db.Users.FirstOrDefault(u => u.UserID == staff.UserID);
-                    if (user != null) txtEmail.Text = user.Username;
-                }
+                picProfileLarge.Image = Image.FromFile(staff.ProfileImagePath);
             }
+            
+
         }
 
-        private void BtnEditProfile_Click(object sender, EventArgs e)
+        private void ToggleEditMode(bool editing)
         {
-            if (!_isEditMode)
+            _isEditMode = editing;
+            
+            // Toggle visibility
+            lblBioContent.Visible = !editing;
+            txtBioEdit.Visible = editing;
+            
+            btnEditProfile.Visible = !editing;
+            btnSaveProfile.Visible = editing;
+            btnUploadPic.Visible = editing;
+
+            // Toggle ReadOnly for textboxes
+            txtLicense.ReadOnly = !editing;
+            txtExperience.ReadOnly = !editing;
+            txtAffiliations.ReadOnly = !editing;
+            txtPhone.ReadOnly = !editing;
+            txtEmail.ReadOnly = !editing;
+            txtAddress.ReadOnly = !editing;
+
+            // Visual feedback for edit mode
+            Color bgColor = editing ? Color.White : Color.FromArgb(242, 247, 250);
+            BorderStyle border = editing ? BorderStyle.FixedSingle : BorderStyle.None;
+
+            var textboxes = new[] { txtLicense, txtExperience, txtAffiliations, txtPhone, txtEmail, txtAddress };
+            foreach (var tb in textboxes)
             {
-                // Enter Edit Mode
-                _isEditMode = true;
-                btnEditProfile.Text = "Save Changes";
-                btnEditProfile.BackColor = Color.FromArgb(16, 185, 129); // Success Green
-                
-                txtPhone.ReadOnly = false;
-                txtPhone.BackColor = Color.White;
-                txtPhone.BorderStyle = BorderStyle.FixedSingle;
-            }
-            else
-            {
-                // Save Changes
-                SaveProfile();
-                
-                _isEditMode = false;
-                btnEditProfile.Text = "Edit Profile";
-                btnEditProfile.BackColor = Color.FromArgb(0, 168, 168); // Original Teal
-                
-                txtPhone.ReadOnly = true;
-                txtPhone.BackColor = Color.FromArgb(242, 247, 250);
-                txtPhone.BorderStyle = BorderStyle.None;
+                tb.BackColor = bgColor;
+                tb.BorderStyle = border;
             }
         }
 
@@ -87,62 +90,80 @@ namespace elnet_recoverease.Doctor
         {
             try
             {
-                var staff = elnet_recoverease.Core.UserSession.CurrentStaff;
-                if (staff == null) return;
+                var staffId = elnet_recoverease.Core.UserSession.CurrentStaff?.StaffID;
+                if (!staffId.HasValue) return;
 
-                using (var db = new AppDbContext())
+                var staff = _db.Staff.Find(staffId.Value);
+                if (staff != null)
                 {
-                    var dbStaff = db.Staff.Find(staff.StaffID);
-                    if (dbStaff != null)
-                    {
-                        dbStaff.ContactNumber = txtPhone.Text;
-                        db.SaveChanges();
-                        
-                        // Update session
-                        elnet_recoverease.Core.UserSession.CurrentStaff.ContactNumber = txtPhone.Text;
-                        MessageBox.Show("Profile updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
+                    staff.Biography = txtBioEdit.Text;
+                    staff.LicenseNumber = txtLicense.Text;
+                    staff.YearsOfExperience = txtExperience.Text;
+                    staff.Affiliations = txtAffiliations.Text;
+                    staff.ContactNumber = txtPhone.Text;
+                    staff.Email = txtEmail.Text;
+                    staff.ClinicAddress = txtAddress.Text;
+
+                    _db.SaveChanges();
+                    
+                    // Refresh UI
+                    LoadProfileData();
+                    ToggleEditMode(false);
+                    MessageBox.Show("Profile updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error updating profile: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error saving profile: " + ex.Message);
             }
         }
 
-        private void BtnChangePassword_Click(object sender, EventArgs e)
+        private void BtnUploadPic_Click(object sender, EventArgs e)
         {
-            // For now, redirect or show a simple input
-            MessageBox.Show("Security settings are managed by the system administrator. Please contact IT for password resets.", "Security Policy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            using (OpenFileDialog ofd = new OpenFileDialog { Filter = "Image Files|*.jpg;*.jpeg;*.png" })
+            {
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var staffId = elnet_recoverease.Core.UserSession.CurrentStaff?.StaffID;
+                        var staff = _db.Staff.Find(staffId);
+                        if (staff != null)
+                        {
+                            string destDir = System.IO.Path.Combine(Application.StartupPath, "uploads", "profiles");
+                            if (!System.IO.Directory.Exists(destDir)) System.IO.Directory.CreateDirectory(destDir);
+                            
+                            string destPath = System.IO.Path.Combine(destDir, $"staff_{staffId}.png");
+                            System.IO.File.Copy(ofd.FileName, destPath, true);
+                            
+                            staff.ProfileImagePath = destPath;
+                            _db.SaveChanges();
+                            
+                            picProfileLarge.Image = Image.FromFile(destPath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error uploading image: " + ex.Message);
+                    }
+                }
+            }
         }
 
-        private void SetLogo()
-        {
-            try 
-            { 
-                string logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
-                if (System.IO.File.Exists(logoPath)) picLogo.Image = Image.FromFile(logoPath);
-            } 
-            catch { }
-        }
 
         private void InitializeNavigation()
         {
-            AttachNavEvents(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            AttachNavEvents(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            AttachNavEvents(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            AttachNavEvents(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            AttachNavEvents(btnNavProfile, () => { /* Already here */ });
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
-        }
+            try {
+                string logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
+                if (System.IO.File.Exists(logoPath)) picLogo.Image = Image.FromFile(logoPath);
+                picLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            } catch { }
 
-        private void AttachNavEvents(Panel pnl, Action action)
-        {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
-            {
-                c.Click += (s, e) => action();
-            }
+            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
+            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
+            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
+            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
+            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
         }
     }
 }

@@ -36,9 +36,6 @@ namespace elnet_recoverease
             this.btnNavMeds = new System.Windows.Forms.Panel();
             this.lblNavMedsIcon = new System.Windows.Forms.Label();
             this.lblNavMedsText = new System.Windows.Forms.Label();
-            this.btnNavMedSchedule = new System.Windows.Forms.Panel();
-            this.lblNavMedSchedIcon = new System.Windows.Forms.Label();
-            this.lblNavMedSchedText = new System.Windows.Forms.Label();
             this.btnNavAppointments = new System.Windows.Forms.Panel();
             this.lblNavApptIcon = new System.Windows.Forms.Label();
             this.lblNavApptText = new System.Windows.Forms.Label();
@@ -85,6 +82,7 @@ namespace elnet_recoverease
             this.colDoctor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colReason = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colAction = new System.Windows.Forms.DataGridViewButtonColumn();
 
             this.pnlSidebar.SuspendLayout();
             this.pnlLogoArea.SuspendLayout();
@@ -92,7 +90,6 @@ namespace elnet_recoverease
             this.btnNavDashboard.SuspendLayout();
             this.btnNavProfile.SuspendLayout();
             this.btnNavMeds.SuspendLayout();
-            this.btnNavMedSchedule.SuspendLayout();
             this.btnNavAppointments.SuspendLayout();
             this.btnNavTreatment.SuspendLayout();
             this.pnlSidebarBottom.SuspendLayout();
@@ -134,8 +131,8 @@ namespace elnet_recoverease
             this.pnlSidebar.Width = 260;
 
             this.pnlLogoArea.Dock = DockStyle.Top;
-            this.pnlLogoArea.Height = 110;
-            this.pnlLogoArea.Padding = new Padding(16, 18, 8, 8);
+            this.pnlLogoArea.Height = 90;
+            this.pnlLogoArea.Padding = new Padding(25, 20, 25, 15);
             this.picLogo.Dock = DockStyle.Fill;
             this.picLogo.SizeMode = PictureBoxSizeMode.Zoom;
             this.pnlLogoArea.Controls.Add(this.picLogo);
@@ -163,14 +160,9 @@ namespace elnet_recoverease
             // -- Meds
             this.btnNavMeds.Dock = DockStyle.Top; this.btnNavMeds.Height = 48; this.btnNavMeds.Cursor = Cursors.Hand;
             this.lblNavMedsIcon.Text = ""; this.lblNavMedsIcon.Font = fntNavIcon; this.lblNavMedsIcon.ForeColor = clrNavText; this.lblNavMedsIcon.Location = new Point(20, 11); this.lblNavMedsIcon.AutoSize = true;
-            this.lblNavMedsText.Text = "Medications"; this.lblNavMedsText.Font = fntNav; this.lblNavMedsText.ForeColor = clrNavText; this.lblNavMedsText.Location = new Point(20, 13); this.lblNavMedsText.AutoSize = true;
+            this.lblNavMedsText.Text = "Medications & Schedule"; this.lblNavMedsText.Font = fntNav; this.lblNavMedsText.ForeColor = clrNavText; this.lblNavMedsText.Location = new Point(20, 13); this.lblNavMedsText.AutoSize = true;
             this.btnNavMeds.Controls.Add(this.lblNavMedsIcon); this.btnNavMeds.Controls.Add(this.lblNavMedsText);
 
-            // -- Medication Schedule
-            this.btnNavMedSchedule.Dock = DockStyle.Top; this.btnNavMedSchedule.Height = 48; this.btnNavMedSchedule.Cursor = Cursors.Hand;
-            this.lblNavMedSchedIcon.Text = ""; this.lblNavMedSchedIcon.Font = fntNavIcon; this.lblNavMedSchedIcon.ForeColor = clrNavText; this.lblNavMedSchedIcon.Location = new Point(20, 11); this.lblNavMedSchedIcon.AutoSize = true;
-            this.lblNavMedSchedText.Text = "Medication Schedule"; this.lblNavMedSchedText.Font = fntNav; this.lblNavMedSchedText.ForeColor = clrNavText; this.lblNavMedSchedText.Location = new Point(20, 13); this.lblNavMedSchedText.AutoSize = true;
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedIcon); this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedText);
 
             // -- Appointments (ACTIVE)
             this.btnNavAppointments.Dock = DockStyle.Top; this.btnNavAppointments.Height = 48; this.btnNavAppointments.BackColor = clrNavyActive; this.btnNavAppointments.Cursor = Cursors.Hand;
@@ -190,11 +182,10 @@ namespace elnet_recoverease
             this.btnLogout.Text = "Sign Out"; this.btnLogout.Font = new Font("Segoe UI Semibold", 9f, FontStyle.Bold); this.btnLogout.ForeColor = Color.FromArgb(68, 68, 68); this.btnLogout.FlatStyle = FlatStyle.Flat; this.btnLogout.FlatAppearance.BorderSize = 0; this.btnLogout.Location = new Point(16, 32); this.btnLogout.Size = new Size(188, 26); this.btnLogout.TextAlign = ContentAlignment.MiddleLeft; this.btnLogout.Cursor = Cursors.Hand;
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter); this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
+            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavTreatment);
             this.pnlSidebar.Controls.Add(this.btnNavAppointments);
-            this.pnlSidebar.Controls.Add(this.btnNavMedSchedule);
             this.pnlSidebar.Controls.Add(this.btnNavMeds);
-            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlNavDivider);
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
@@ -264,9 +255,42 @@ namespace elnet_recoverease
             this.pnlApptList.BackColor = Color.White;
             this.pnlApptList.Padding = new Padding(20);
             this.lblApptListTitle.Text = "Appointment Schedule"; this.lblApptListTitle.Font = new Font("Segoe UI Semibold", 12f, FontStyle.Bold); this.lblApptListTitle.Dock = DockStyle.Top; this.lblApptListTitle.Height = 40;
+            
             this.dgvAppts.Dock = DockStyle.Fill;
             this.dgvAppts.BackgroundColor = Color.White;
             this.dgvAppts.BorderStyle = BorderStyle.None;
+            this.dgvAppts.RowHeadersVisible = false;
+            this.dgvAppts.AllowUserToAddRows = false;
+            this.dgvAppts.ReadOnly = true;
+            this.dgvAppts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAppts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvAppts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dgvAppts.ColumnHeadersHeight = 40;
+            this.dgvAppts.GridColor = clrNavyLight;
+            this.dgvAppts.EnableHeadersVisualStyles = false;
+            this.dgvAppts.ColumnHeadersDefaultCellStyle.BackColor = clrBg;
+            this.dgvAppts.ColumnHeadersDefaultCellStyle.ForeColor = clrTextMid;
+            this.dgvAppts.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 9f, FontStyle.Bold);
+
+            // Columns
+            this.colDate.HeaderText = "DATE"; this.colDate.FillWeight = 18;
+            this.colTime.HeaderText = "TIME"; this.colTime.FillWeight = 12;
+            this.colDoctor.HeaderText = "DOCTOR"; this.colDoctor.FillWeight = 22;
+            this.colReason.HeaderText = "REASON / TYPE"; this.colReason.FillWeight = 23;
+            this.colStatus.HeaderText = "STATUS"; this.colStatus.FillWeight = 12;
+            this.colAction.HeaderText = "ACTION"; this.colAction.FillWeight = 13;
+            this.colAction.Text = "View Details";
+            this.colAction.UseColumnTextForButtonValue = true;
+            this.colAction.FlatStyle = FlatStyle.Flat;
+            this.colAction.DefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            this.colAction.DefaultCellStyle.ForeColor = clrNavyActive;
+            this.colAction.DefaultCellStyle.SelectionBackColor = clrNavyActive;
+            this.colAction.DefaultCellStyle.SelectionForeColor = Color.White;
+
+            this.dgvAppts.Columns.AddRange(new DataGridViewColumn[] {
+                this.colDate, this.colTime, this.colDoctor, this.colReason, this.colStatus, this.colAction
+            });
+
             this.pnlApptList.Controls.Add(this.dgvAppts);
             this.pnlApptList.Controls.Add(this.lblApptListTitle);
 
@@ -307,9 +331,6 @@ namespace elnet_recoverease
         private Panel btnNavMeds;
         private Label lblNavMedsIcon;
         private Label lblNavMedsText;
-        private Panel btnNavMedSchedule;
-        private Label lblNavMedSchedIcon;
-        private Label lblNavMedSchedText;
         private Panel btnNavAppointments;
         private Label lblNavApptIcon;
         private Label lblNavApptText;
@@ -351,5 +372,6 @@ namespace elnet_recoverease
         private DataGridViewTextBoxColumn colDoctor;
         private DataGridViewTextBoxColumn colReason;
         private DataGridViewTextBoxColumn colStatus;
+        private DataGridViewButtonColumn colAction;
     }
 }

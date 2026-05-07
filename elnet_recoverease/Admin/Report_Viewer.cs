@@ -141,13 +141,15 @@ namespace elnet_recoverease.Admin
                 string title = reportType.ToUpper();
                 string contentHtml = "";
                 bool isAllDoctors = string.IsNullOrEmpty(doctor) || doctor == "All Doctors";
+                var doctorLower = doctor?.ToLower() ?? "";
+                var rangeEnd = to.Date.AddDays(1).AddSeconds(-1);
 
                 using (var db = new AppDbContext())
                 {
                     if (reportType == "Staff Directory")
                     {
                         var query = db.Staff.AsQueryable();
-                        if (!isAllDoctors) query = query.Where(s => s.Role == doctor || s.FullName.Contains(doctor));
+                        if (!isAllDoctors) query = query.Where(s => s.Role.ToLower() == doctorLower || s.FullName.ToLower().Contains(doctorLower));
                         var staff = query.OrderBy(s => s.FullName).ToList();
                         contentHtml = BuildTableHtml(new[] { "Name", "Role", "Specialty", "Contact", "Status" },
                             staff.Select(s => new[] { s.FullName, s.Role, s.Specialty, s.ContactNumber, s.Status }).ToList());
@@ -155,8 +157,8 @@ namespace elnet_recoverease.Admin
                     else if (reportType == "Patient Master List")
                     {
                         // Filter by Registration Date and Attending Doctor
-                        var query = db.Patients.Where(p => p.CreatedAt >= from && p.CreatedAt <= to);
-                        if (!isAllDoctors) query = query.Where(p => p.AttendingDoctor == doctor);
+                        var query = db.Patients.Where(p => p.CreatedAt >= from.Date && p.CreatedAt <= rangeEnd);
+                        if (!isAllDoctors) query = query.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
                         
                         var patients = query.OrderBy(p => p.FullName).ToList();
                         contentHtml = BuildTableHtml(new[] { "ID", "Name", "Birthday", "Gender", "Doctor", "Status" },
@@ -164,10 +166,10 @@ namespace elnet_recoverease.Admin
                     }
                     else if (reportType == "Appointment Summary")
                     {
-                        var query = db.Appointments.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
+                        var query = db.Appointments.Where(a => a.AppointmentDate >= from.Date && a.AppointmentDate <= rangeEnd);
                         var appointments = (from a in query
                                            join p in db.Patients on a.PatientID equals p.PatientID
-                                           where isAllDoctors || p.AttendingDoctor == doctor
+                                           where isAllDoctors || (p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower)
                                            select new { a.AppointmentDate, a.PatientID, p.FullName, a.Notes, a.Status })
                                            .OrderBy(x => x.AppointmentDate).ToList();
 

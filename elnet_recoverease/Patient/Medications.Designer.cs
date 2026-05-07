@@ -31,9 +31,6 @@ namespace elnet_recoverease
             this.btnNavMeds = new System.Windows.Forms.Panel();
             this.lblNavMedsIcon = new System.Windows.Forms.Label();
             this.lblNavMedsText = new System.Windows.Forms.Label();
-            this.btnNavMedSchedule = new System.Windows.Forms.Panel();
-            this.lblNavMedSchedIcon = new System.Windows.Forms.Label();
-            this.lblNavMedSchedText = new System.Windows.Forms.Label();
             this.btnNavAppointments = new System.Windows.Forms.Panel();
             this.lblNavApptIcon = new System.Windows.Forms.Label();
             this.lblNavApptText = new System.Windows.Forms.Label();
@@ -86,6 +83,17 @@ namespace elnet_recoverease
             this.colRefills = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
 
+            // -- Schedule Panel Components --
+            this.pnlDailySchedule = new System.Windows.Forms.Panel();
+            this.lblSchedTitle = new System.Windows.Forms.Label();
+            this.pnlSchedTabs = new System.Windows.Forms.Panel();
+            this.btnTabMorning = new System.Windows.Forms.Button();
+            this.btnTabNoon = new System.Windows.Forms.Button();
+            this.btnTabEvening = new System.Windows.Forms.Button();
+            this.pnlTimelineCont = new System.Windows.Forms.Panel();
+            this.lblTimelineFooter = new System.Windows.Forms.Label();
+            this.pnlTimelineItems = new System.Windows.Forms.Panel();
+
             this.SuspendLayout();
             this.pnlSidebar.SuspendLayout();
             this.pnlLogoArea.SuspendLayout();
@@ -115,7 +123,7 @@ namespace elnet_recoverease
             System.Drawing.Color clrOrange = System.Drawing.Color.FromArgb(230, 126, 34);
 
             // ==========================================================
-            this.Text = "RecoverEase - Medications";
+            this.Text = "RecoverEase - Medications & Schedule";
             this.ClientSize = new System.Drawing.Size(1600, 900);
             this.MinimumSize = new System.Drawing.Size(1000, 620);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -191,7 +199,7 @@ namespace elnet_recoverease
             this.lblNavMedsIcon.ForeColor = clrWhite;
             this.lblNavMedsIcon.AutoSize = true;
             this.lblNavMedsIcon.Location = new System.Drawing.Point(20, 11);
-            this.lblNavMedsText.Text = "Medications";
+            this.lblNavMedsText.Text = "Medications & Schedule";
             this.lblNavMedsText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
             this.lblNavMedsText.ForeColor = clrWhite;
             this.lblNavMedsText.AutoSize = true;
@@ -200,23 +208,6 @@ namespace elnet_recoverease
             this.btnNavMeds.Controls.Add(this.lblNavMedsIcon);
             this.btnNavMeds.Controls.Add(this.lblNavMedsText);
 
-            // -- Medication Schedule
-            this.btnNavMedSchedule.Size = new System.Drawing.Size(260, 48);
-            this.btnNavMedSchedule.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnNavMedSchedule.BackColor = clrNavy;
-            this.btnNavMedSchedule.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblNavMedSchedIcon.Text = "";
-            this.lblNavMedSchedIcon.Font = new System.Drawing.Font("Segoe UI Semibold", 15f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedSchedIcon.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedSchedIcon.AutoSize = true;
-            this.lblNavMedSchedIcon.Location = new System.Drawing.Point(20, 11);
-            this.lblNavMedSchedText.Text = "Medication Schedule";
-            this.lblNavMedSchedText.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
-            this.lblNavMedSchedText.ForeColor = System.Drawing.ColorTranslator.FromHtml("#2D3748");
-            this.lblNavMedSchedText.AutoSize = true;
-            this.lblNavMedSchedText.Location = new System.Drawing.Point(20, 13);
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedIcon);
-            this.btnNavMedSchedule.Controls.Add(this.lblNavMedSchedText);
 
             // -- Appointments
             this.btnNavAppointments.Size = new System.Drawing.Size(260, 48);
@@ -235,6 +226,7 @@ namespace elnet_recoverease
             this.lblNavApptText.Location = new System.Drawing.Point(20, 13);
             this.btnNavAppointments.Controls.Add(this.lblNavApptIcon);
             this.btnNavAppointments.Controls.Add(this.lblNavApptText);
+
 
             // -- Treatment Plans
             this.btnNavTreatment.Size = new System.Drawing.Size(260, 48);
@@ -278,11 +270,10 @@ namespace elnet_recoverease
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
             // Add in reverse order of display from bottom-to-top so they dock correctly
+            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavTreatment);
             this.pnlSidebar.Controls.Add(this.btnNavAppointments);
-            this.pnlSidebar.Controls.Add(this.btnNavMedSchedule);
             this.pnlSidebar.Controls.Add(this.btnNavMeds);
-            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlNavDivider);
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
@@ -300,7 +291,7 @@ namespace elnet_recoverease
             var pnlTopBarBorder = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Bottom, Height = 1, BackColor = clrNavyLight };
             this.pnlTopBar.Controls.Add(pnlTopBarBorder);
 
-            this.lblPageTitle.Text = "Medications";
+            this.lblPageTitle.Text = "Medications & Schedule";
             this.lblPageTitle.Font = new System.Drawing.Font("Segoe UI", 18f, System.Drawing.FontStyle.Bold);
             this.lblPageTitle.ForeColor = clrNavyActive;
             this.lblPageTitle.AutoSize = true;
@@ -359,11 +350,10 @@ namespace elnet_recoverease
             // -- Stat Cards
             this.tlpMedsCards.Dock = System.Windows.Forms.DockStyle.Top;
             this.tlpMedsCards.Height = 120;
-            this.tlpMedsCards.ColumnCount = 3;
+            this.tlpMedsCards.ColumnCount = 2;
             this.tlpMedsCards.RowCount = 1;
-            this.tlpMedsCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.tlpMedsCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.tlpMedsCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.tlpMedsCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpMedsCards.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 
             // Card 1
             this.cardActiveMeds.BackColor = clrWhite;
@@ -435,8 +425,7 @@ namespace elnet_recoverease
             this.cardAdherence.Controls.AddRange(new System.Windows.Forms.Control[] { accM3, this.lblCardAdhrTitle, this.lblCardAdhrValue, this.lblCardAdhrIcon });
 
             this.tlpMedsCards.Controls.Add(this.cardActiveMeds, 0, 0);
-            this.tlpMedsCards.Controls.Add(this.cardPendingRefills, 1, 0);
-            this.tlpMedsCards.Controls.Add(this.cardAdherence, 2, 0);
+            this.tlpMedsCards.Controls.Add(this.cardAdherence, 1, 0);
 
             var pnlSpacer = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 24 };
 
@@ -480,25 +469,101 @@ namespace elnet_recoverease
             this.dgvMeds.DefaultCellStyle.SelectionForeColor = clrTextDark;
 
             // Columns
-            this.colMedName.HeaderText = "MEDICATION NAME"; this.colMedName.FillWeight = 25;
+            this.colMedName.HeaderText = "MEDICATION NAME"; this.colMedName.FillWeight = 30;
             this.colDosage.HeaderText = "DOSAGE"; this.colDosage.FillWeight = 15;
             this.colFreq.HeaderText = "FREQUENCY"; this.colFreq.FillWeight = 20;
-            this.colPrescriber.HeaderText = "PRESCRIBER"; this.colPrescriber.FillWeight = 20;
-            this.colRefills.HeaderText = "REFILLS LEFT"; this.colRefills.FillWeight = 10;
+            this.colPrescriber.HeaderText = "PRESCRIBER"; this.colPrescriber.FillWeight = 25;
             this.colStatus.HeaderText = "STATUS"; this.colStatus.FillWeight = 10;
 
             this.dgvMeds.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                this.colMedName, this.colDosage, this.colFreq, this.colPrescriber, this.colRefills, this.colStatus
+                this.colMedName, this.colDosage, this.colFreq, this.colPrescriber, this.colStatus
             });
 
             this.pnlMedsList.Controls.Add(this.dgvMeds);
             this.pnlMedsList.Controls.Add(pnlGridHeader);
-            this.dgvMeds.BringToFront();
+            // pnlGridHeader is Dock.Top, dgvMeds is Dock.Fill
 
-            this.pnlContent.Controls.Add(this.pnlMedsList);
+            // -- Layout Split --
+            var tlpMainSplit = new System.Windows.Forms.TableLayoutPanel();
+            tlpMainSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlpMainSplit.ColumnCount = 2;
+            tlpMainSplit.RowCount = 1;
+            tlpMainSplit.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            tlpMainSplit.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+
+            // -- Daily Schedule Panel --
+            this.pnlDailySchedule.BackColor = clrWhite;
+            this.pnlDailySchedule.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlDailySchedule.Padding = new System.Windows.Forms.Padding(20);
+            this.pnlDailySchedule.Margin = new System.Windows.Forms.Padding(16, 0, 0, 0);
+
+            this.lblSchedTitle.Text = "Daily Medication Schedule";
+            this.lblSchedTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 12f, System.Drawing.FontStyle.Bold);
+            this.lblSchedTitle.ForeColor = clrNavyActive;
+            this.lblSchedTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblSchedTitle.Height = 30;
+
+            this.pnlSchedTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlSchedTabs.Height = 40;
+            this.pnlSchedTabs.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
+
+            this.btnTabMorning.Text = "MORNING\n(8 AM)";
+            this.btnTabMorning.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnTabMorning.Width = 100;
+            this.btnTabMorning.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTabMorning.BackColor = clrNavyActive;
+            this.btnTabMorning.ForeColor = clrWhite;
+            this.btnTabMorning.Font = new System.Drawing.Font("Segoe UI", 8f, System.Drawing.FontStyle.Bold);
+
+            this.btnTabNoon.Text = "NOON\n(12 PM)";
+            this.btnTabNoon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnTabNoon.Width = 100;
+            this.btnTabNoon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTabNoon.BackColor = clrNavy;
+            this.btnTabNoon.ForeColor = clrTextDark;
+            this.btnTabNoon.Font = new System.Drawing.Font("Segoe UI", 8f, System.Drawing.FontStyle.Bold);
+
+            this.btnTabEvening.Text = "EVENING\n(6 PM)";
+            this.btnTabEvening.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnTabEvening.Width = 100;
+            this.btnTabEvening.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTabEvening.BackColor = clrNavy;
+            this.btnTabEvening.ForeColor = clrTextDark;
+            this.btnTabEvening.Font = new System.Drawing.Font("Segoe UI", 8f, System.Drawing.FontStyle.Bold);
+
+            this.pnlSchedTabs.Controls.AddRange(new System.Windows.Forms.Control[] { this.btnTabEvening, this.btnTabNoon, this.btnTabMorning });
+
+            this.lblTimelineFooter.Text = "Tap to check doses taken.";
+            this.lblTimelineFooter.Font = new System.Drawing.Font("Segoe UI", 8f);
+            this.lblTimelineFooter.ForeColor = clrTextMid;
+            this.lblTimelineFooter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblTimelineFooter.Height = 30;
+            this.lblTimelineFooter.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+
+            this.pnlTimelineCont.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlTimelineCont.Padding = new System.Windows.Forms.Padding(0, 20, 0, 0);
+            
+            // Vertical Line
+            var pnlLine = new System.Windows.Forms.Panel { BackColor = clrNavyLight, Width = 2, Location = new System.Drawing.Point(20, 20), Height = 300, Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom };
+            this.pnlTimelineCont.Controls.Add(pnlLine);
+
+            this.pnlTimelineItems.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlTimelineItems.AutoScroll = true;
+            this.pnlTimelineCont.Controls.Add(this.pnlTimelineItems);
+            this.pnlTimelineItems.BringToFront();
+
+            this.pnlDailySchedule.Controls.AddRange(new System.Windows.Forms.Control[] { this.pnlTimelineCont, this.lblTimelineFooter, this.pnlSchedTabs, this.lblSchedTitle });
+
+            tlpMainSplit.Controls.Add(this.pnlMedsList, 0, 0);
+            tlpMainSplit.Controls.Add(this.pnlDailySchedule, 1, 0);
+            this.pnlMedsList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMedsList.Margin = new System.Windows.Forms.Padding(0);
+
+            this.pnlContent.Controls.Add(tlpMainSplit);
             this.pnlContent.Controls.Add(pnlSpacer);
             this.pnlContent.Controls.Add(this.tlpMedsCards);
-            this.pnlMedsList.BringToFront();
+            
+            tlpMainSplit.BringToFront();
             pnlSpacer.SendToBack();
             this.tlpMedsCards.SendToBack();
 
@@ -531,7 +596,6 @@ namespace elnet_recoverease
             this.btnNavDashboard.ResumeLayout(false);
             this.btnNavProfile.ResumeLayout(false);
             this.btnNavMeds.ResumeLayout(false);
-            this.btnNavMedSchedule.ResumeLayout(false);
             this.btnNavAppointments.ResumeLayout(false);
             
             this.ResumeLayout(false);
@@ -553,9 +617,6 @@ namespace elnet_recoverease
         private System.Windows.Forms.Panel btnNavMeds;
         private System.Windows.Forms.Label lblNavMedsIcon;
         private System.Windows.Forms.Label lblNavMedsText;
-        private System.Windows.Forms.Panel btnNavMedSchedule;
-        private System.Windows.Forms.Label lblNavMedSchedIcon;
-        private System.Windows.Forms.Label lblNavMedSchedText;
         private System.Windows.Forms.Panel btnNavAppointments;
         private System.Windows.Forms.Label lblNavApptIcon;
         private System.Windows.Forms.Label lblNavApptText;
@@ -602,5 +663,16 @@ namespace elnet_recoverease
         private System.Windows.Forms.DataGridViewTextBoxColumn colPrescriber;
         private System.Windows.Forms.DataGridViewTextBoxColumn colRefills;
         private System.Windows.Forms.DataGridViewTextBoxColumn colStatus;
+
+        // Schedule components
+        private System.Windows.Forms.Panel pnlDailySchedule;
+        private System.Windows.Forms.Label lblSchedTitle;
+        private System.Windows.Forms.Panel pnlSchedTabs;
+        private System.Windows.Forms.Button btnTabMorning;
+        private System.Windows.Forms.Button btnTabNoon;
+        private System.Windows.Forms.Button btnTabEvening;
+        private System.Windows.Forms.Panel pnlTimelineCont;
+        private System.Windows.Forms.Label lblTimelineFooter;
+        private System.Windows.Forms.Panel pnlTimelineItems;
     }
 }

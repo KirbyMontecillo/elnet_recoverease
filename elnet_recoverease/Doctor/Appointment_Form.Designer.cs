@@ -66,7 +66,7 @@ namespace elnet_recoverease.Doctor
             System.Drawing.Color clrReminderBorder = System.Drawing.Color.FromArgb(180, 215, 255);
 
             // Form Settings
-            this.ClientSize = new System.Drawing.Size(680, 980);
+            this.ClientSize = new System.Drawing.Size(680, 850);
             this.BackColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -202,7 +202,8 @@ namespace elnet_recoverease.Doctor
             this.lblTimeTag.AutoSize = true;
 
             this.pnlTimeSlots.Location = new System.Drawing.Point(24, 435);
-            this.pnlTimeSlots.Size = new System.Drawing.Size(610, 140);
+            this.pnlTimeSlots.Size = new System.Drawing.Size(610, 280);
+            this.pnlTimeSlots.AutoSize = false;
             
             // Legend
             this.pnlLegend.Location = new System.Drawing.Point(24, 585);
@@ -212,28 +213,28 @@ namespace elnet_recoverease.Doctor
             this.lblLegendTaken.Text = "● Taken"; this.lblLegendTaken.ForeColor = System.Drawing.Color.LightGray; this.lblLegendTaken.Location = new System.Drawing.Point(160, 0); this.lblLegendTaken.AutoSize = true;
             this.pnlLegend.Controls.AddRange(new Control[] { this.lblLegendSelected, this.lblLegendAvailable, this.lblLegendTaken });
 
-            this.divider2.Location = new System.Drawing.Point(24, 630);
+            this.divider2.Location = new System.Drawing.Point(24, 725);
             this.divider2.Size = new System.Drawing.Size(610, 1);
             this.divider2.BackColor = System.Drawing.Color.FromArgb(230, 235, 245);
 
             // --- Section 3: Clinical Notes ---
             this.lblSection3.Text = "📝 CLINICAL DETAILS";
-            this.lblSection3.Location = new System.Drawing.Point(24, 650);
+            this.lblSection3.Location = new System.Drawing.Point(24, 745);
             this.lblSection3.Font = new System.Drawing.Font("Segoe UI", 8, System.Drawing.FontStyle.Bold);
             this.lblSection3.ForeColor = clrMuted;
             this.lblSection3.AutoSize = true;
 
             this.lblNotesTag.Text = "Doctor's notes / instructions for patient";
-            this.lblNotesTag.Location = new System.Drawing.Point(24, 675);
+            this.lblNotesTag.Location = new System.Drawing.Point(24, 770);
             this.lblNotesTag.Font = new System.Drawing.Font("Segoe UI", 9, System.Drawing.FontStyle.Bold);
             this.lblNotesTag.AutoSize = true;
-            this.txtNotes.Location = new System.Drawing.Point(24, 700);
+            this.txtNotes.Location = new System.Drawing.Point(24, 795);
             this.txtNotes.Size = new System.Drawing.Size(610, 100);
             this.txtNotes.Multiline = true;
             this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
             // Reminder Box
-            this.pnlReminder.Location = new System.Drawing.Point(24, 820);
+            this.pnlReminder.Location = new System.Drawing.Point(24, 905);
             this.pnlReminder.Size = new System.Drawing.Size(610, 50);
             this.pnlReminder.BackColor = clrReminderBg;
             this.pnlReminder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;

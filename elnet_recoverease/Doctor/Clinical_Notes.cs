@@ -83,7 +83,7 @@ namespace elnet_recoverease.Doctor
             this.Controls.Add(btnCancel);
         }
 
-        private async void BtnSaveNote_Click(object sender, EventArgs e)
+        private async void BtnSaveNote_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(rtxtNoteContent.Text))
             {

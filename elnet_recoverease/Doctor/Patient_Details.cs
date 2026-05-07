@@ -1,18 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using elnet_recoverease.Data;
 using elnet_recoverease.Models;
-using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
+using System.Collections.Generic;
 using elnet_recoverease.Core;
-using elnet_recoverease.Admin;
+using Microsoft.EntityFrameworkCore;
 
 namespace elnet_recoverease.Doctor
 {
@@ -27,254 +21,250 @@ namespace elnet_recoverease.Doctor
             InitializeComponent();
             _patientId = patientId;
             
-            InitializeNavigation();
-            LoadPatientData();
+            this.Load += (s, e) => LoadPatientData();
+            SetupEventHandlers();
         }
 
-        private void InitializeNavigation()
+        private void SetupEventHandlers()
         {
-            // Navbar handlers
+            btnBack.Click += (s, e) => NavigationHelper.SwitchForm(this, new Patient_List());
+            btnUpdatePlan.Click += (s, e) => {
+                using (var form = new Treatment_Plan_Form(_patientId))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        LoadPatientData();
+                    }
+                }
+            };
+
+            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            
+            // Sidebar Nav
             NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
             NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
             NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
             NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
             NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
         }
 
-        private void AttachNavEvents(Panel pnl, Action action)
+        private void LoadPatientData()
         {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
-            {
-                c.Click += (s, e) => action();
-            }
-        }
-
-        private async void LoadPatientData()
-        {
-            try
-            {
-                _patient = await _db.Patients
-                    .Include(p => p.User)
-                    .FirstOrDefaultAsync(p => p.PatientID == _patientId);
-
-                if (_patient == null)
-                {
-                    MessageBox.Show("Patient not found.");
-                    this.Close();
-                    return;
+            // Load Sidebar Logo
+            try {
+                string logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
+                if (System.IO.File.Exists(logoPath)) {
+                    picLogo.Image = Image.FromFile(logoPath);
+                    picLogo.SizeMode = PictureBoxSizeMode.Zoom;
                 }
+            } catch { }
 
-                // Fetch Appointments
-                var appts = await _db.Appointments
-                    .Where(a => a.PatientID == _patientId)
+            using (var db = new AppDbContext())
+            {
+                _patient = db.Patients.FirstOrDefault(p => p.PatientID == _patientId);
+                
+                if (_patient == null) return;
+                
+                var appts = db.Appointments
+                    .Where(a => a.PatientID == _patientId && a.Status == "Completed")
                     .OrderByDescending(a => a.AppointmentDate)
-                    .Take(5)
-                    .ToListAsync();
+                    .ToList();
 
-                // Fetch Medications through Schedule
-                var meds = await _db.MedicationSchedules
+                var medIds = db.MedicationSchedules
                     .Where(ms => ms.PatientID == _patientId)
-                    .Select(ms => _db.Medications.FirstOrDefault(m => m.MedicationID == ms.MedicationID))
-                    .Where(m => m != null)
+                    .Select(ms => ms.MedicationID)
                     .Distinct()
-                    .ToListAsync();
+                    .ToList();
 
-                // Fetch Treatment Plan
-                var plan = await _db.TreatmentPlans
+                var meds = db.Medications
+                    .Where(m => medIds.Contains(m.MedicationID))
+                    .ToList();
+
+                lblPatientName.Text = _patient.FullName;
+                lblPatientId.Text = $"Patient ID: {_patient.PatientID:D4}";
+                lblPatientInitials.Text = GetInitials(_patient.FullName);
+                lblAvatarInitials.Text = GetInitials(UserSession.CurrentStaff?.FullName ?? "Dr");
+
+                lblInfoAgeGenVal.Text = $"👤 Age: {_patient.Age} / {_patient.Gender}";
+                lblInfoContactVal.Text = $"📞 {_patient.ContactNumber}";
+                lblInfoBloodVal.Text = $"🩸 Blood Type: {_patient.BloodType ?? "N/A"}";
+                lblInfoAddressVal.Text = $"📍 {_patient.Address}";
+
+                // Status Badge
+                lblStatusBadge.Text = _patient.Status?.ToUpper() ?? "ACTIVE";
+                if (_patient.Status == "Discharged")
+                {
+                    lblStatusBadge.BackColor = Color.FromArgb(71, 85, 105); // Slate gray
+                    btnActivate.Visible = true;
+                    btnActivate.Click -= BtnActivate_Click;
+                    btnActivate.Click += BtnActivate_Click;
+                }
+                else
+                {
+                    lblStatusBadge.BackColor = Color.FromArgb(0, 168, 168); // Teal for active
+                    btnActivate.Visible = false;
+                }
+                
+                // Refresh badge region for rounding
+                lblStatusBadge.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, lblStatusBadge.Width, lblStatusBadge.Height, 10, 10));
+
+                var latestAppt = appts.FirstOrDefault();
+                var latestPlan = db.TreatmentPlans
                     .Where(tp => tp.PatientID == _patientId)
                     .OrderByDescending(tp => tp.CreatedAt)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
+                
+                if (latestPlan != null)
+                {
+                    string details = latestPlan.PlanDetails ?? "";
+                    lblDiagContent.Text = ExtractSection(details, "DIAGNOSIS:") ?? "Recorded in plan.";
+                    lblGoalContent.Text = ExtractSection(details, "GOALS:") ?? "See plan details.";
+                    lblNoteContent.Text = ExtractSection(details, "NOTES:") ?? details;
+                }
+                else if (latestAppt != null && !string.IsNullOrEmpty(latestAppt.Diagnosis))
+                {
+                    lblDiagContent.Text = latestAppt.Diagnosis;
+                    lblGoalContent.Text = latestAppt.TreatmentGoals ?? "No specific goals set.";
+                    lblNoteContent.Text = latestAppt.DoctorNotes ?? "No additional clinical notes recorded.";
+                }
+                else
+                {
+                    lblDiagContent.Text = "No active diagnosis.";
+                    lblGoalContent.Text = "—";
+                    lblNoteContent.Text = "Select '+ Update Treatment Plan' to record a new plan.";
+                }
 
-                UpdateProfileUI(appts, meds, plan);
-                SetLogo();
-                SetupNavigation();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading patient: " + ex.Message);
+                PopulateMedInfo(latestAppt);
+                PopulateVitals(latestAppt);
+                PopulateMedCards(meds);
+                SetupAppointmentGrid(appts);
             }
         }
 
-        private void SetLogo()
+        private void PopulateMedInfo(Appointment latest)
         {
-            try 
-            { 
-                string logoPath = System.IO.Path.Combine(Application.StartupPath, "images", "logo.png");
-                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
-                if (System.IO.File.Exists(logoPath)) picLogo.Image = Image.FromFile(logoPath);
-            } 
-            catch { }
+            pnlMedInfo.Controls.Clear();
+            pnlMedInfo.Controls.Add(new Label { Text = "Medical Information", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
+
+            int startX = 25, startY = 75, gapX = 220, gapY = 95;
+            
+            AddMedInfoCard(pnlMedInfo, "HEIGHT", latest?.Height ?? _patient.Height ?? "N/A", startX, startY);
+            AddMedInfoCard(pnlMedInfo, "WEIGHT", latest?.Weight ?? _patient.Weight ?? "N/A", startX + gapX, startY);
+            AddMedInfoCard(pnlMedInfo, "BMI", latest?.BMI ?? "N/A", startX, startY + gapY);
+            AddMedInfoCard(pnlMedInfo, "BLOOD TYPE", _patient.BloodType ?? "N/A", startX + gapX, startY + gapY);
+
+            var lblAllergies = new Label { Text = "Allergies", Location = new Point(25, 255), Font = new Font("Segoe UI Semibold", 9), ForeColor = Color.FromArgb(100, 120, 145), AutoSize = true };
+            var lblAllergiesVal = new Label { Text = _patient.Allergies ?? "No known allergies recorded", Location = new Point(25, 280), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Italic), ForeColor = Color.FromArgb(30, 43, 60) };
+            pnlMedInfo.Controls.Add(lblAllergies);
+            pnlMedInfo.Controls.Add(lblAllergiesVal);
         }
 
-        private void SetupNavigation()
+        private void AddMedInfoCard(Panel parent, string title, string val, int x, int y)
         {
-            // Navbar
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            
-            btnBack.Click += (s, e) => this.Close();
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
-
-            // Quick Actions
-            btnUpdatePlan.Click += (s, e) => {
-                using (var planForm = new Treatment_Plan_Form(_patientId))
-                {
-                    if (planForm.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadPatientData(); // Refresh UI
-                    }
-                }
-            };
-            btnPrescribe.Click += (s, e) => {
-                using (var prescForm = new Prescribe_Medicine(_patientId))
-                {
-                    if (prescForm.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadPatientData(); // Refresh UI
-                    }
-                }
-            };
-            btnAddNote.Click += (s, e) => {
-                using (var notesForm = new Clinical_Notes(_patientId))
-                {
-                    if (notesForm.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadPatientData(); // Refresh UI
-                    }
-                }
-            };
+            var pnl = new Panel { Size = new Size(200, 75), Location = new Point(x, y), BackColor = Color.FromArgb(245, 248, 250) };
+            pnl.Controls.Add(new Label { Text = title, Location = new Point(12, 12), AutoSize = true, Font = new Font("Segoe UI", 7, FontStyle.Bold), ForeColor = Color.Gray });
+            pnl.Controls.Add(new Label { Text = val, Location = new Point(12, 32), AutoSize = true, Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(30, 43, 60) });
+            parent.Controls.Add(pnl);
         }
 
-        private DataGridView dgvApptHistory;
-
-        private void UpdateProfileUI(List<Appointment> appts, List<Medication> meds, TreatmentPlan plan)
+        private void PopulateVitals(Appointment latest)
         {
-            // Identity Card
-            lblPatientName.Text = _patient.FullName;
-            lblPatientId.Text = $"Patient ID: {_patient.PatientCode ?? _patient.PatientID.ToString()}";
-            lblPatientInitials.Text = GetInitials(_patient.FullName);
+            pnlLatestVitals.Controls.Clear();
+            pnlLatestVitals.Controls.Add(new Label { Text = "⚡ Latest Vital Signs", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(0, 168, 168), AutoSize = true });
 
-            int age = DateTime.Today.Year - _patient.DateOfBirth.Year;
-            lblInfoAgeGenVal.Text = $"{age} / {_patient.Gender}";
-            lblInfoBloodVal.Text = _patient.BloodType ?? "N/A";
-            lblInfoContactVal.Text = _patient.EmergencyPhone ?? "No contact set";
-            lblInfoAddressVal.Text = _patient.Address ?? "No address recorded";
+            int startX = 25, startY = 85, gapY = 95;
+            AddVitalCard(pnlLatestVitals, "Blood Pressure", latest?.BloodPressure ?? "N/A", startX, startY);
+            AddVitalCard(pnlLatestVitals, "Heart Rate", latest?.HeartRate != null ? $"{latest.HeartRate} bpm" : "N/A", startX, startY + gapY);
+            AddVitalCard(pnlLatestVitals, "Temperature", latest?.Temperature != null ? $"{latest.Temperature}°C" : "N/A", startX, startY + gapY * 2);
+            AddVitalCard(pnlLatestVitals, "Weight", latest?.Weight != null ? $"{latest.Weight} kg" : "N/A", startX, startY + gapY * 3);
+        }
 
-            // Smart Vitals Extraction (Pull from latest COMPLETED session if available)
-            var latestCompleted = appts.FirstOrDefault(a => a.Status == "Completed");
-            
-            // Medical History (Vitals/Allergies Only)
-            StringBuilder history = new StringBuilder();
-            history.AppendLine($"● Height: {latestCompleted?.BloodPressure ?? _patient.Height ?? "N/A"}"); 
-            history.AppendLine($"● Weight: {latestCompleted?.Weight ?? _patient.Weight ?? "N/A"}");
-            history.AppendLine($"● Allergies: {_patient.Allergies ?? "None recorded"}");
-            lblHistoryContent.Text = history.ToString();
+        private void AddVitalCard(Panel parent, string title, string val, int x, int y)
+        {
+            var pnl = new Panel { Size = new Size(420, 80), Location = new Point(x, y), BackColor = Color.FromArgb(245, 248, 250) };
+            pnl.Controls.Add(new Label { Text = title, Location = new Point(15, 15), AutoSize = true, Font = new Font("Segoe UI", 8.5f), ForeColor = Color.Gray });
+            pnl.Controls.Add(new Label { Text = val, Location = new Point(15, 38), AutoSize = true, Font = new Font("Segoe UI", 13, FontStyle.Bold), ForeColor = Color.FromArgb(30, 43, 60) });
+            parent.Controls.Add(pnl);
+        }
 
-            // Latest Appointments Card (New Panel & Grid)
-            SetupAppointmentGrid(appts);
-            
-            // Medications
-            if (meds != null && meds.Any())
+        private void PopulateMedCards(List<Medication> meds)
+        {
+            pnlCurrentMeds.Controls.Clear();
+            pnlCurrentMeds.Controls.Add(new Label { Text = "💊 Current Medications", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
+
+            if (meds == null || !meds.Any())
             {
-                StringBuilder medList = new StringBuilder();
-                foreach (var m in meds)
-                {
-                    medList.AppendLine($"💊 {m.MedicationName} ({m.DosageUnit})");
-                }
-                lblMedsContent.Text = medList.ToString();
+                pnlCurrentMeds.Controls.Add(new Label { Text = "No active prescriptions.", Location = new Point(25, 75), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Italic), ForeColor = Color.Gray });
+                return;
             }
-            else lblMedsContent.Text = "No active prescriptions.";
 
-            // Treatment Plan
-            if (plan != null)
+            int startY = 75;
+            foreach (var m in meds)
             {
-                lblTreatmentContent.Text = $"{plan.PlanDetails}\n\nPERIOD: {plan.StartDate:MM/dd/yyyy} - {plan.EndDate:MM/dd/yyyy}";
-            }
-            else lblTreatmentContent.Text = "No active treatment plan set.";
-
-            // Doctor Info (Top Bar)
-            if (elnet_recoverease.Core.UserSession.CurrentStaff != null)
-            {
-                lblAvatarInitials.Text = GetInitials(elnet_recoverease.Core.UserSession.CurrentStaff.FullName);
+                var card = new Panel { Size = new Size(430, 75), Location = new Point(25, startY), BackColor = Color.FromArgb(245, 248, 250) };
+                card.Controls.Add(new Label { Text = "💊", Location = new Point(12, 20), Font = new Font("Segoe UI", 14), AutoSize = true });
+                card.Controls.Add(new Label { Text = m.MedicationName, Location = new Point(55, 18), AutoSize = true, Font = new Font("Segoe UI", 10, FontStyle.Bold), ForeColor = Color.FromArgb(30, 43, 60) });
+                card.Controls.Add(new Label { Text = "Active Prescription", Location = new Point(55, 42), AutoSize = true, Font = new Font("Segoe UI", 8.5f), ForeColor = Color.FromArgb(100, 120, 145) });
+                pnlCurrentMeds.Controls.Add(card);
+                startY += 85;
             }
         }
 
         private void SetupAppointmentGrid(List<Appointment> appts)
         {
-            if (dgvApptHistory == null)
-            {
-                Panel pnlAppts = new Panel {
-                    BackColor = Color.White,
-                    Location = new Point(16, 180),
-                    Size = new Size(pnlHistory.Width - 32, 250),
-                    Padding = new Padding(10)
-                };
-                
-                Label lblTitle = new Label { 
-                    Text = "LATEST APPOINTMENTS", 
-                    Font = new Font("Segoe UI", 10, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(27, 58, 107),
-                    Dock = DockStyle.Top,
-                    Height = 30
-                };
+            pnlApptHistory.Controls.Clear();
+            pnlApptHistory.Controls.Add(new Label { Text = "🗓️ Appointment History", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
 
-                dgvApptHistory = new DataGridView {
-                    Dock = DockStyle.Fill,
-                    BackgroundColor = Color.White,
-                    BorderStyle = BorderStyle.None,
-                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                    SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                    AllowUserToAddRows = false,
-                    RowHeadersVisible = false,
-                    ReadOnly = true
-                };
+            dgvApptHistory = new DataGridView { Location = new Point(25, 75), Size = new Size(940, 220), BackgroundColor = Color.White, BorderStyle = BorderStyle.None, SelectionMode = DataGridViewSelectionMode.FullRowSelect, RowHeadersVisible = false, AllowUserToAddRows = false, ReadOnly = true, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, RowTemplate = { Height = 45 }, GridColor = Color.FromArgb(240, 240, 240) };
+            dgvApptHistory.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd, yyyy"), Status = a.Status, Diagnosis = a.Diagnosis ?? "N/A", Action = "View Details" }).ToList();
 
-                dgvApptHistory.Columns.Add("Date", "DATE");
-                dgvApptHistory.Columns.Add("Status", "STATUS");
-                
-                DataGridViewButtonColumn viewBtn = new DataGridViewButtonColumn {
-                    Name = "Action",
-                    Text = "VIEW",
-                    UseColumnTextForButtonValue = true,
-                    HeaderText = "ACTION",
-                    FlatStyle = FlatStyle.Flat
-                };
-                dgvApptHistory.Columns.Add(viewBtn);
-
-                dgvApptHistory.CellContentClick += (s, e) => {
-                    if (e.ColumnIndex == dgvApptHistory.Columns["Action"].Index && e.RowIndex >= 0)
+            dgvApptHistory.CellContentClick += (s, e) => {
+                if (e.RowIndex >= 0)
+                {
+                    var appt = appts[e.RowIndex];
+                    using (var session = new Clinical_Session(appt.AppointmentID))
                     {
-                        var apptId = (int)dgvApptHistory.Rows[e.RowIndex].Tag;
-                        new Clinical_Session(apptId).ShowDialog();
-                        LoadPatientData(); // Refresh on return
+                        session.ShowDialog();
+                        LoadPatientData();
                     }
-                };
+                }
+            };
+            pnlApptHistory.Controls.Add(dgvApptHistory);
+        }
 
-                pnlAppts.Controls.Add(dgvApptHistory);
-                pnlAppts.Controls.Add(lblTitle);
-                pnlHistory.Controls.Add(pnlAppts);
-                pnlAppts.BringToFront();
-            }
-
-            dgvApptHistory.Rows.Clear();
-            foreach (var a in appts)
+        private async void BtnActivate_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show($"Are you sure you want to re-activate {_patient.FullName} for new treatment?", "Re-activate Patient", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                int rowIndex = dgvApptHistory.Rows.Add(a.AppointmentDate?.ToShortDateString(), a.Status);
-                dgvApptHistory.Rows[rowIndex].Tag = a.AppointmentID;
+                using (var db = new AppDbContext())
+                {
+                    var p = db.Patients.Find(_patientId);
+                    if (p != null)
+                    {
+                        p.Status = "Active";
+                        await db.SaveChangesAsync();
+                        MessageBox.Show("Patient status set to Active.", "Success");
+                        LoadPatientData();
+                    }
+                }
             }
         }
 
         private string GetInitials(string name)
         {
             if (string.IsNullOrEmpty(name)) return "P";
-            var parts = name.Split(' ');
+            var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpper();
             return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
+        }
+
+        private string ExtractSection(string text, string sectionName)
+        {
+            if (string.IsNullOrEmpty(text) || !text.Contains(sectionName)) return null;
+            int start = text.IndexOf(sectionName) + sectionName.Length;
+            int nextSection = text.IndexOf("\n", start);
+            if (nextSection == -1) return text.Substring(start).Trim();
+            return text.Substring(start, nextSection - start).Trim();
         }
     }
 }

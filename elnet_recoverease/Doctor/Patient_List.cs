@@ -155,9 +155,8 @@ namespace elnet_recoverease.Doctor
 
         private void OpenPatientDetails(int patientId)
         {
-            // We'll implement the navigation to the details screen next
             var detailsForm = new Patient_Details(patientId);
-            detailsForm.Show();
+            NavigationHelper.SwitchForm(this, detailsForm);
         }
         private void Dgv_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {

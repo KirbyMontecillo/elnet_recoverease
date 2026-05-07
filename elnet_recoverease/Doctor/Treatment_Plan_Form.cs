@@ -39,7 +39,6 @@ namespace elnet_recoverease.Doctor
             NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
             NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
             NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
         }
 
         private void AttachNavEvents(Panel pnl, Action action)

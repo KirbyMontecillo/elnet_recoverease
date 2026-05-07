@@ -41,8 +41,6 @@ namespace elnet_recoverease.Doctor
             this.btnLogout = new System.Windows.Forms.Button();
             this.pnlTopBar = new System.Windows.Forms.Panel();
             this.lblPageTitle = new System.Windows.Forms.Label();
-            this.pnlAvatarTop = new System.Windows.Forms.Panel();
-            this.lblAvatarInitials = new System.Windows.Forms.Label();
             this.pnlContent = new System.Windows.Forms.Panel();
             this.pnlReportSelection = new System.Windows.Forms.TableLayoutPanel();
             this.pnlFilters = new System.Windows.Forms.Panel();
@@ -52,6 +50,7 @@ namespace elnet_recoverease.Doctor
             this.dtpFrom = new System.Windows.Forms.DateTimePicker();
             this.dtpTo = new System.Windows.Forms.DateTimePicker();
             this.btnGenerateReport = new System.Windows.Forms.Button();
+            this.btnPreview = new System.Windows.Forms.Button();
             this.wvPreview = new Microsoft.Web.WebView2.WinForms.WebView2();
 
             this.pnlSidebar.SuspendLayout();
@@ -64,7 +63,6 @@ namespace elnet_recoverease.Doctor
             this.btnNavProfile.SuspendLayout();
             this.pnlSidebarBottom.SuspendLayout();
             this.pnlTopBar.SuspendLayout();
-            this.pnlAvatarTop.SuspendLayout();
             this.pnlContent.SuspendLayout();
             this.pnlFilters.SuspendLayout();
             this.pnlPreview.SuspendLayout();
@@ -149,7 +147,6 @@ namespace elnet_recoverease.Doctor
 
             this.pnlTopBar.BackColor = clrWhite;
             this.pnlTopBar.Controls.Add(this.lblPageTitle);
-            this.pnlTopBar.Controls.Add(this.pnlAvatarTop);
             this.pnlTopBar.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTopBar.Location = new System.Drawing.Point(260, 0);
             this.pnlTopBar.Name = "pnlTopBar";
@@ -161,22 +158,6 @@ namespace elnet_recoverease.Doctor
             this.lblPageTitle.ForeColor = clrNavyActive;
             this.lblPageTitle.Location = new System.Drawing.Point(24, 22);
             this.lblPageTitle.Text = "Analytical Workstation";
-
-            this.pnlAvatarTop.BackColor = clrTeal;
-            this.pnlAvatarTop.Controls.Add(this.lblAvatarInitials);
-            this.pnlAvatarTop.Location = new System.Drawing.Point(1270, 20);
-            this.pnlAvatarTop.Name = "pnlAvatarTop";
-            this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
-            this.pnlAvatarTop.TabIndex = 2;
-            this.pnlAvatarTop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-            this.lblAvatarInitials.ForeColor = clrWhite;
-            this.lblAvatarInitials.Location = new System.Drawing.Point(0, 0);
-            this.lblAvatarInitials.Name = "lblAvatarInitials";
-            this.lblAvatarInitials.Size = new System.Drawing.Size(40, 40);
-            this.lblAvatarInitials.Text = "DR";
-            this.lblAvatarInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             
             this.pnlContent.BackColor = clrBg;
             this.pnlContent.Controls.Add(this.pnlPreview);
@@ -219,24 +200,33 @@ namespace elnet_recoverease.Doctor
             this.pnlFilters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlFilters.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 
-            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 30), AutoSize = true };
-            this.dtpFrom.Location = new System.Drawing.Point(24, 48);
-            this.dtpFrom.Width = 180;
+            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 18), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
+            this.dtpFrom.Location = new System.Drawing.Point(24, 42);
+            this.dtpFrom.Width = 250;
 
-            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(300, 30), AutoSize = true };
-            this.dtpTo.Location = new System.Drawing.Point(300, 48);
-            this.dtpTo.Width = 180;
+            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(310, 18), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
+            this.dtpTo.Location = new System.Drawing.Point(310, 42);
+            this.dtpTo.Width = 250;
+
+            this.btnPreview.Text = "👁️ Preview";
+            this.btnPreview.BackColor = clrWhite;
+            this.btnPreview.FlatStyle = FlatStyle.Flat;
+            this.btnPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.btnPreview.Size = new System.Drawing.Size(120, 35);
+            this.btnPreview.Location = new System.Drawing.Point(890, 28);
+            this.btnPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.btnPreview.Font = new System.Drawing.Font("Segoe UI", 9F);
 
             this.btnGenerateReport.Text = "🖨️ Generate Full Report";
             this.btnGenerateReport.BackColor = clrTeal;
             this.btnGenerateReport.ForeColor = clrWhite;
             this.btnGenerateReport.FlatStyle = FlatStyle.Flat;
-            this.btnGenerateReport.Size = new System.Drawing.Size(220, 40);
-            this.btnGenerateReport.Location = new System.Drawing.Point(1030, 25);
+            this.btnGenerateReport.Size = new System.Drawing.Size(200, 35);
+            this.btnGenerateReport.Location = new System.Drawing.Point(1030, 28);
             this.btnGenerateReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.btnGenerateReport.Font = new System.Drawing.Font("Segoe UI", 9F, FontStyle.Bold);
 
-            this.pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { lblFrom, this.dtpFrom, lblTo, this.dtpTo, this.btnGenerateReport });
+            this.pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { lblFrom, this.dtpFrom, lblTo, this.dtpTo, this.btnPreview, this.btnGenerateReport });
 
             this.pnlPreview.BackColor = clrWhite;
             this.pnlPreview.Location = new System.Drawing.Point(30, 370);
@@ -259,7 +249,6 @@ namespace elnet_recoverease.Doctor
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
             this.pnlTopBar.ResumeLayout(false);
             this.pnlTopBar.PerformLayout();
-            this.pnlAvatarTop.ResumeLayout(false);
             this.pnlContent.ResumeLayout(false);
             this.pnlFilters.ResumeLayout(false);
             this.pnlFilters.PerformLayout();
@@ -337,8 +326,6 @@ namespace elnet_recoverease.Doctor
         private System.Windows.Forms.Button btnLogout;
         private System.Windows.Forms.Panel pnlTopBar;
         private System.Windows.Forms.Label lblPageTitle;
-        private System.Windows.Forms.Panel pnlAvatarTop;
-        private System.Windows.Forms.Label lblAvatarInitials;
         private System.Windows.Forms.Panel pnlContent;
         private System.Windows.Forms.TableLayoutPanel pnlReportSelection;
         private System.Windows.Forms.Panel pnlFilters;
@@ -348,6 +335,7 @@ namespace elnet_recoverease.Doctor
         private System.Windows.Forms.DateTimePicker dtpFrom;
         private System.Windows.Forms.DateTimePicker dtpTo;
         private System.Windows.Forms.Button btnGenerateReport;
+        private System.Windows.Forms.Button btnPreview;
         private Microsoft.Web.WebView2.WinForms.WebView2 wvPreview;
     }
 }

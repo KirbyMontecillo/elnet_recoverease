@@ -11,10 +11,121 @@ namespace elnet_recoverease.Doctor
 {
     public partial class Doctor_Report_Viewer : Form
     {
+        private string _currentReportType = "";
+        private DateTime _currentFrom;
+        private DateTime _currentTo;
+        private string _currentDoctor = "";
+
         public Doctor_Report_Viewer()
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
+            AddToolBar();
+        }
+
+        private void AddToolBar()
+        {
+            ToolStrip ts = new ToolStrip();
+            ts.Dock = DockStyle.Top;
+            ts.ImageScalingSize = new Size(24, 24);
+
+            ToolStripButton btnPrint = new ToolStripButton("🖨️ Print", null, (s, e) => wvReport.CoreWebView2.ShowPrintUI());
+            ToolStripButton btnPdf = new ToolStripButton("💾 Save as PDF", null, (s, e) => SaveToPdf());
+            ToolStripButton btnExcel = new ToolStripButton("📊 Export to Excel", null, (s, e) => ExportToExcel());
+
+            ts.Items.Add(btnPrint);
+            ts.Items.Add(new ToolStripSeparator());
+            ts.Items.Add(btnPdf);
+            ts.Items.Add(new ToolStripSeparator());
+            ts.Items.Add(btnExcel);
+
+            this.Controls.Add(ts);
+        }
+
+        private async void SaveToPdf()
+        {
+            try
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "PDF Files (*.pdf)|*.pdf";
+                sfd.FileName = $"{_currentReportType.Replace(" ", "_")}_{DateTime.Now:yyyyMMdd}";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    await wvReport.CoreWebView2.PrintToPdfAsync(sfd.FileName);
+                    if (MessageBox.Show("PDF saved successfully! Open it now?", "Success", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(sfd.FileName) { UseShellExecute = true });
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Save failed: " + ex.Message); }
+        }
+
+        private void ExportToExcel()
+        {
+            try
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "CSV Files (*.csv)|*.csv";
+                sfd.FileName = $"{_currentReportType.Replace(" ", "_")}_{DateTime.Now:yyyyMMdd}";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    System.Text.StringBuilder csv = new System.Text.StringBuilder();
+                    using (var db = new AppDbContext())
+                    {
+                        var fromDateOnly = DateOnly.FromDateTime(_currentFrom);
+                        var toDateOnly = DateOnly.FromDateTime(_currentTo);
+                        var nowOnly = DateOnly.FromDateTime(DateTime.Now);
+
+                        if (_currentReportType == "Patient Adherence")
+                        {
+                            csv.AppendLine("Patient Name,Scheduled,Taken,Adherence Rate");
+                            var schedules = db.MedicationSchedules.Where(s => s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly).ToList();
+                            var patients = db.Patients.Where(p => p.AttendingDoctor == _currentDoctor).ToList();
+                            foreach (var p in patients)
+                            {
+                                var pSchedules = schedules.Where(s => s.PatientID == p.PatientID).ToList();
+                                if (pSchedules.Count == 0) continue;
+                                int taken = pSchedules.Count(s => s.IsTaken);
+                                double rate = (double)taken / pSchedules.Count * 100;
+                                csv.AppendLine($"\"{p.FullName}\",\"{pSchedules.Count}\",\"{taken}\",\"{rate:F1}%\"");
+                            }
+                        }
+                        else if (_currentReportType == "Missed Medication")
+                        {
+                            csv.AppendLine("Patient Name,Medication,Date,Time");
+                            var missed = (from s in db.MedicationSchedules
+                                         join p in db.Patients on s.PatientID equals p.PatientID
+                                         join m in db.Medications on s.MedicationID equals m.MedicationID
+                                         where s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly
+                                         && p.AttendingDoctor == _currentDoctor && !s.IsTaken && s.ScheduledDate < nowOnly
+                                         select new { p.FullName, m.MedicationName, s.ScheduledDate, s.ScheduledTime }).ToList();
+                            foreach (var x in missed) csv.AppendLine($"\"{x.FullName}\",\"{x.MedicationName}\",\"{x.ScheduledDate}\",\"{x.ScheduledTime}\"");
+                        }
+                        else if (_currentReportType == "Appointment Summary")
+                        {
+                            csv.AppendLine("Date,Patient Name,Notes,Status");
+                            var appts = (from a in db.Appointments join p in db.Patients on a.PatientID equals p.PatientID
+                                        where a.AppointmentDate >= _currentFrom && a.AppointmentDate <= _currentTo && p.AttendingDoctor == _currentDoctor
+                                        select new { a.AppointmentDate, p.FullName, a.Notes, a.Status }).ToList();
+                            foreach (var x in appts) csv.AppendLine($"\"{x.AppointmentDate}\",\"{x.FullName}\",\"{x.Notes}\",\"{x.Status}\"");
+                        }
+                        else if (_currentReportType == "Treatment Plan Progress")
+                        {
+                            csv.AppendLine("Patient Name,Plan Details,Start Date,Target End");
+                            var plans = (from tp in db.TreatmentPlans join p in db.Patients on tp.PatientID equals p.PatientID
+                                        where p.AttendingDoctor == _currentDoctor
+                                        select new { p.FullName, tp.PlanDetails, tp.StartDate, tp.EndDate }).ToList();
+                            foreach (var x in plans) csv.AppendLine($"\"{x.FullName}\",\"{x.PlanDetails}\",\"{x.StartDate}\",\"{x.EndDate}\"");
+                        }
+                    }
+                    System.IO.File.WriteAllText(sfd.FileName, csv.ToString());
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(sfd.FileName) { UseShellExecute = true });
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Export failed: " + ex.Message); }
         }
 
         public void GenerateLiveReport(string reportType, DateTime dateFrom, DateTime dateTo, string doctorName)
@@ -32,12 +143,21 @@ namespace elnet_recoverease.Doctor
 
         public string GetReportHtml(string reportType, DateTime dateFrom, DateTime dateTo, string doctor)
         {
+            _currentReportType = reportType;
+            _currentFrom = dateFrom;
+            _currentTo = dateTo;
+            _currentDoctor = doctor;
+
             string contentHtml = "";
             using (var db = new AppDbContext())
             {
                 var fromDateOnly = DateOnly.FromDateTime(dateFrom);
                 var toDateOnly = DateOnly.FromDateTime(dateTo);
                 var nowOnly = DateOnly.FromDateTime(DateTime.Now);
+                
+                // For appointments, we need to cover the full range of the end date
+                var rangeEnd = dateTo.Date.AddDays(1).AddSeconds(-1);
+                var doctorLower = doctor?.ToLower() ?? "";
 
                 if (reportType == "Patient Adherence")
                 {
@@ -45,7 +165,9 @@ namespace elnet_recoverease.Doctor
                         .Where(s => s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly)
                         .ToList();
 
-                    var patients = db.Patients.Where(p => p.AttendingDoctor == doctor).ToList();
+                    var patients = db.Patients
+                        .Where(p => (p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower) || (p.AttendingDoctor == null && doctorLower == ""))
+                        .ToList();
                     var adherenceData = new List<string[]>();
 
                     foreach (var p in patients)
@@ -65,7 +187,7 @@ namespace elnet_recoverease.Doctor
                                  join p in db.Patients on s.PatientID equals p.PatientID
                                  join m in db.Medications on s.MedicationID equals m.MedicationID
                                  where s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly
-                                 && p.AttendingDoctor == doctor
+                                 && p.AttendingDoctor.ToLower() == doctorLower
                                  && !s.IsTaken && s.ScheduledDate < nowOnly
                                  select new { p.FullName, m.MedicationName, s.ScheduledDate, s.ScheduledTime })
                                  .OrderByDescending(x => x.ScheduledDate).ToList();
@@ -77,8 +199,8 @@ namespace elnet_recoverease.Doctor
                 {
                     var appts = (from a in db.Appointments
                                 join p in db.Patients on a.PatientID equals p.PatientID
-                                where a.AppointmentDate >= dateFrom && a.AppointmentDate <= dateTo
-                                && p.AttendingDoctor == doctor
+                                where a.AppointmentDate >= dateFrom.Date && a.AppointmentDate <= rangeEnd
+                                && p.AttendingDoctor.ToLower() == doctorLower
                                 select new { a.AppointmentDate, p.FullName, a.Notes, a.Status })
                                 .OrderBy(x => x.AppointmentDate).ToList();
 
@@ -89,7 +211,7 @@ namespace elnet_recoverease.Doctor
                 {
                     var plans = (from tp in db.TreatmentPlans
                                 join p in db.Patients on tp.PatientID equals p.PatientID
-                                where p.AttendingDoctor == doctor
+                                where p.AttendingDoctor.ToLower() == doctorLower
                                 select new { p.FullName, tp.PlanDetails, tp.StartDate, tp.EndDate })
                                 .OrderBy(x => x.FullName).ToList();
 
