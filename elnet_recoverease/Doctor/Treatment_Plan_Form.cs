@@ -20,35 +20,73 @@ namespace elnet_recoverease.Doctor
             InitializeComponent();
             _patientId = patientId;
             
+            SetLogo();
             SetupEventHandlers();
+        }
+
+        private void SetLogo()
+        {
+            try 
+            { 
+                string logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
+                if (System.IO.File.Exists(logoPath)) picLogo.Image = Image.FromFile(logoPath);
+            } 
+            catch { }
         }
 
         private void SetupEventHandlers()
         {
-            btnSave.Click += BtnSave_Click;
-            btnCancel.Click += (s, e) => this.Close();
-            btnBack.Click += (s, e) => this.Close();
+            btnSave.Click += new EventHandler(BtnSave_Click);
+            btnCancel.Click += new EventHandler(btnCancel_Click);
+            btnBack.Click += new EventHandler(btnBack_Click);
             
             // Set default dates
             dtpStartDate.Value = DateTime.Now;
             dtpEndDate.Value = DateTime.Now.AddMonths(1);
 
             // Side nav
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
         }
 
-        private void AttachNavEvents(Panel pnl, Action action)
+        private void btnCancel_Click(object sender, EventArgs e)
         {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
-            {
-                c.Click += (s, e) => action();
-            }
+            this.Close();
         }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnNavAppointments_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Appointments());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Reports());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Profile());
+        }
+
 
         private async void BtnSave_Click(object sender, EventArgs e)
         {

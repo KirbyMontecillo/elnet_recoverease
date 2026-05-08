@@ -30,7 +30,27 @@ namespace elnet_recoverease.Doctor
             // Critical: Ensure database has the latest columns
             _db.EnsureSchemaUpdated();
 
-            this.Load += async (s, e) => await InitializeForm();
+            this.Load += new EventHandler(Appointment_Form_Load);
+        }
+
+        private async void Appointment_Form_Load(object sender, EventArgs e)
+        {
+            await InitializeForm();
+        }
+
+        private async void dtpDate_ValueChanged(object sender, EventArgs e)
+        {
+            await UpdateAvailableTimeSlots();
+        }
+
+        private async void cmbDoctor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            await UpdateAvailableTimeSlots();
+        }
+
+        private async void cmbDuration_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            await UpdateAvailableTimeSlots();
         }
 
         private async Task InitializeForm()
@@ -41,9 +61,9 @@ namespace elnet_recoverease.Doctor
                 await UpdateAvailableTimeSlots();
 
                 // Wire up change events
-                dtpDate.ValueChanged += async (s, e) => await UpdateAvailableTimeSlots();
-                cmbDoctor.SelectedIndexChanged += async (s, e) => await UpdateAvailableTimeSlots();
-                cmbDuration.SelectedIndexChanged += async (s, e) => await UpdateAvailableTimeSlots();
+                dtpDate.ValueChanged += new EventHandler(dtpDate_ValueChanged);
+                cmbDoctor.SelectedIndexChanged += new EventHandler(cmbDoctor_SelectedIndexChanged);
+                cmbDuration.SelectedIndexChanged += new EventHandler(cmbDuration_SelectedIndexChanged);
 
                 // Load Patients - Only show patients assigned to THIS doctor
                 string currentDoctor = UserSession.CurrentStaff?.FullName ?? "";
@@ -210,10 +230,8 @@ namespace elnet_recoverease.Doctor
                         }
                     }
 
-                    btn.Click += async (s, e) => {
-                        _selectedTime = t;
-                        await UpdateAvailableTimeSlots(); // Re-run to show duration blocking
-                    };
+                    btn.Tag = t;
+                    btn.Click += new EventHandler(btnTimeSlot_Click);
 
                     pnlTimeSlots.Controls.Add(btn);
                     buttons.Add(btn);
@@ -222,6 +240,15 @@ namespace elnet_recoverease.Doctor
                 if (isPastDate) MessageBox.Show("Past dates cannot be selected.", "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch { }
+        }
+
+        private async void btnTimeSlot_Click(object sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string t)
+            {
+                _selectedTime = t;
+                await UpdateAvailableTimeSlots(); // Re-run to show duration blocking
+            }
         }
 
         private int GetDurationInMinutes(string durationText)

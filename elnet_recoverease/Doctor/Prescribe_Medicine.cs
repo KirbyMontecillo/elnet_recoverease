@@ -97,7 +97,7 @@ namespace elnet_recoverease.Doctor
             btnCancel.Location = new Point(140, 450);
             btnCancel.Size = new Size(100, 40);
             btnCancel.FlatStyle = FlatStyle.Flat;
-            btnCancel.Click += (s, e) => this.Close();
+            btnCancel.Click += new EventHandler(btnCancel_Click);
 
             btnPrescribe.Click += BtnPrescribe_Click;
 
@@ -114,6 +114,11 @@ namespace elnet_recoverease.Doctor
             this.Controls.Add(txtNotes);
             this.Controls.Add(btnPrescribe);
             this.Controls.Add(btnCancel);
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private async void LoadMedications()

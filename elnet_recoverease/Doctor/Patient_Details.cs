@@ -15,37 +15,80 @@ namespace elnet_recoverease.Doctor
         private AppDbContext _db = new AppDbContext();
         private int _patientId;
         private Patient _patient;
+        private List<Appointment> _currentAppts;
 
         public Patient_Details(int patientId)
         {
             InitializeComponent();
             _patientId = patientId;
             
-            this.Load += (s, e) => LoadPatientData();
+            this.Load += new EventHandler(Patient_Details_Load);
             SetupEventHandlers();
         }
 
         private void SetupEventHandlers()
         {
-            btnBack.Click += (s, e) => NavigationHelper.SwitchForm(this, new Patient_List());
-            btnUpdatePlan.Click += (s, e) => {
-                using (var form = new Treatment_Plan_Form(_patientId))
-                {
-                    if (form.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadPatientData();
-                    }
-                }
-            };
-
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            btnBack.Click += new EventHandler(btnBack_Click);
+            btnUpdatePlan.Click += new EventHandler(btnUpdatePlan_Click);
+            btnLogout.Click += new EventHandler(btnLogout_Click);
             
             // Sidebar Nav
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+        }
+
+        private void Patient_Details_Load(object sender, EventArgs e)
+        {
+            LoadPatientData();
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnUpdatePlan_Click(object sender, EventArgs e)
+        {
+            using (var form = new Treatment_Plan_Form(_patientId))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    LoadPatientData();
+                }
+            }
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnNavAppointments_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Appointments());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Reports());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Profile());
         }
 
         private void LoadPatientData()
@@ -153,10 +196,6 @@ namespace elnet_recoverease.Doctor
             AddMedInfoCard(pnlMedInfo, "BMI", latest?.BMI ?? "N/A", startX, startY + gapY);
             AddMedInfoCard(pnlMedInfo, "BLOOD TYPE", _patient.BloodType ?? "N/A", startX + gapX, startY + gapY);
 
-            var lblAllergies = new Label { Text = "Allergies", Location = new Point(25, 255), Font = new Font("Segoe UI Semibold", 9), ForeColor = Color.FromArgb(100, 120, 145), AutoSize = true };
-            var lblAllergiesVal = new Label { Text = _patient.Allergies ?? "No known allergies recorded", Location = new Point(25, 280), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Italic), ForeColor = Color.FromArgb(30, 43, 60) };
-            pnlMedInfo.Controls.Add(lblAllergies);
-            pnlMedInfo.Controls.Add(lblAllergiesVal);
         }
 
         private void AddMedInfoCard(Panel parent, string title, string val, int x, int y)
@@ -212,24 +251,28 @@ namespace elnet_recoverease.Doctor
 
         private void SetupAppointmentGrid(List<Appointment> appts)
         {
+            _currentAppts = appts;
             pnlApptHistory.Controls.Clear();
             pnlApptHistory.Controls.Add(new Label { Text = "🗓️ Appointment History", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
 
             dgvApptHistory = new DataGridView { Location = new Point(25, 75), Size = new Size(940, 220), BackgroundColor = Color.White, BorderStyle = BorderStyle.None, SelectionMode = DataGridViewSelectionMode.FullRowSelect, RowHeadersVisible = false, AllowUserToAddRows = false, ReadOnly = true, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, RowTemplate = { Height = 45 }, GridColor = Color.FromArgb(240, 240, 240) };
             dgvApptHistory.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd, yyyy"), Status = a.Status, Diagnosis = a.Diagnosis ?? "N/A", Action = "View Details" }).ToList();
 
-            dgvApptHistory.CellContentClick += (s, e) => {
-                if (e.RowIndex >= 0)
-                {
-                    var appt = appts[e.RowIndex];
-                    using (var session = new Clinical_Session(appt.AppointmentID))
-                    {
-                        session.ShowDialog();
-                        LoadPatientData();
-                    }
-                }
-            };
+            dgvApptHistory.CellContentClick += new DataGridViewCellEventHandler(dgvApptHistory_CellContentClick);
             pnlApptHistory.Controls.Add(dgvApptHistory);
+        }
+
+        private void dgvApptHistory_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && _currentAppts != null && e.RowIndex < _currentAppts.Count)
+            {
+                var appt = _currentAppts[e.RowIndex];
+                using (var session = new Clinical_Session(appt.AppointmentID))
+                {
+                    session.ShowDialog();
+                    LoadPatientData();
+                }
+            }
         }
 
         private async void BtnActivate_Click(object sender, EventArgs e)

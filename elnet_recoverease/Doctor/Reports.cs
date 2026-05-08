@@ -19,8 +19,18 @@ namespace elnet_recoverease.Doctor
             SetLogo();
             InitializeNavigation();
 
-            btnGenerateReport.Click += (s, e) => GenerateReport();
-            btnPreview.Click += (s, e) => UpdateInstantPreview();
+            btnGenerateReport.Click += new EventHandler(btnGenerateReport_Click);
+            btnPreview.Click += new EventHandler(btnPreview_Click);
+        }
+
+        private void btnGenerateReport_Click(object sender, EventArgs e)
+        {
+            GenerateReport();
+        }
+
+        private void btnPreview_Click(object sender, EventArgs e)
+        {
+            UpdateInstantPreview();
         }
 
         private void SetLogo()
@@ -30,12 +40,42 @@ namespace elnet_recoverease.Doctor
 
         private void InitializeNavigation()
         {
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => { });
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            btnLogout.Click += new EventHandler(btnLogout_Click);
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnNavAppointments_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Appointments());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            // Do nothing, already on Reports
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Profile());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
         }
 
         private void SelectCard(Panel card)
@@ -72,6 +112,21 @@ namespace elnet_recoverease.Doctor
                 viewer.GenerateLiveReport(_selectedReport, dtpFrom.Value, dtpTo.Value, _currentDoctorName);
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
+        }
+
+        private void ReportCard_Click(object sender, EventArgs e)
+        {
+            Control c = sender as Control;
+            if (c == null) return;
+            Panel card = c as Panel;
+            if (card == null)
+            {
+                card = c.Parent as Panel;
+            }
+            if (card != null)
+            {
+                SelectCard(card);
+            }
         }
     }
 }

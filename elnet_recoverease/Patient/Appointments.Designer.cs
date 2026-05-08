@@ -132,7 +132,7 @@ namespace elnet_recoverease
 
             this.pnlLogoArea.Dock = DockStyle.Top;
             this.pnlLogoArea.Height = 90;
-            this.pnlLogoArea.Padding = new Padding(25, 20, 25, 15);
+            this.pnlLogoArea.Padding = new Padding(16, 18, 8, 8);
             this.picLogo.Dock = DockStyle.Fill;
             this.picLogo.SizeMode = PictureBoxSizeMode.Zoom;
             this.pnlLogoArea.Controls.Add(this.picLogo);
@@ -177,9 +177,10 @@ namespace elnet_recoverease
             this.lblNavTreatmentText.Text = "Treatment Plans"; this.lblNavTreatmentText.Font = fntNav; this.lblNavTreatmentText.ForeColor = clrNavText; this.lblNavTreatmentText.Location = new Point(20, 13); this.lblNavTreatmentText.AutoSize = true;
             this.btnNavTreatment.Controls.Add(this.lblNavTreatmentIcon); this.btnNavTreatment.Controls.Add(this.lblNavTreatmentText);
 
-            this.pnlSidebarBottom.Dock = DockStyle.Bottom; this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Dock = DockStyle.Bottom; this.pnlSidebarBottom.Height = 40;
             this.lblSidebarFooter.Text = "Secure Healthcare Platform"; this.lblSidebarFooter.Font = new Font("Segoe UI", 8f); this.lblSidebarFooter.ForeColor = clrTextMid; this.lblSidebarFooter.Location = new Point(20, 10); this.lblSidebarFooter.AutoSize = true;
             this.btnLogout.Text = "Sign Out"; this.btnLogout.Font = new Font("Segoe UI Semibold", 9f, FontStyle.Bold); this.btnLogout.ForeColor = Color.FromArgb(68, 68, 68); this.btnLogout.FlatStyle = FlatStyle.Flat; this.btnLogout.FlatAppearance.BorderSize = 0; this.btnLogout.Location = new Point(16, 32); this.btnLogout.Size = new Size(188, 26); this.btnLogout.TextAlign = ContentAlignment.MiddleLeft; this.btnLogout.Cursor = Cursors.Hand;
+            this.btnLogout.Visible = false;
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter); this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
             this.pnlSidebar.Controls.Add(this.btnNavProfile);

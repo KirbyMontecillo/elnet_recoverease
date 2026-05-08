@@ -99,6 +99,35 @@ namespace elnet_recoverease.Doctor
             this.pnlSidebar.Controls.Add(this.btnNavPatients);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
+
+            // Sidebar bottom
+            this.pnlSidebarBottom.BackColor = System.Drawing.Color.FromArgb(238, 243, 247);
+            this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Padding = new System.Windows.Forms.Padding(20, 12, 16, 12);
+
+            var lblSidebarFooter = new System.Windows.Forms.Label();
+            lblSidebarFooter.Text = "Secure Healthcare Platform";
+            lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8f);
+            lblSidebarFooter.ForeColor = clrTextMid;
+            lblSidebarFooter.AutoSize = true;
+            lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
+
+            this.btnLogout.Text = "⇠  Sign Out";
+            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5f, System.Drawing.FontStyle.Bold);
+            this.btnLogout.ForeColor = System.Drawing.ColorTranslator.FromHtml("#444444");
+            this.btnLogout.BackColor = System.Drawing.Color.Transparent;
+            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLogout.FlatAppearance.BorderSize = 0;
+            this.btnLogout.FlatAppearance.MouseOverBackColor = System.Drawing.ColorTranslator.FromHtml("#D0DBE8");
+            this.btnLogout.Size = new System.Drawing.Size(188, 26);
+            this.btnLogout.Location = new System.Drawing.Point(16, 32);
+            this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLogout.Cursor = System.Windows.Forms.Cursors.Hand;
+
+            this.pnlSidebarBottom.Controls.Add(lblSidebarFooter);
+            this.pnlSidebarBottom.Controls.Add(this.btnLogout);
+            this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
  
             // Logo
             this.pnlLogoArea.Dock = System.Windows.Forms.DockStyle.Top;

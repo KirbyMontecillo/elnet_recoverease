@@ -227,7 +227,7 @@ namespace elnet_recoverease
             // Sidebar bottom
             this.pnlSidebarBottom.BackColor = clrNavy;
             this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Height = 40;
             this.pnlSidebarBottom.Padding = new System.Windows.Forms.Padding(20, 12, 16, 12);
             this.lblSidebarFooter.Text = "Secure Healthcare Platform";
             this.lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8f);
@@ -244,6 +244,7 @@ namespace elnet_recoverease
             this.btnLogout.Location = new System.Drawing.Point(16, 32);
             this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnLogout.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLogout.Visible = false;
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);
 
@@ -283,39 +284,12 @@ namespace elnet_recoverease
             this.lblWelcome.Location = new System.Drawing.Point(28, 58);
             this.lblWelcome.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
 
-            this.pnlNotifBell.Size = new System.Drawing.Size(38, 38);
-            this.pnlNotifBell.BackColor = clrBg;
-            this.pnlNotifBell.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.pnlNotifBell.Location = new System.Drawing.Point(1280, 13);
-            this.lblBellIcon.Text = "";
-            this.lblBellIcon.Font = new System.Drawing.Font("Segoe UI", 16f);
-            this.lblBellIcon.AutoSize = true;
-            this.lblBellIcon.Location = new System.Drawing.Point(2, 2);
-            this.lblNotifBadge.Text = "3";
-            this.lblNotifBadge.Font = new System.Drawing.Font("Segoe UI", 6f, System.Drawing.FontStyle.Bold);
-            this.lblNotifBadge.ForeColor = clrWhite;
-            this.lblNotifBadge.BackColor = clrRed;
-            this.lblNotifBadge.Size = new System.Drawing.Size(14, 14);
-            this.lblNotifBadge.Location = new System.Drawing.Point(22, 2);
-            this.lblNotifBadge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.pnlNotifBell.Controls.Add(this.lblBellIcon);
-            this.pnlNotifBell.Controls.Add(this.lblNotifBadge);
 
-            this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
-            this.pnlAvatarTop.BackColor = clrTeal;
-            this.pnlAvatarTop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.pnlAvatarTop.Location = new System.Drawing.Point(1328, 12);
-            this.lblAvatarInitials.Text = "--";
-            this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 11f, System.Drawing.FontStyle.Bold);
-            this.lblAvatarInitials.ForeColor = clrWhite;
-            this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAvatarInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.pnlAvatarTop.Controls.Add(this.lblAvatarInitials);
+
+
 
             this.pnlTopBar.Controls.Add(this.lblPageTitle);
             this.pnlTopBar.Controls.Add(this.lblWelcome);
-            this.pnlTopBar.Controls.Add(this.pnlNotifBell);
-            this.pnlTopBar.Controls.Add(this.pnlAvatarTop);
 
             // -- Content area --
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;

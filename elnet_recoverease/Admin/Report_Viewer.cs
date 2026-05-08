@@ -14,6 +14,7 @@ using System.Diagnostics;
 using Microsoft.Web.WebView2.Core;
 using elnet_recoverease.Data;
 using elnet_recoverease.Models;
+using elnet_recoverease.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace elnet_recoverease.Admin
@@ -39,9 +40,9 @@ namespace elnet_recoverease.Admin
             ts.Dock = DockStyle.Top;
             ts.ImageScalingSize = new Size(24, 24);
 
-            ToolStripButton btnPrint = new ToolStripButton("🖨️ Print", null, (s, e) => webView.CoreWebView2.ShowPrintUI());
-            ToolStripButton btnPdf = new ToolStripButton("💾 Save as PDF", null, (s, e) => SaveToPdf());
-            ToolStripButton btnExcel = new ToolStripButton("📊 Export to Excel", null, (s, e) => ExportToExcel());
+            ToolStripButton btnPrint = new ToolStripButton("🖨️ Print", null, new EventHandler(btnPrint_Click));
+            ToolStripButton btnPdf = new ToolStripButton("💾 Save as PDF", null, new EventHandler(btnPdf_Click));
+            ToolStripButton btnExcel = new ToolStripButton("📊 Export to Excel", null, new EventHandler(btnExcel_Click));
 
             ts.Items.Add(btnPrint);
             ts.Items.Add(new ToolStripSeparator());
@@ -50,6 +51,21 @@ namespace elnet_recoverease.Admin
             ts.Items.Add(btnExcel);
 
             this.Controls.Add(ts);
+        }
+
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            webView.CoreWebView2.ShowPrintUI();
+        }
+
+        private void btnPdf_Click(object sender, EventArgs e)
+        {
+            SaveToPdf();
+        }
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+            ExportToExcel();
         }
 
         private async void SaveToPdf()
@@ -143,6 +159,10 @@ namespace elnet_recoverease.Admin
                 bool isAllDoctors = string.IsNullOrEmpty(doctor) || doctor == "All Doctors";
                 var doctorLower = doctor?.ToLower() ?? "";
                 var rangeEnd = to.Date.AddDays(1).AddSeconds(-1);
+                var fromDateOnly = DateOnly.FromDateTime(from);
+                var toDateOnly = DateOnly.FromDateTime(to);
+
+                ScheduleManager.UpdateMissedSchedules();
 
                 using (var db = new AppDbContext())
                 {
@@ -175,6 +195,67 @@ namespace elnet_recoverease.Admin
 
                         contentHtml = BuildTableHtml(new[] { "Date", "Patient Name", "Notes", "Status" },
                             appointments.Select(x => new[] { x.AppointmentDate?.ToString("MM/dd/yyyy HH:mm") ?? "N/A", x.FullName, x.Notes, x.Status }).ToList());
+                    }
+                    else if (reportType == "Missed Medication Report")
+                    {
+                        var query = db.MedicationSchedules.Where(m => m.IsMissed && m.ScheduledDate >= fromDateOnly && m.ScheduledDate <= toDateOnly);
+                        var data = (from m in query
+                                   join p in db.Patients on m.PatientID equals p.PatientID
+                                   where isAllDoctors || (p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower)
+                                   select new { m.ScheduledDate, m.ScheduledTime, p.FullName, m.MedicationName, m.DosageUnit, m.Notes })
+                                   .OrderByDescending(x => x.ScheduledDate).ThenByDescending(x => x.ScheduledTime).ToList();
+
+                        contentHtml = BuildTableHtml(new[] { "Date", "Time", "Patient Name", "Medication", "Dosage", "Reason/Notes" },
+                            data.Select(x => new[] { x.ScheduledDate.ToShortDateString(), x.ScheduledTime?.ToString("HH:mm") ?? "N/A", x.FullName, x.MedicationName, x.DosageUnit, x.Notes }).ToList());
+                    }
+                    else if (reportType == "Patient Adherence Report")
+                    {
+                        var patientsQuery = db.Patients.AsQueryable();
+                        if (!isAllDoctors) patientsQuery = patientsQuery.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
+                        
+                        var patients = patientsQuery.ToList();
+                        var schedules = db.MedicationSchedules.Where(s => s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly).ToList();
+
+                        var reportData = patients.Select(p => {
+                            var pSchedules = schedules.Where(s => s.PatientID == p.PatientID).ToList();
+                            int total = pSchedules.Count;
+                            int taken = pSchedules.Count(s => s.IsTaken);
+                            int missed = pSchedules.Count(s => s.IsMissed);
+                            double rate = total > 0 ? (taken * 100.0 / total) : 0;
+                            
+                            return new[] { p.FullName, p.AttendingDoctor ?? "N/A", total.ToString(), taken.ToString(), missed.ToString(), $"{rate:F1}%" };
+                        }).OrderBy(r => r[0]).ToList();
+
+                        contentHtml = BuildTableHtml(new[] { "Patient Name", "Doctor", "Total Doses", "Taken", "Missed", "Adherence Rate" }, reportData);
+                    }
+                    else if (reportType == "Treatment Plan Progress")
+                    {
+                        var query = db.Patients.AsQueryable();
+                        if (!isAllDoctors) query = query.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
+                        
+                        var patients = query.OrderBy(p => p.FullName).ToList();
+                        var schedules = db.MedicationSchedules.Where(s => s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly).ToList();
+
+                        var reportData = patients.Select(p => {
+                            var pSchedules = schedules.Where(s => s.PatientID == p.PatientID).ToList();
+                            int total = pSchedules.Count;
+                            int taken = pSchedules.Count(s => s.IsTaken);
+                            double rate = total > 0 ? (taken * 100.0 / total) : 100; // Assume 100 if no meds scheduled yet
+                            
+                            string risk = "Normal";
+                            string est = "95%";
+                            
+                            if (total > 0) {
+                                if (rate >= 90) { risk = "<span style='color:#059669; font-weight:bold;'>Normal</span>"; est = "95%"; }
+                                else if (rate >= 70) { risk = "<span style='color:#0891b2; font-weight:bold;'>Low Risk</span>"; est = "80%"; }
+                                else if (rate >= 50) { risk = "<span style='color:#d97706; font-weight:bold;'>Medium Risk</span>"; est = "60%"; }
+                                else { risk = "<span style='color:#dc2626; font-weight:bold;'>High Risk</span>"; est = "30%"; }
+                            }
+
+                            return new[] { p.FullName, p.AttendingDoctor ?? "N/A", p.Status ?? "Active", risk, est };
+                        }).ToList();
+
+                        contentHtml = BuildTableHtml(new[] { "Patient", "Doctor", "Plan Status", "Risk Level", "Recovery Est." }, reportData);
                     }
                     else if (reportType == "System Activity Audit")
                     {

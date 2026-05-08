@@ -1,6 +1,10 @@
 using elnet_recoverease.Core;
 using elnet_recoverease.Data;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace elnet_recoverease.Admin
 {
@@ -11,18 +15,85 @@ namespace elnet_recoverease.Admin
         public Admin_Report()
         {
             InitializeComponent();
-            try { this.picLogo.Image = System.Drawing.Image.FromFile(@"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png"); } catch { }
+            SetupForm();
+        }
 
-            // Wire up navigation
-            NavigationHelper.WireNavButton(this.btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Admin_Dashboard()));
-            NavigationHelper.WireNavButton(this.btnNavStaff, () => NavigationHelper.SwitchForm(this, new Staff_List()));
-            NavigationHelper.WireNavButton(this.btnNavPatients, () => NavigationHelper.SwitchForm(this, new Medication_List()));
-            this.btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+        private void SetupForm()
+        {
+            try 
+            { 
+                string logoPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\images\logo.png");
+                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
+                if (System.IO.File.Exists(logoPath)) this.picLogo.Image = System.Drawing.Image.FromFile(logoPath); 
+            } 
+            catch { }
 
-            // Wire up report actions
-            this.btnGenerateReport.Click += (s, e) => GenerateReport();
+            // Navigation
+            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
+            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(this.pnlAvatarTop, new EventHandler(btnNavProfile_Click));
+            this.btnLogout.Click += new EventHandler(btnLogout_Click);
+
+            // Report Actions
+            this.btnGenerateReport.Click += new EventHandler(btnGenerateReport_Click);
+            this.btnPreview.Click += new EventHandler(btnPreview_Click);
             
             LoadDoctors();
+            SetAvatarInitials();
+            this.Load += new EventHandler(Admin_Report_Load);
+        }
+
+        private void SetAvatarInitials()
+        {
+            var staff = elnet_recoverease.Core.UserSession.CurrentStaff;
+            if (staff != null && !string.IsNullOrEmpty(staff.FullName))
+            {
+                var parts = staff.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 1) lblAvatarInitials.Text = (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
+                else if (parts.Length == 1) lblAvatarInitials.Text = parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpper();
+            }
+        }
+
+        private void Admin_Report_Load(object sender, EventArgs e)
+        {
+            this.ActiveControl = lblPageTitle;
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Admin_Dashboard());
+        }
+
+        private void btnNavStaff_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Staff_List());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Medication_List());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Admin_Profile());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
+        }
+
+        private void btnPreview_Click(object sender, EventArgs e)
+        {
+            UpdateInstantPreview();
+        }
+
+        private void btnGenerateReport_Click(object sender, EventArgs e)
+        {
+            GenerateReport();
         }
 
         private void LoadDoctors()
@@ -55,12 +126,8 @@ namespace elnet_recoverease.Admin
 
             try
             {
-                // We launch the viewer
                 Report_Viewer viewer = new Report_Viewer();
                 viewer.Show();
-                
-                // NEW: We call the Live Generation engine!
-                // This will fetch real data from your database and show it instantly.
                 viewer.GenerateLiveReport(_selectedReport, fromDate, toDate, selectedDoctor);
             }
             catch (Exception ex)
@@ -69,67 +136,16 @@ namespace elnet_recoverease.Admin
             }
         }
 
-        private void GenerateActivityReport()
+        // Helper for Report cards (moved logic from Designer)
+        public void HandleCardClick(object sender, EventArgs e)
         {
-             try
-            {
-                using (var db = new AppDbContext())
-                {
-                    // For activity audit, we'll just show the viewer for now
-                    // In a real scenario, you'd fetch logs from a Logs table
-                    Report_Viewer viewer = new Report_Viewer();
-                    viewer.Show();
-                    
-                    MessageBox.Show("Ready to bind 'System_Activity_Audit.rpt'.\n\nPlease create the report file in Visual Studio.", "Report Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error generating activity report: " + ex.Message);
-            }
-        }
+            Panel card = null;
+            if (sender is Panel) card = (Panel)sender;
+            else if (sender is Control) card = (Panel)((Control)sender).Parent;
 
-        private void GenerateStaffReport()
-        {
-            try
+            if (card != null)
             {
-                using (var db = new AppDbContext())
-                {
-                    var staffList = db.Staff.ToList();
-                    DataTable dt = ToDataTable(staffList, "StaffData");
-
-                    // This is where you would load your .rpt file
-                    // For now, we show the viewer window
-                    Report_Viewer viewer = new Report_Viewer();
-                    viewer.Show();
-                    
-                    MessageBox.Show("Ready to bind 'Staff_Directory.rpt'.\n\nPlease create the report file in Visual Studio and link it here.", "Report Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error generating staff report: " + ex.Message);
-            }
-        }
-
-        private void GenerateMedReport()
-        {
-            try
-            {
-                using (var db = new AppDbContext())
-                {
-                    var meds = db.Medications.ToList();
-                    DataTable dt = ToDataTable(meds, "MedicationData");
-
-                    Report_Viewer viewer = new Report_Viewer();
-                    viewer.Show();
-
-                    MessageBox.Show("Ready to bind 'Medication_Inventory.rpt'.\n\nPlease create the report file in Visual Studio and link it here.", "Report Ready", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error generating medication report: " + ex.Message);
+                SelectCard(card);
             }
         }
 

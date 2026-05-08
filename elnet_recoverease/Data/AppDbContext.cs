@@ -16,7 +16,6 @@ namespace elnet_recoverease.Data
         public DbSet<ClinicalNote> ClinicalNotes { get; set; }
         public AppDbContext()
         {
-            EnsureSchemaUpdated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,6 +27,7 @@ namespace elnet_recoverease.Data
         {
             try
             {
+                this.Database.EnsureCreated();
                 this.Database.OpenConnection();
                 using (var command = this.Database.GetDbConnection().CreateCommand())
                 {
@@ -124,6 +124,8 @@ namespace elnet_recoverease.Data
                     command.ExecuteNonQuery();
                     command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'Status') ALTER TABLE MedicationSchedules ADD Status NVARCHAR(MAX) NULL DEFAULT 'Pending';";
                     command.ExecuteNonQuery();
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('MedicationSchedules') AND name = 'AppointmentID') ALTER TABLE MedicationSchedules ADD AppointmentID INT NULL;";
+                    command.ExecuteNonQuery();
 
                     // Add TreatmentGoals and DoctorNotes to Appointments
                     command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'TreatmentGoals') ALTER TABLE Appointments ADD TreatmentGoals NVARCHAR(MAX) NULL;";
@@ -143,9 +145,27 @@ namespace elnet_recoverease.Data
                     command.ExecuteNonQuery();
                     command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'ProfileImagePath') ALTER TABLE Staff ADD ProfileImagePath NVARCHAR(MAX) NULL;";
                     command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'CreatedAt') ALTER TABLE Staff ADD CreatedAt DATETIME2 NULL;";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Staff') AND name = 'UserID') ALTER TABLE Staff ADD UserID INT NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Allow NULL in LicenseNumber
+                    command.CommandText = "ALTER TABLE Staff ALTER COLUMN LicenseNumber NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
+
+                    // Medication Status Fix
+                    command.CommandText = "IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Medications') AND name = 'Status') " +
+                                         "ALTER TABLE Medications ADD Status NVARCHAR(MAX) NULL DEFAULT 'Active';";
+                    command.ExecuteNonQuery();
+
+                    command.CommandText = "ALTER TABLE Medications ALTER COLUMN Status NVARCHAR(MAX) NULL;";
+                    command.ExecuteNonQuery();
                 }
             }
-            catch { }
+            catch { throw; }
             finally { this.Database.CloseConnection(); }
         }
 

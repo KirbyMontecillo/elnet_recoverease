@@ -16,5 +16,6 @@ namespace elnet_recoverease.Models
         public bool IsMissed { get; set; }
         public string? Status { get; set; } // Pending, Taken, Missed
         public string? Notes { get; set; }
+        public int? AppointmentID { get; set; }
     }
 }

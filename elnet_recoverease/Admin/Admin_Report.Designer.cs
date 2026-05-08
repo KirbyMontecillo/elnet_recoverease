@@ -17,307 +17,510 @@ namespace elnet_recoverease.Admin
 
         private void InitializeComponent()
         {
-            this.pnlSidebar = new System.Windows.Forms.Panel();
-            this.pnlLogoArea = new System.Windows.Forms.Panel();
-            this.picLogo = new System.Windows.Forms.PictureBox();
-            this.pnlNavDivider = new System.Windows.Forms.Panel();
-            this.btnNavDashboard = new System.Windows.Forms.Panel();
-            this.lblNavDashIcon = new System.Windows.Forms.Label();
-            this.lblNavDashText = new System.Windows.Forms.Label();
-            this.btnNavStaff = new System.Windows.Forms.Panel();
-            this.lblNavStaffIcon = new System.Windows.Forms.Label();
-            this.lblNavStaffText = new System.Windows.Forms.Label();
-            this.btnNavPatients = new System.Windows.Forms.Panel();
-            this.lblNavPatientsIcon = new System.Windows.Forms.Label();
-            this.lblNavPatientsText = new System.Windows.Forms.Label();
-            this.btnNavReports = new System.Windows.Forms.Panel();
-            this.lblNavReportsIcon = new System.Windows.Forms.Label();
-            this.lblNavReportsText = new System.Windows.Forms.Label();
-            this.pnlSidebarBottom = new System.Windows.Forms.Panel();
-            this.lblSidebarFooter = new System.Windows.Forms.Label();
-            this.btnLogout = new System.Windows.Forms.Button();
-            this.pnlTopBar = new System.Windows.Forms.Panel();
-            this.lblPageTitle = new System.Windows.Forms.Label();
-            this.pnlAvatarTop = new System.Windows.Forms.Panel();
-            this.lblAvatarInitials = new System.Windows.Forms.Label();
-            this.pnlContent = new System.Windows.Forms.Panel();
-            this.pnlReportSelection = new System.Windows.Forms.TableLayoutPanel();
-            this.pnlFilters = new System.Windows.Forms.Panel();
-            this.pnlPreview = new System.Windows.Forms.Panel();
-            this.lblSelectReportTitle = new System.Windows.Forms.Label();
-            this.lblFiltersTitle = new System.Windows.Forms.Label();
-            this.lblPreviewTitle = new System.Windows.Forms.Label();
-            this.dtpFrom = new System.Windows.Forms.DateTimePicker();
-            this.dtpTo = new System.Windows.Forms.DateTimePicker();
-            this.cmbDoctor = new System.Windows.Forms.ComboBox();
-            this.btnPreview = new System.Windows.Forms.Button();
-            this.btnGenerateReport = new System.Windows.Forms.Button();
-            this.btnPrintReport = new System.Windows.Forms.Button();
-
-            this.pnlSidebar.SuspendLayout();
-            this.pnlLogoArea.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
-            this.pnlSidebarBottom.SuspendLayout();
-            this.pnlTopBar.SuspendLayout();
-            this.pnlAvatarTop.SuspendLayout();
-            this.pnlContent.SuspendLayout();
-            this.pnlFilters.SuspendLayout();
-            this.pnlPreview.SuspendLayout();
-            this.SuspendLayout();
-
-            // Colors
-            System.Drawing.Color clrTeal = System.Drawing.Color.FromArgb(0, 168, 168);
-            System.Drawing.Color clrNavy = System.Drawing.ColorTranslator.FromHtml("#EEF3F7");
-            System.Drawing.Color clrNavyActive = System.Drawing.ColorTranslator.FromHtml("#1B3A6B");
-            System.Drawing.Color clrBg = System.Drawing.Color.FromArgb(242, 247, 250);
-            System.Drawing.Color clrWhite = System.Drawing.Color.White;
-
-            // Sidebar
-            this.pnlSidebar.BackColor = clrNavy;
-            this.pnlSidebar.Controls.Add(this.btnNavReports);
-            this.pnlSidebar.Controls.Add(this.btnNavPatients);
-            this.pnlSidebar.Controls.Add(this.btnNavStaff);
-            this.pnlSidebar.Controls.Add(this.btnNavDashboard);
-            this.pnlSidebar.Controls.Add(this.pnlNavDivider);
-            this.pnlSidebar.Controls.Add(this.pnlLogoArea);
-            this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
-            this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pnlSidebar.Location = new System.Drawing.Point(0, 0);
-            this.pnlSidebar.Name = "pnlSidebar";
-            this.pnlSidebar.Size = new System.Drawing.Size(260, 900);
-            this.pnlSidebar.TabIndex = 0;
-
-            // Logo Area
-            this.pnlLogoArea.Controls.Add(this.picLogo);
-            this.pnlLogoArea.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlLogoArea.Location = new System.Drawing.Point(0, 0);
-            this.pnlLogoArea.Name = "pnlLogoArea";
-            this.pnlLogoArea.Padding = new System.Windows.Forms.Padding(16, 18, 8, 8);
-            this.pnlLogoArea.Size = new System.Drawing.Size(260, 90);
-            this.pnlLogoArea.TabIndex = 0;
-
-            this.picLogo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picLogo.Location = new System.Drawing.Point(16, 18);
-            this.picLogo.Name = "picLogo";
-            this.picLogo.Size = new System.Drawing.Size(236, 64);
-            this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picLogo.TabIndex = 0;
-            this.picLogo.TabStop = false;
-
-            this.pnlNavDivider.BackColor = System.Drawing.Color.FromArgb(208, 219, 232);
-            this.pnlNavDivider.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlNavDivider.Location = new System.Drawing.Point(0, 90);
-            this.pnlNavDivider.Name = "pnlNavDivider";
-            this.pnlNavDivider.Size = new System.Drawing.Size(260, 1);
-            this.pnlNavDivider.TabIndex = 1;
-
-            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", true, clrNavyActive, clrWhite);
-
-            // Sidebar Bottom
-            this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
-            this.pnlSidebarBottom.Controls.Add(this.btnLogout);
-            this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Location = new System.Drawing.Point(0, 830);
-            this.pnlSidebarBottom.Name = "pnlSidebarBottom";
-            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 70);
-            this.pnlSidebarBottom.TabIndex = 7;
-            this.lblSidebarFooter.AutoSize = true;
-            this.lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
-            this.lblSidebarFooter.Text = "RecoverEase Admin Portal";
-            this.btnLogout.FlatAppearance.BorderSize = 0;
-            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogout.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
-            this.btnLogout.ForeColor = System.Drawing.Color.FromArgb(68, 68, 68);
-            this.btnLogout.Location = new System.Drawing.Point(16, 32);
-            this.btnLogout.Name = "btnLogout";
-            this.btnLogout.Size = new System.Drawing.Size(188, 26);
-            this.btnLogout.TabIndex = 1;
-            this.btnLogout.Text = "⇠  Sign Out";
-            this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            // TopBar
-            this.pnlTopBar.BackColor = clrWhite;
-            this.pnlTopBar.Controls.Add(this.lblPageTitle);
-            this.pnlTopBar.Controls.Add(this.pnlAvatarTop);
-            this.pnlTopBar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTopBar.Location = new System.Drawing.Point(260, 0);
-            this.pnlTopBar.Name = "pnlTopBar";
-            this.pnlTopBar.Size = new System.Drawing.Size(1340, 80);
-            this.pnlTopBar.TabIndex = 1;
-
-            this.lblPageTitle.AutoSize = true;
-            this.lblPageTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblPageTitle.ForeColor = clrNavyActive;
-            this.lblPageTitle.Location = new System.Drawing.Point(24, 22);
-            this.lblPageTitle.Text = "System Analytics & Reports";
-
-            this.pnlAvatarTop.BackColor = clrTeal;
-            this.pnlAvatarTop.Controls.Add(this.lblAvatarInitials);
-            this.pnlAvatarTop.Location = new System.Drawing.Point(1270, 20);
-            this.pnlAvatarTop.Name = "pnlAvatarTop";
-            this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
-            this.pnlAvatarTop.TabIndex = 2;
-            this.pnlAvatarTop.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
-            this.lblAvatarInitials.ForeColor = clrWhite;
-            this.lblAvatarInitials.Location = new System.Drawing.Point(0, 0);
-            this.lblAvatarInitials.Name = "lblAvatarInitials";
-            this.lblAvatarInitials.Size = new System.Drawing.Size(40, 40);
-            this.lblAvatarInitials.Text = "AD";
-            this.lblAvatarInitials.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            
-            // Content
-            this.pnlContent.BackColor = clrBg;
-            this.pnlContent.Controls.Add(this.pnlPreview);
-            this.pnlContent.Controls.Add(this.pnlFilters);
-            this.pnlContent.Controls.Add(this.pnlReportSelection);
-            this.pnlContent.Controls.Add(this.lblSelectReportTitle);
-            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlContent.Location = new System.Drawing.Point(260, 80);
-            this.pnlContent.Name = "pnlContent";
-            this.pnlContent.Padding = new System.Windows.Forms.Padding(30);
-            this.pnlContent.Size = new System.Drawing.Size(1340, 820);
-            this.pnlContent.TabIndex = 2;
-
-            this.lblSelectReportTitle.Text = "SELECT A REPORT TO GENERATE";
-            this.lblSelectReportTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
-            this.lblSelectReportTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.lblSelectReportTitle.Location = new System.Drawing.Point(30, 20);
-            this.lblSelectReportTitle.AutoSize = true;
-
-            this.pnlReportSelection.Location = new System.Drawing.Point(30, 50);
-            this.pnlReportSelection.Size = new System.Drawing.Size(1280, 320);
-            this.pnlReportSelection.BackColor = System.Drawing.Color.Transparent;
-            this.pnlReportSelection.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.pnlReportSelection.ColumnCount = 3;
-            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlReportSelection.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
-            this.pnlReportSelection.RowCount = 2;
-            this.pnlReportSelection.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.pnlReportSelection.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-
-            // Report Selection Cards
-            AddReportCard("Patient Adherence Report", "Shows how well patients are following medication schedules.", "📈", System.Drawing.Color.FromArgb(236, 253, 245), System.Drawing.Color.FromArgb(5, 150, 105));
-            AddReportCard("Missed Medication Report", "Lists all patients who missed medications within a range.", "🚫", System.Drawing.Color.FromArgb(254, 242, 242), System.Drawing.Color.FromArgb(220, 38, 38));
-            AddReportCard("Appointment Summary", "Overview of scheduled, completed, and missed appointments.", "📅", System.Drawing.Color.FromArgb(239, 246, 255), System.Drawing.Color.FromArgb(37, 99, 235));
-            AddReportCard("Treatment Plan Progress", "Tracks recovery and treatment status of all patients.", "📋", System.Drawing.Color.FromArgb(255, 251, 235), System.Drawing.Color.FromArgb(217, 119, 6));
-            AddReportCard("Patient Master List", "Comprehensive directory of all registered patients.", "👥", System.Drawing.Color.FromArgb(245, 243, 255), System.Drawing.Color.FromArgb(124, 58, 237));
-            AddReportCard("Staff Directory", "Complete roster of all hospital staff and their respective roles.", "🏢", System.Drawing.Color.FromArgb(236, 254, 255), System.Drawing.Color.FromArgb(8, 145, 178));
-
-            // Filters Section
-            this.pnlFilters.BackColor = clrWhite;
-            this.pnlFilters.Location = new System.Drawing.Point(30, 390);
-            this.pnlFilters.Size = new System.Drawing.Size(1280, 100);
-            this.pnlFilters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlFilters.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-
-            this.lblFiltersTitle.Text = "FILTERS";
-            this.lblFiltersTitle.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
-            this.lblFiltersTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.lblFiltersTitle.Location = new System.Drawing.Point(24, 10);
-            this.lblFiltersTitle.AutoSize = true;
-
-            System.Windows.Forms.Label lblFrom = new System.Windows.Forms.Label { Text = "Date from", Location = new System.Drawing.Point(24, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
-            this.dtpFrom.Location = new System.Drawing.Point(24, 42);
-            this.dtpFrom.Width = 220;
-
-            System.Windows.Forms.Label lblTo = new System.Windows.Forms.Label { Text = "Date to", Location = new System.Drawing.Point(265, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
-            this.dtpTo.Location = new System.Drawing.Point(265, 42);
-            this.dtpTo.Width = 220;
-
-            System.Windows.Forms.Label lblDoc = new System.Windows.Forms.Label { Text = "Doctor Filter", Location = new System.Drawing.Point(510, 20), AutoSize = true, Font = new System.Drawing.Font("Segoe UI Semibold", 8.5f) };
-            this.cmbDoctor.Location = new System.Drawing.Point(510, 42);
-            this.cmbDoctor.Width = 260;
-            this.cmbDoctor.Height = 35;
-            this.cmbDoctor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-
-            this.btnPreview.Text = "👁️ Preview";
-            this.btnPreview.BackColor = clrWhite;
-            this.btnPreview.FlatStyle = FlatStyle.Flat;
-            this.btnPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
-            this.btnPreview.Size = new System.Drawing.Size(120, 35);
-            this.btnPreview.Location = new System.Drawing.Point(1000, 50);
-            this.btnPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.btnPreview.Click += (s, e) => UpdateInstantPreview();
-
-            this.btnGenerateReport.Text = "🖨️ Generate";
-            this.btnGenerateReport.BackColor = clrWhite;
-            this.btnGenerateReport.FlatStyle = FlatStyle.Flat;
-            this.btnGenerateReport.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
-            this.btnGenerateReport.Size = new System.Drawing.Size(120, 35);
-            this.btnGenerateReport.Location = new System.Drawing.Point(1130, 50);
-            this.btnGenerateReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-
-            this.pnlFilters.Controls.AddRange(new System.Windows.Forms.Control[] { this.lblFiltersTitle, lblFrom, this.dtpFrom, lblTo, this.dtpTo, lblDoc, this.cmbDoctor, this.btnPreview, this.btnGenerateReport });
-
-            // Preview Section
-            this.pnlPreview.BackColor = clrWhite;
-            this.pnlPreview.Location = new System.Drawing.Point(30, 510);
-            this.pnlPreview.Size = new System.Drawing.Size(1280, 280);
-            this.pnlPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-
-            this.wvPreview = new Microsoft.Web.WebView2.WinForms.WebView2();
-            ((System.ComponentModel.ISupportInitialize)(this.wvPreview)).BeginInit();
-            this.wvPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.wvPreview.Name = "wvPreview";
-            
-            this.pnlPreview.Controls.Add(this.wvPreview);
-            ((System.ComponentModel.ISupportInitialize)(this.wvPreview)).EndInit();
-
-            // Form
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1600, 900);
-            this.Controls.Add(this.pnlContent);
-            this.Controls.Add(this.pnlTopBar);
-            this.Controls.Add(this.pnlSidebar);
-            this.Name = "Admin_Report";
-            this.Text = "RecoverEase - System Reports";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.pnlSidebar.ResumeLayout(false);
-            this.pnlLogoArea.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-            this.pnlSidebarBottom.ResumeLayout(false);
-            this.pnlSidebarBottom.PerformLayout();
-            this.pnlTopBar.ResumeLayout(false);
-            this.pnlTopBar.PerformLayout();
-            this.pnlAvatarTop.ResumeLayout(false);
-            this.pnlContent.ResumeLayout(false);
-            this.pnlFilters.ResumeLayout(false);
-            this.pnlFilters.PerformLayout();
-            this.pnlPreview.ResumeLayout(false);
-            this.pnlPreview.PerformLayout();
-            this.ResumeLayout(false);
+            pnlSidebar = new Panel();
+            pnlSidebarBottom = new Panel();
+            btnNavProfile = new Panel();
+            btnNavReports = new Panel();
+            btnNavPatients = new Panel();
+            btnNavStaff = new Panel();
+            btnNavDashboard = new Panel();
+            pnlNavDivider = new Panel();
+            pnlLogoArea = new Panel();
+            picLogo = new PictureBox();
+            lblNavDashIcon = new Label();
+            lblNavDashText = new Label();
+            lblNavStaffIcon = new Label();
+            lblNavStaffText = new Label();
+            lblNavPatientsIcon = new Label();
+            lblNavPatientsText = new Label();
+            lblNavReportsIcon = new Label();
+            lblNavReportsText = new Label();
+            lblSidebarFooter = new Label();
+            btnLogout = new Button();
+            lblNavProfileIcon = new Label();
+            lblNavProfileText = new Label();
+            pnlTopBar = new Panel();
+            lblPageTitle = new Label();
+            pnlAvatarTop = new Panel();
+            lblAvatarInitials = new Label();
+            pnlContent = new Panel();
+            pnlPreview = new Panel();
+            wvPreview = new Microsoft.Web.WebView2.WinForms.WebView2();
+            pnlFilters = new Panel();
+            lblFrom = new Label();
+            dtpFrom = new DateTimePicker();
+            lblTo = new Label();
+            dtpTo = new DateTimePicker();
+            lblDoc = new Label();
+            cmbDoctor = new ComboBox();
+            btnPreview = new Button();
+            btnGenerateReport = new Button();
+            pnlReportSelection = new TableLayoutPanel();
+            lblSelectReportTitle = new Label();
+            lblPreviewTitle = new Label();
+            btnPrintReport = new Button();
+            pnlSidebar.SuspendLayout();
+            pnlLogoArea.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picLogo).BeginInit();
+            pnlTopBar.SuspendLayout();
+            pnlAvatarTop.SuspendLayout();
+            pnlContent.SuspendLayout();
+            pnlPreview.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)wvPreview).BeginInit();
+            pnlFilters.SuspendLayout();
+            SuspendLayout();
+            // 
+            // pnlSidebar
+            // 
+            pnlSidebar.Controls.Add(pnlSidebarBottom);
+            pnlSidebar.Controls.Add(btnNavProfile);
+            pnlSidebar.Controls.Add(btnNavReports);
+            pnlSidebar.Controls.Add(btnNavPatients);
+            pnlSidebar.Controls.Add(btnNavStaff);
+            pnlSidebar.Controls.Add(btnNavDashboard);
+            pnlSidebar.Controls.Add(pnlNavDivider);
+            pnlSidebar.Controls.Add(pnlLogoArea);
+            pnlSidebar.Dock = DockStyle.Left;
+            pnlSidebar.Location = new Point(0, 0);
+            pnlSidebar.Name = "pnlSidebar";
+            pnlSidebar.Size = new Size(260, 900);
+            pnlSidebar.TabIndex = 0;
+            // 
+            // pnlSidebarBottom
+            // 
+            pnlSidebarBottom.Dock = DockStyle.Bottom;
+            pnlSidebarBottom.Location = new Point(0, 840);
+            pnlSidebarBottom.Name = "pnlSidebarBottom";
+            pnlSidebarBottom.Size = new Size(260, 60);
+            pnlSidebarBottom.TabIndex = 7;
+            // 
+            // btnNavProfile
+            // 
+            btnNavProfile.Location = new Point(0, 0);
+            btnNavProfile.Name = "btnNavProfile";
+            btnNavProfile.Size = new Size(200, 100);
+            btnNavProfile.TabIndex = 8;
+            // 
+            // btnNavReports
+            // 
+            btnNavReports.Location = new Point(0, 0);
+            btnNavReports.Name = "btnNavReports";
+            btnNavReports.Size = new Size(200, 100);
+            btnNavReports.TabIndex = 9;
+            // 
+            // btnNavPatients
+            // 
+            btnNavPatients.Location = new Point(0, 0);
+            btnNavPatients.Name = "btnNavPatients";
+            btnNavPatients.Size = new Size(200, 100);
+            btnNavPatients.TabIndex = 10;
+            // 
+            // btnNavStaff
+            // 
+            btnNavStaff.Location = new Point(0, 0);
+            btnNavStaff.Name = "btnNavStaff";
+            btnNavStaff.Size = new Size(200, 100);
+            btnNavStaff.TabIndex = 11;
+            // 
+            // btnNavDashboard
+            // 
+            btnNavDashboard.Location = new Point(0, 0);
+            btnNavDashboard.Name = "btnNavDashboard";
+            btnNavDashboard.Size = new Size(200, 100);
+            btnNavDashboard.TabIndex = 12;
+            // 
+            // pnlNavDivider
+            // 
+            pnlNavDivider.BackColor = Color.FromArgb(226, 232, 240);
+            pnlNavDivider.Dock = DockStyle.Top;
+            pnlNavDivider.Location = new Point(0, 120);
+            pnlNavDivider.Name = "pnlNavDivider";
+            pnlNavDivider.Size = new Size(260, 1);
+            pnlNavDivider.TabIndex = 1;
+            // 
+            // pnlLogoArea
+            // 
+            pnlLogoArea.BackColor = Color.FromArgb(238, 243, 247);
+            pnlLogoArea.Controls.Add(picLogo);
+            pnlLogoArea.Dock = DockStyle.Top;
+            pnlLogoArea.Location = new Point(0, 0);
+            pnlLogoArea.Name = "pnlLogoArea";
+            pnlLogoArea.Padding = new Padding(35, 25, 35, 15);
+            pnlLogoArea.Size = new Size(260, 120);
+            pnlLogoArea.TabIndex = 0;
+            // 
+            // picLogo
+            // 
+            picLogo.Dock = DockStyle.Fill;
+            picLogo.Location = new Point(35, 25);
+            picLogo.Name = "picLogo";
+            picLogo.Size = new Size(190, 80);
+            picLogo.SizeMode = PictureBoxSizeMode.Zoom;
+            picLogo.TabIndex = 0;
+            picLogo.TabStop = false;
+            // 
+            // lblNavDashIcon
+            // 
+            lblNavDashIcon.Location = new Point(0, 0);
+            lblNavDashIcon.Name = "lblNavDashIcon";
+            lblNavDashIcon.Size = new Size(100, 23);
+            lblNavDashIcon.TabIndex = 0;
+            // 
+            // lblNavDashText
+            // 
+            lblNavDashText.Location = new Point(0, 0);
+            lblNavDashText.Name = "lblNavDashText";
+            lblNavDashText.Size = new Size(100, 23);
+            lblNavDashText.TabIndex = 0;
+            // 
+            // lblNavStaffIcon
+            // 
+            lblNavStaffIcon.Location = new Point(0, 0);
+            lblNavStaffIcon.Name = "lblNavStaffIcon";
+            lblNavStaffIcon.Size = new Size(100, 23);
+            lblNavStaffIcon.TabIndex = 0;
+            // 
+            // lblNavStaffText
+            // 
+            lblNavStaffText.Location = new Point(0, 0);
+            lblNavStaffText.Name = "lblNavStaffText";
+            lblNavStaffText.Size = new Size(100, 23);
+            lblNavStaffText.TabIndex = 0;
+            // 
+            // lblNavPatientsIcon
+            // 
+            lblNavPatientsIcon.Location = new Point(0, 0);
+            lblNavPatientsIcon.Name = "lblNavPatientsIcon";
+            lblNavPatientsIcon.Size = new Size(100, 23);
+            lblNavPatientsIcon.TabIndex = 0;
+            // 
+            // lblNavPatientsText
+            // 
+            lblNavPatientsText.Location = new Point(0, 0);
+            lblNavPatientsText.Name = "lblNavPatientsText";
+            lblNavPatientsText.Size = new Size(100, 23);
+            lblNavPatientsText.TabIndex = 0;
+            // 
+            // lblNavReportsIcon
+            // 
+            lblNavReportsIcon.Location = new Point(0, 0);
+            lblNavReportsIcon.Name = "lblNavReportsIcon";
+            lblNavReportsIcon.Size = new Size(100, 23);
+            lblNavReportsIcon.TabIndex = 0;
+            // 
+            // lblNavReportsText
+            // 
+            lblNavReportsText.Location = new Point(0, 0);
+            lblNavReportsText.Name = "lblNavReportsText";
+            lblNavReportsText.Size = new Size(100, 23);
+            lblNavReportsText.TabIndex = 0;
+            // 
+            // lblSidebarFooter
+            // 
+            lblSidebarFooter.Dock = DockStyle.Fill;
+            lblSidebarFooter.Font = new Font("Segoe UI", 8F);
+            lblSidebarFooter.ForeColor = Color.FromArgb(160, 174, 192);
+            lblSidebarFooter.Location = new Point(0, 0);
+            lblSidebarFooter.Name = "lblSidebarFooter";
+            lblSidebarFooter.Size = new Size(100, 23);
+            lblSidebarFooter.TabIndex = 0;
+            lblSidebarFooter.Text = "RecoverEase Admin Portal";
+            lblSidebarFooter.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnLogout
+            // 
+            btnLogout.FlatAppearance.BorderSize = 0;
+            btnLogout.FlatStyle = FlatStyle.Flat;
+            btnLogout.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            btnLogout.ForeColor = Color.FromArgb(68, 68, 68);
+            btnLogout.Location = new Point(16, 32);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(188, 26);
+            btnLogout.TabIndex = 1;
+            btnLogout.Text = "⇠  Sign Out";
+            btnLogout.TextAlign = ContentAlignment.MiddleLeft;
+            btnLogout.Visible = false;
+            // 
+            // lblNavProfileIcon
+            // 
+            lblNavProfileIcon.Location = new Point(0, 0);
+            lblNavProfileIcon.Name = "lblNavProfileIcon";
+            lblNavProfileIcon.Size = new Size(100, 23);
+            lblNavProfileIcon.TabIndex = 0;
+            // 
+            // lblNavProfileText
+            // 
+            lblNavProfileText.Location = new Point(0, 0);
+            lblNavProfileText.Name = "lblNavProfileText";
+            lblNavProfileText.Size = new Size(100, 23);
+            lblNavProfileText.TabIndex = 0;
+            // 
+            // pnlTopBar
+            // 
+            pnlTopBar.BackColor = Color.White;
+            pnlTopBar.Controls.Add(lblPageTitle);
+            pnlTopBar.Controls.Add(pnlAvatarTop);
+            pnlTopBar.Dock = DockStyle.Top;
+            pnlTopBar.Location = new Point(260, 0);
+            pnlTopBar.Name = "pnlTopBar";
+            pnlTopBar.Size = new Size(1340, 80);
+            pnlTopBar.TabIndex = 1;
+            // 
+            // lblPageTitle
+            // 
+            lblPageTitle.AutoSize = true;
+            lblPageTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblPageTitle.ForeColor = Color.FromArgb(27, 58, 107);
+            lblPageTitle.Location = new Point(24, 22);
+            lblPageTitle.Name = "lblPageTitle";
+            lblPageTitle.Size = new Size(380, 41);
+            lblPageTitle.TabIndex = 0;
+            lblPageTitle.Text = "System Analytics & Reports";
+            // 
+            // pnlAvatarTop
+            // 
+            pnlAvatarTop.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pnlAvatarTop.BackColor = Color.FromArgb(0, 168, 168);
+            pnlAvatarTop.Controls.Add(lblAvatarInitials);
+            pnlAvatarTop.Location = new Point(1270, 20);
+            pnlAvatarTop.Name = "pnlAvatarTop";
+            pnlAvatarTop.Size = new Size(40, 40);
+            pnlAvatarTop.TabIndex = 2;
+            pnlAvatarTop.Visible = false;
+            // 
+            // lblAvatarInitials
+            // 
+            lblAvatarInitials.Dock = DockStyle.Fill;
+            lblAvatarInitials.Font = new Font("Segoe UI Semibold", 11F, FontStyle.Bold);
+            lblAvatarInitials.ForeColor = Color.White;
+            lblAvatarInitials.Location = new Point(0, 0);
+            lblAvatarInitials.Name = "lblAvatarInitials";
+            lblAvatarInitials.Size = new Size(40, 40);
+            lblAvatarInitials.TabIndex = 0;
+            lblAvatarInitials.Text = "AD";
+            lblAvatarInitials.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlContent
+            // 
+            pnlContent.BackColor = Color.FromArgb(242, 247, 250);
+            pnlContent.Controls.Add(pnlPreview);
+            pnlContent.Controls.Add(pnlFilters);
+            pnlContent.Controls.Add(pnlReportSelection);
+            pnlContent.Controls.Add(lblSelectReportTitle);
+            pnlContent.Dock = DockStyle.Fill;
+            pnlContent.Location = new Point(260, 80);
+            pnlContent.Name = "pnlContent";
+            pnlContent.Padding = new Padding(30);
+            pnlContent.Size = new Size(1340, 820);
+            pnlContent.TabIndex = 2;
+            // 
+            // pnlPreview
+            // 
+            pnlPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlPreview.BackColor = Color.White;
+            pnlPreview.BorderStyle = BorderStyle.FixedSingle;
+            pnlPreview.Controls.Add(wvPreview);
+            pnlPreview.Location = new Point(30, 510);
+            pnlPreview.Name = "pnlPreview";
+            pnlPreview.Size = new Size(1280, 280);
+            pnlPreview.TabIndex = 0;
+            // 
+            // wvPreview
+            // 
+            wvPreview.AllowExternalDrop = true;
+            wvPreview.CreationProperties = null;
+            wvPreview.DefaultBackgroundColor = Color.White;
+            wvPreview.Dock = DockStyle.Fill;
+            wvPreview.Location = new Point(0, 0);
+            wvPreview.Name = "wvPreview";
+            wvPreview.Size = new Size(1278, 278);
+            wvPreview.TabIndex = 0;
+            wvPreview.ZoomFactor = 1D;
+            // 
+            // pnlFilters
+            // 
+            pnlFilters.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFilters.BackColor = Color.White;
+            pnlFilters.BorderStyle = BorderStyle.FixedSingle;
+            pnlFilters.Controls.Add(lblFrom);
+            pnlFilters.Controls.Add(dtpFrom);
+            pnlFilters.Controls.Add(lblTo);
+            pnlFilters.Controls.Add(dtpTo);
+            pnlFilters.Controls.Add(lblDoc);
+            pnlFilters.Controls.Add(cmbDoctor);
+            pnlFilters.Controls.Add(btnPreview);
+            pnlFilters.Controls.Add(btnGenerateReport);
+            pnlFilters.Location = new Point(30, 390);
+            pnlFilters.Name = "pnlFilters";
+            pnlFilters.Size = new Size(1280, 100);
+            pnlFilters.TabIndex = 1;
+            // 
+            // lblFrom
+            // 
+            lblFrom.Location = new Point(0, 0);
+            lblFrom.Name = "lblFrom";
+            lblFrom.Size = new Size(100, 23);
+            lblFrom.TabIndex = 0;
+            // 
+            // dtpFrom
+            // 
+            dtpFrom.Location = new Point(24, 42);
+            dtpFrom.Name = "dtpFrom";
+            dtpFrom.Size = new Size(264, 27);
+            dtpFrom.TabIndex = 1;
+            // 
+            // lblTo
+            // 
+            lblTo.Location = new Point(0, 0);
+            lblTo.Name = "lblTo";
+            lblTo.Size = new Size(100, 23);
+            lblTo.TabIndex = 2;
+            // 
+            // dtpTo
+            // 
+            dtpTo.Location = new Point(306, 41);
+            dtpTo.Name = "dtpTo";
+            dtpTo.Size = new Size(264, 27);
+            dtpTo.TabIndex = 3;
+            // 
+            // lblDoc
+            // 
+            lblDoc.Location = new Point(0, 0);
+            lblDoc.Name = "lblDoc";
+            lblDoc.Size = new Size(100, 23);
+            lblDoc.TabIndex = 4;
+            // 
+            // cmbDoctor
+            // 
+            cmbDoctor.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDoctor.Location = new Point(599, 41);
+            cmbDoctor.Name = "cmbDoctor";
+            cmbDoctor.Size = new Size(260, 28);
+            cmbDoctor.TabIndex = 5;
+            // 
+            // btnPreview
+            // 
+            btnPreview.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnPreview.BackColor = Color.White;
+            btnPreview.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+            btnPreview.FlatStyle = FlatStyle.Flat;
+            btnPreview.Location = new Point(1000, 50);
+            btnPreview.Name = "btnPreview";
+            btnPreview.Size = new Size(120, 35);
+            btnPreview.TabIndex = 6;
+            btnPreview.Text = "👁️ Preview";
+            btnPreview.UseVisualStyleBackColor = false;
+            // 
+            // btnGenerateReport
+            // 
+            btnGenerateReport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnGenerateReport.BackColor = Color.White;
+            btnGenerateReport.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+            btnGenerateReport.FlatStyle = FlatStyle.Flat;
+            btnGenerateReport.Location = new Point(1130, 50);
+            btnGenerateReport.Name = "btnGenerateReport";
+            btnGenerateReport.Size = new Size(120, 35);
+            btnGenerateReport.TabIndex = 7;
+            btnGenerateReport.Text = "🖨️ Generate";
+            btnGenerateReport.UseVisualStyleBackColor = false;
+            // 
+            // pnlReportSelection
+            // 
+            pnlReportSelection.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlReportSelection.BackColor = Color.Transparent;
+            pnlReportSelection.ColumnCount = 3;
+            pnlReportSelection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+            pnlReportSelection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+            pnlReportSelection.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.33F));
+            pnlReportSelection.Location = new Point(30, 50);
+            pnlReportSelection.Name = "pnlReportSelection";
+            pnlReportSelection.RowCount = 2;
+            pnlReportSelection.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            pnlReportSelection.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+            pnlReportSelection.Size = new Size(1280, 320);
+            pnlReportSelection.TabIndex = 2;
+            // 
+            // lblSelectReportTitle
+            // 
+            lblSelectReportTitle.AutoSize = true;
+            lblSelectReportTitle.Font = new Font("Segoe UI Semibold", 10F, FontStyle.Bold);
+            lblSelectReportTitle.ForeColor = Color.FromArgb(100, 116, 139);
+            lblSelectReportTitle.Location = new Point(30, 20);
+            lblSelectReportTitle.Name = "lblSelectReportTitle";
+            lblSelectReportTitle.Size = new Size(262, 23);
+            lblSelectReportTitle.TabIndex = 3;
+            lblSelectReportTitle.Text = "SELECT A REPORT TO GENERATE";
+            // 
+            // lblPreviewTitle
+            // 
+            lblPreviewTitle.Location = new Point(0, 0);
+            lblPreviewTitle.Name = "lblPreviewTitle";
+            lblPreviewTitle.Size = new Size(100, 23);
+            lblPreviewTitle.TabIndex = 0;
+            // 
+            // btnPrintReport
+            // 
+            btnPrintReport.Location = new Point(0, 0);
+            btnPrintReport.Name = "btnPrintReport";
+            btnPrintReport.Size = new Size(75, 23);
+            btnPrintReport.TabIndex = 0;
+            // 
+            // Admin_Report
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1600, 900);
+            Controls.Add(pnlContent);
+            Controls.Add(pnlTopBar);
+            Controls.Add(pnlSidebar);
+            Name = "Admin_Report";
+            Text = "RecoverEase - System Reports";
+            WindowState = FormWindowState.Maximized;
+            pnlSidebar.ResumeLayout(false);
+            pnlLogoArea.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)picLogo).EndInit();
+            pnlTopBar.ResumeLayout(false);
+            pnlTopBar.PerformLayout();
+            pnlAvatarTop.ResumeLayout(false);
+            pnlContent.ResumeLayout(false);
+            pnlContent.PerformLayout();
+            pnlPreview.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)wvPreview).EndInit();
+            pnlFilters.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
 
         private void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive, System.Drawing.Color activeColor, System.Drawing.Color whiteColor)
         {
+            pnl.SuspendLayout();
             pnl.Cursor = System.Windows.Forms.Cursors.Hand;
             pnl.Dock = System.Windows.Forms.DockStyle.Top;
-            pnl.Size = new System.Drawing.Size(260, 48);
-            if (isActive) pnl.BackColor = activeColor;
-            ico.AutoSize = true;
+            pnl.Height = 56;
+            pnl.BackColor = isActive ? activeColor : System.Drawing.Color.Transparent;
+
+            ico.AutoSize = false;
+            ico.Size = new System.Drawing.Size(56, 56);
+            ico.Location = new System.Drawing.Point(0, 0);
             ico.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            ico.Location = new System.Drawing.Point(20, 11);
+            ico.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             ico.Text = icoChar;
-            txt.AutoSize = true;
-            txt.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+
+            txt.AutoSize = false;
+            txt.Size = new System.Drawing.Size(190, 56);
+            txt.Location = new System.Drawing.Point(56, 0);
+            txt.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            txt.Location = new System.Drawing.Point(64, 13);
+            txt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             txt.Text = label;
+
+            pnl.Controls.Clear();
             pnl.Controls.Add(ico);
             pnl.Controls.Add(txt);
+            pnl.ResumeLayout(false);
+            pnl.PerformLayout();
         }
 
         private int _cardCount = 0;
@@ -365,11 +568,11 @@ namespace elnet_recoverease.Admin
             _cardCount++;
             
             card.Tag = title;
-            card.Click += (s, e) => SelectCard(card);
+            card.Click += new EventHandler(HandleCardClick);
             
             foreach (System.Windows.Forms.Control child in card.Controls)
             {
-                child.Click += (s, e) => SelectCard(card);
+                child.Click += new EventHandler(HandleCardClick);
             }
         }
 
@@ -414,6 +617,9 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Panel btnNavReports;
         private System.Windows.Forms.Label lblNavReportsIcon;
         private System.Windows.Forms.Label lblNavReportsText;
+        private System.Windows.Forms.Panel btnNavProfile;
+        private System.Windows.Forms.Label lblNavProfileIcon;
+        private System.Windows.Forms.Label lblNavProfileText;
         private System.Windows.Forms.Panel pnlSidebarBottom;
         private System.Windows.Forms.Label lblSidebarFooter;
         private System.Windows.Forms.Button btnLogout;
@@ -428,7 +634,6 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Panel pnlFilters;
         private System.Windows.Forms.Panel pnlPreview;
         private System.Windows.Forms.Label lblSelectReportTitle;
-        private System.Windows.Forms.Label lblFiltersTitle;
         private System.Windows.Forms.DateTimePicker dtpFrom;
         private System.Windows.Forms.DateTimePicker dtpTo;
         private System.Windows.Forms.ComboBox cmbDoctor;
@@ -436,5 +641,8 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Button btnGenerateReport;
         private System.Windows.Forms.Button btnPrintReport;
         private Microsoft.Web.WebView2.WinForms.WebView2 wvPreview;
+        private Label lblFrom;
+        private Label lblTo;
+        private Label lblDoc;
     }
 }

@@ -27,7 +27,7 @@ namespace elnet_recoverease.Doctor
 
             SetLogo();
             InitializeUI();
-            LoadPatients();
+            LoadPatientsData();
         }
 
         private void SetLogo()
@@ -47,39 +47,68 @@ namespace elnet_recoverease.Doctor
                 lblAvatarInitials.Text = GetInitials(_doctor.FullName);
             }
 
-            // Navigation Handlers
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => { });
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            // Navigation Handlers - Classic way (No lambdas)
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            btnLogout.Click += new EventHandler(btnLogout_Click);
 
             // Action Handlers
-            btnSearch.Click += (s, e) => LoadPatients(txtSearch.Text);
-            txtSearch.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) LoadPatients(txtSearch.Text); };
+            btnSearch.Click += new EventHandler(btnSearch_Click);
+            txtSearch.KeyDown += new KeyEventHandler(txtSearch_KeyDown);
+            btnAddPatient.Click += new EventHandler(btnAddPatient_Click);
 
-            btnAddPatient.Click += (s, e) => {
-                using (var regForm = new Register_Patient())
-                {
-                    if (regForm.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadPatients();
-                    }
-                }
-            };
-
-            dgvPatients.CellContentClick += dgvPatients_CellContentClick;
-            dgvPatients.CellPainting += Dgv_CellPainting;
+            dgvPatients.CellContentClick += new DataGridViewCellEventHandler(dgvPatients_CellContentClick);
+            dgvPatients.CellPainting += new DataGridViewCellPaintingEventHandler(Dgv_CellPainting);
         }
 
-        private void AttachNavEvents(Panel pnl, Action action)
+        private void btnNavDashboard_Click(object sender, EventArgs e)
         {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavAppointments_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Appointments());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Reports());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Profile());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            LoadPatientsData(txtSearch.Text);
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
             {
-                c.Click += (s, e) => action();
-                c.Cursor = Cursors.Hand;
+                LoadPatientsData(txtSearch.Text);
+            }
+        }
+
+        private void btnAddPatient_Click(object sender, EventArgs e)
+        {
+            using (var regForm = new Register_Patient())
+            {
+                if (regForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadPatientsData();
+                }
             }
         }
 
@@ -90,42 +119,52 @@ namespace elnet_recoverease.Doctor
             return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
         }
 
-        private async void LoadPatients(string searchTerm = "")
+        private async void LoadPatientsData(string searchTerm = "")
         {
             try
             {
                 if (_doctor == null) return;
 
-                var query = _db.Patients
-                    .Where(p => p.AttendingDoctor == _doctor.FullName);
+                // Optimization: Fetch everything in ONE query to avoid N+1 problem
+                var query = _db.Patients.Where(p => p.AttendingDoctor == _doctor.FullName);
 
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
                     query = query.Where(p => p.FullName.Contains(searchTerm) || p.PatientCode.Contains(searchTerm));
                 }
 
-                var patients = await query.OrderBy(p => p.FullName).ToListAsync();
+                // Project into a simplified model including the last appointment date in one trip
+                var patientData = await query
+                    .OrderBy(p => p.FullName)
+                    .Select(p => new {
+                        p.PatientID,
+                        p.PatientCode,
+                        p.FullName,
+                        p.EmergencyPhone,
+                        LastVisitDate = _db.Appointments
+                            .Where(a => a.PatientID == p.PatientID && a.Status == "Completed")
+                            .OrderByDescending(a => a.AppointmentDate)
+                            .Select(a => a.AppointmentDate)
+                            .FirstOrDefault()
+                    })
+                    .ToListAsync();
 
                 dgvPatients.Rows.Clear();
-                foreach (var p in patients)
+                foreach (var item in patientData)
                 {
-                    // Find last visit
-                    var lastAppt = await _db.Appointments
-                        .Where(a => a.PatientID == p.PatientID && a.Status == "Completed")
-                        .OrderByDescending(a => a.AppointmentDate)
-                        .FirstOrDefaultAsync();
+                    string lastVisitStr = item.LastVisitDate.HasValue 
+                        ? item.LastVisitDate.Value.ToString("MM/dd/yyyy") 
+                        : "Never";
 
-                    string lastVisitStr = lastAppt != null ? lastAppt.AppointmentDate?.ToString("MM/dd/yyyy") ?? "N/A" : "Never";
-
-            dgvPatients.Rows.Add(
-                        p.PatientCode ?? p.PatientID.ToString(),
-                        p.FullName,
-                        p.EmergencyPhone ?? "N/A",
+                    int rowIndex = dgvPatients.Rows.Add(
+                        item.PatientCode ?? item.PatientID.ToString(),
+                        item.FullName,
+                        item.EmergencyPhone ?? "N/A",
                         lastVisitStr,
                         "Details",
                         "Schedule"
                     );
-                    dgvPatients.Rows[dgvPatients.Rows.Count - 1].Tag = p.PatientID;
+                    dgvPatients.Rows[rowIndex].Tag = item.PatientID;
                 }
             }
             catch (Exception ex)
@@ -158,6 +197,7 @@ namespace elnet_recoverease.Doctor
             var detailsForm = new Patient_Details(patientId);
             NavigationHelper.SwitchForm(this, detailsForm);
         }
+
         private void Dgv_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0) return;

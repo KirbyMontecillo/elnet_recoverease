@@ -7,12 +7,52 @@ namespace elnet_recoverease.Core
     {
         public static void WireNavButton(Panel pnl, Action action)
         {
-            pnl.Click += (s, e) => action();
+            pnl.Tag = action;
+            pnl.Click += new EventHandler(NavAction_Click);
             foreach (Control ctrl in pnl.Controls)
             {
-                ctrl.Click += (s, e) => action();
+                ctrl.Tag = action;
+                ctrl.Click += new EventHandler(NavAction_Click);
                 if (ctrl is Panel childPnl) WireNavButton(childPnl, action);
             }
+        }
+
+        private static void NavAction_Click(object sender, EventArgs e)
+        {
+            if (sender is Control ctrl && ctrl.Tag is Action action)
+            {
+                action();
+            }
+        }
+
+        public static void WireNavButton(Panel pnl, EventHandler handler)
+        {
+            pnl.Click += handler;
+            foreach (Control ctrl in pnl.Controls)
+            {
+                // We want clicking the control to fire the panel's handler but passing the panel as sender
+                // We use a wrapper to handle this without lambdas
+                var wrapper = new NavHandlerWrapper(pnl, handler);
+                ctrl.Tag = wrapper;
+                ctrl.Click += new EventHandler(NavHandler_Click);
+                
+                if (ctrl is Panel childPnl) WireNavButton(childPnl, handler);
+            }
+        }
+
+        private static void NavHandler_Click(object sender, EventArgs e)
+        {
+            if (sender is Control ctrl && ctrl.Tag is NavHandlerWrapper wrapper)
+            {
+                wrapper.Handler(wrapper.Panel, e);
+            }
+        }
+
+        private class NavHandlerWrapper
+        {
+            public Panel Panel { get; }
+            public EventHandler Handler { get; }
+            public NavHandlerWrapper(Panel p, EventHandler h) { Panel = p; Handler = h; }
         }
 
         public static void SwitchForm(Form current, Form target)
@@ -28,12 +68,15 @@ namespace elnet_recoverease.Core
             }
             
             // Handle target form closure to exit application if it's the only one left
-            target.FormClosed += (s, e) => {
-                if (Application.OpenForms.Count == 0 || (Application.OpenForms.Count == 1 && Application.OpenForms[0] is Login))
-                {
-                    // Logic to exit or show login
-                }
-            };
+            target.FormClosed += new FormClosedEventHandler(TargetForm_Closed);
+        }
+
+        private static void TargetForm_Closed(object sender, FormClosedEventArgs e)
+        {
+            if (Application.OpenForms.Count == 0 || (Application.OpenForms.Count == 1 && Application.OpenForms[0] is Login))
+            {
+                // Logic to exit or show login
+            }
         }
 
         public static void Logout(Form current)

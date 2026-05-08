@@ -43,7 +43,12 @@ namespace elnet_recoverease.Doctor
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
 
             _appointmentId = appointmentId;
-            this.Load += async (s, e) => await InitializeSession();
+            this.Load += new EventHandler(Clinical_Session_Load);
+        }
+
+        private async void Clinical_Session_Load(object sender, EventArgs e)
+        {
+            await InitializeSession();
         }
 
         private async Task InitializeSession()
@@ -80,8 +85,8 @@ namespace elnet_recoverease.Doctor
                 txtHeight.Text = _appt.Height;
                 txtBMI.Text = _appt.BMI;
 
-                txtWeight.TextChanged += (s, e) => CalculateBMI();
-                txtHeight.TextChanged += (s, e) => CalculateBMI();
+                txtWeight.TextChanged += new EventHandler(txtWeight_TextChanged);
+                txtHeight.TextChanged += new EventHandler(txtHeight_TextChanged);
 
                 if (!string.IsNullOrEmpty(patient?.BloodType))
                 {
@@ -101,14 +106,13 @@ namespace elnet_recoverease.Doctor
                 cmbMeds.SelectedIndex = -1; 
                 cmbMeds.Text = "";
 
-                cmbMeds.SelectedIndexChanged += (s, e) => {
-                    if (cmbMeds.SelectedItem is Medication m) txtDosageUnit.Text = m.DosageUnit;
-                };
+                cmbMeds.SelectedIndexChanged += new EventHandler(cmbMeds_SelectedIndexChanged);
 
                 UpdatePrescriptionGrid();
 
                 if (_appt.Status == "Completed")
                 {
+                    await LoadPrescriptionsForCompletedSession();
                     SetReadOnly();
                 }
             }
@@ -116,6 +120,71 @@ namespace elnet_recoverease.Doctor
             {
                 MessageBox.Show("Error starting session: " + ex.Message);
             }
+        }
+
+        private async Task LoadPrescriptionsForCompletedSession()
+        {
+            try
+            {
+                var schedules = await _db.MedicationSchedules
+                    .Where(m => m.AppointmentID == _appointmentId)
+                    .ToListAsync();
+
+                if (!schedules.Any() && _appt != null && _appt.PatientID.HasValue)
+                {
+                    // Fallback for older records where AppointmentID wasn't captured
+                    var apptDate = DateOnly.FromDateTime(_appt.AppointmentDate ?? DateTime.Today);
+                    schedules = await _db.MedicationSchedules
+                        .Where(m => m.PatientID == _appt.PatientID.Value 
+                                 && m.Notes == "Prescribed during clinical session." 
+                                 && m.ScheduledDate >= apptDate)
+                        .ToListAsync();
+                }
+
+                var grouped = schedules.GroupBy(m => new { m.MedicationID, m.MedicationName, m.DosageUnit, m.Frequency });
+
+                _prescribedMeds.Clear();
+                foreach (var g in grouped)
+                {
+                    var first = g.First();
+                    var dates = g.Select(m => m.ScheduledDate).Distinct().OrderBy(d => d).ToList();
+                    if (!dates.Any()) continue;
+
+                    var times = g.Where(m => m.ScheduledTime.HasValue)
+                                 .Select(m => m.ScheduledTime.Value)
+                                 .Distinct()
+                                 .OrderBy(t => t)
+                                 .ToList();
+
+                    _prescribedMeds.Add(new PrescriptionEntry
+                    {
+                        MedicationId = first.MedicationID,
+                        MedicationName = first.MedicationName ?? "Unknown",
+                        Dosage = first.DosageUnit ?? "N/A",
+                        Frequency = first.Frequency ?? "N/A",
+                        StartDate = dates.First(),
+                        EndDate = dates.Last(),
+                        DoseTimes = times
+                    });
+                }
+                UpdatePrescriptionGrid();
+            }
+            catch { }
+        }
+
+        private void txtWeight_TextChanged(object sender, EventArgs e)
+        {
+            CalculateBMI();
+        }
+
+        private void txtHeight_TextChanged(object sender, EventArgs e)
+        {
+            CalculateBMI();
+        }
+
+        private void cmbMeds_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbMeds.SelectedItem is Medication m) txtDosageUnit.Text = m.DosageUnit;
         }
 
         private void SetupSchedulingUI()
@@ -137,12 +206,9 @@ namespace elnet_recoverease.Doctor
                 Font = new Font("Segoe UI", 10)
             };
 
-            cmbFrequency.SelectedIndexChanged += (s, e) => {
-                UpdateIntervalDefault();
-                UpdateReminderLabel();
-            };
-            dtpIntakeTime.ValueChanged += (s, e) => UpdateReminderLabel();
-            txtInterval.TextChanged += (s, e) => UpdateReminderLabel();
+            cmbFrequency.SelectedIndexChanged += new EventHandler(cmbFrequency_SelectedIndexChanged);
+            dtpIntakeTime.ValueChanged += new EventHandler(dtpIntakeTime_ValueChanged);
+            txtInterval.TextChanged += new EventHandler(txtInterval_TextChanged);
 
             foreach (Control c in tpPrescription.Controls)
             {
@@ -158,6 +224,22 @@ namespace elnet_recoverease.Doctor
             dtpEndDate.Value = DateTime.Now.AddDays(7);
             
             UpdateIntervalDefault();
+            UpdateReminderLabel();
+        }
+
+        private void cmbFrequency_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateIntervalDefault();
+            UpdateReminderLabel();
+        }
+
+        private void dtpIntakeTime_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateReminderLabel();
+        }
+
+        private void txtInterval_TextChanged(object sender, EventArgs e)
+        {
             UpdateReminderLabel();
         }
 
@@ -366,34 +448,16 @@ namespace elnet_recoverease.Doctor
                     Margin = new Padding(0, 0, 0, 15)
                 };
                 card.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, card.Width, card.Height, 15, 15));
-                card.Paint += (s, e) => {
-                    using (Pen p = new Pen(Color.FromArgb(20, 35, 65), 1))
-                    {
-                        e.Graphics.DrawRectangle(p, 0, 0, card.Width - 1, card.Height - 1);
-                    }
-                };
+                card.Paint += new PaintEventHandler(PrescriptionCard_Paint);
 
                 var lblIcon = new Label { Text = "🔗", Location = new Point(20, 20), AutoSize = true, Font = new Font("Segoe UI", 12) };
                 var lblName = new Label { Text = entry.MedicationName, Location = new Point(60, 20), Font = new Font("Segoe UI", 11, FontStyle.Bold), AutoSize = true };
                 
                 var flpBadges = new FlowLayoutPanel { Location = new Point(20, 55), Size = new Size(600, 30), BackColor = Color.Transparent };
                 
-                var addBadge = new Action<string, string>((text, icon) => {
-                    var b = new Label {
-                        Text = $"{icon} {text}",
-                        BackColor = Color.FromArgb(245, 245, 240),
-                        Padding = new Padding(8, 3, 8, 3),
-                        AutoSize = true,
-                        Font = new Font("Segoe UI", 8.5f),
-                        Margin = new Padding(0, 0, 8, 0)
-                    };
-                    b.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, b.PreferredWidth, b.PreferredHeight, 8, 8));
-                    flpBadges.Controls.Add(b);
-                });
-
-                addBadge(entry.Dosage, "💧");
-                addBadge(entry.Frequency, "🔁");
-                addBadge($"{entry.StartDate:MM/dd/yyyy} - {entry.EndDate:MM/dd/yyyy}", "📅");
+                AddBadgeToPanel(flpBadges, entry.Dosage, "💧");
+                AddBadgeToPanel(flpBadges, entry.Frequency, "🔁");
+                AddBadgeToPanel(flpBadges, $"{entry.StartDate:MM/dd/yyyy} - {entry.EndDate:MM/dd/yyyy}", "📅");
 
                 var lblTimes = new Label {
                     Text = "🕒 " + string.Join(" · ", entry.DoseTimes.Select(t => t.ToString("hh:mm tt"))),
@@ -409,16 +473,36 @@ namespace elnet_recoverease.Doctor
                     Location = new Point(850, 20),
                     FlatStyle = FlatStyle.Flat,
                     BackColor = Color.FromArgb(250, 240, 240),
-                    ForeColor = Color.DarkRed
+                    ForeColor = Color.DarkRed,
+                    Tag = entry
                 };
-                btnDelete.Click += (s, e) => {
-                    _prescribedMeds.Remove(entry);
-                    UpdatePrescriptionGrid();
-                };
+                btnDelete.Click += new EventHandler(btnDelete_Click);
                 if (_appt.Status == "Completed") btnDelete.Visible = false;
 
                 card.Controls.AddRange(new Control[] { lblIcon, lblName, flpBadges, lblTimes, btnDelete });
                 flpPrescriptions.Controls.Add(card);
+            }
+        }
+
+        private void PrescriptionCard_Paint(object sender, PaintEventArgs e)
+        {
+            Panel card = sender as Panel;
+            if (card != null)
+            {
+                using (Pen p = new Pen(Color.FromArgb(20, 35, 65), 1))
+                {
+                    e.Graphics.DrawRectangle(p, 0, 0, card.Width - 1, card.Height - 1);
+                }
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null && btn.Tag is PrescriptionEntry entry)
+            {
+                _prescribedMeds.Remove(entry);
+                UpdatePrescriptionGrid();
             }
         }
 
@@ -460,7 +544,8 @@ namespace elnet_recoverease.Doctor
                                 IsTaken = false,
                                 IsMissed = false,
                                 Status = "Pending",
-                                Notes = $"Prescribed during clinical session."
+                                Notes = $"Prescribed during clinical session.",
+                                AppointmentID = _appt.AppointmentID
                             });
                         }
                         else
@@ -478,7 +563,8 @@ namespace elnet_recoverease.Doctor
                                     IsTaken = false,
                                     IsMissed = false,
                                     Status = "Pending",
-                                    Notes = $"Prescribed during clinical session."
+                                    Notes = $"Prescribed during clinical session.",
+                                    AppointmentID = _appt.AppointmentID
                                 });
                             }
                         }
@@ -567,7 +653,21 @@ namespace elnet_recoverease.Doctor
             btnFinalize.Text = "Record Finalized";
             btnFinalize.BackColor = Color.Gray;
             btnCancel.Text = "Close View";
+        }
 
+        private void AddBadgeToPanel(FlowLayoutPanel panel, string text, string icon)
+        {
+            var b = new Label
+            {
+                Text = $"{icon} {text}",
+                BackColor = Color.FromArgb(245, 245, 240),
+                Padding = new Padding(8, 3, 8, 3),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 8.5f),
+                Margin = new Padding(0, 0, 8, 0)
+            };
+            b.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, b.PreferredWidth, b.PreferredHeight, 8, 8));
+            panel.Controls.Add(b);
         }
     }
 }

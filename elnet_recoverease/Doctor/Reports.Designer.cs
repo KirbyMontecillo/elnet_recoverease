@@ -127,7 +127,7 @@ namespace elnet_recoverease.Doctor
             this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlSidebarBottom.Location = new System.Drawing.Point(0, 830);
             this.pnlSidebarBottom.Name = "pnlSidebarBottom";
-            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 70);
+            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 40);
             this.pnlSidebarBottom.TabIndex = 7;
             this.lblSidebarFooter.AutoSize = true;
             this.lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8F);
@@ -144,6 +144,7 @@ namespace elnet_recoverease.Doctor
             this.btnLogout.TabIndex = 1;
             this.btnLogout.Text = "⇠  Sign Out";
             this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLogout.Visible = false;
 
             this.pnlTopBar.BackColor = clrWhite;
             this.pnlTopBar.Controls.Add(this.lblPageTitle);
@@ -298,8 +299,8 @@ namespace elnet_recoverease.Doctor
             this.pnlReportSelection.Controls.Add(card, col, 0);
             _cardCount++;
             card.Tag = title;
-            card.Click += (s, e) => SelectCard(card);
-            foreach (System.Windows.Forms.Control child in card.Controls) child.Click += (s, e) => SelectCard(card);
+            card.Click += new System.EventHandler(this.ReportCard_Click);
+            foreach (System.Windows.Forms.Control child in card.Controls) child.Click += new System.EventHandler(this.ReportCard_Click);
         }
 
         private System.Windows.Forms.Panel pnlSidebar;

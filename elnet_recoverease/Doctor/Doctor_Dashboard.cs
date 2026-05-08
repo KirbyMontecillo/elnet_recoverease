@@ -19,14 +19,14 @@ namespace elnet_recoverease.Doctor
     {
         private AppDbContext _db = new AppDbContext();
         private Staff _doctor;
-
         private System.Windows.Forms.Timer _notifTimer;
 
         public Doctor_Dashboard()
         {
             InitializeComponent();
             _doctor = UserSession.CurrentStaff;
-            
+
+
             InitializeDashboard();
             InitializeAsyncData();
             StartNotifTimer();
@@ -34,16 +34,21 @@ namespace elnet_recoverease.Doctor
 
         private async void InitializeAsyncData()
         {
-            await CheckPastAppointments(); // Run once on login
-            LoadData();
+            await CheckPastAppointments();
+            LoadDashboardData();
         }
 
         private void StartNotifTimer()
         {
             _notifTimer = new System.Windows.Forms.Timer();
             _notifTimer.Interval = 60000; // 1 minute
-            _notifTimer.Tick += (s, e) => LoadData();
+            _notifTimer.Tick += new System.EventHandler(Timer_Tick);
             _notifTimer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            LoadDashboardData();
         }
 
         private async Task CheckPastAppointments()
@@ -70,14 +75,12 @@ namespace elnet_recoverease.Doctor
 
         private void InitializeDashboard()
         {
-            // Set welcome message
             if (_doctor != null)
             {
-                lblWelcome.Text = $"Welcome back, Dr. {_doctor.FullName}. Here's your clinical overview for today.";
+                lblWelcome.Text = $"Welcome, Dr. {_doctor.FullName}.";
                 lblAvatarInitials.Text = GetInitials(_doctor.FullName);
             }
 
-            // Set Logo
             try 
             { 
                 string logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
@@ -85,24 +88,21 @@ namespace elnet_recoverease.Doctor
             } 
             catch { }
 
-            // Navigation Handlers
-            NavigationHelper.WireNavButton(btnNavDashboard, () => { });
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            // Navigation Handlers - Classic way
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            btnLogout.Click += new EventHandler(btnLogout_Click);
         }
 
-        private void AttachNavEvents(Panel pnl, Action action)
-        {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
-            {
-                c.Click += (s, e) => action();
-                c.Cursor = Cursors.Hand;
-            }
-        }
+        private void btnNavDashboard_Click(object sender, EventArgs e) { }
+        private void btnNavPatients_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_List()); }
+        private void btnNavAppointments_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Appointments()); }
+        private void btnNavReports_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Reports()); }
+        private void btnNavProfile_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Doctor_Profile()); }
+        private void btnLogout_Click(object sender, EventArgs e) { NavigationHelper.Logout(this); }
 
         private string GetInitials(string name)
         {
@@ -112,186 +112,128 @@ namespace elnet_recoverease.Doctor
             return (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
         }
 
-        private void OpenForm(Form childForm)
-        {
-            childForm.Show();
-            // In a real MDI setup, we might dock it, but for now we'll just show it.
-        }
-
-        private async void LoadData()
+        private async void LoadDashboardData()
         {
             try
             {
+                ScheduleManager.UpdateMissedSchedules();
                 if (_doctor == null) return;
 
-                // 1. Total Patients under this doctor
+                // 1. Stats Summary - Optimized queries
                 int totalPatients = await _db.Patients.CountAsync(p => p.AttendingDoctor == _doctor.FullName);
                 lblCardPatValue.Text = totalPatients.ToString();
 
-                // 2. Appointments Today - Filter by StaffID
                 var today = DateTime.Today;
                 var tomorrow = today.AddDays(1);
-                var dayAfter = today.AddDays(2);
                 var now = DateTime.Now;
-
-                // Auto-mark missed during refresh
-                var pastThreshold = now.AddMinutes(-30);
-                var missedToUpdate = await _db.Appointments
-                    .Where(a => (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)) 
-                           && a.Status == "Scheduled" && a.AppointmentDate < pastThreshold)
-                    .ToListAsync();
-                
-                if (missedToUpdate.Any())
-                {
-                    foreach (var a in missedToUpdate) a.Status = "Missed";
-                    await _db.SaveChangesAsync();
-                }
 
                 var apptsToday = await _db.Appointments
                     .Where(a => a.AppointmentDate >= today && a.AppointmentDate < tomorrow 
                            && (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)))
                     .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p })
-                    .Where(x => x.p.AttendingDoctor == _doctor.FullName) // Strict patient assignment check
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName)
+                    .Select(x => new { x.a.AppointmentDate, x.p.FullName, x.a.Notes, x.a.Status })
                     .ToListAsync();
                 
                 lblCardApptValue.Text = apptsToday.Count.ToString();
-                lblCardApptSub.Text = $"{apptsToday.Count(x => x.a.Status == "Completed")} completed today";
+                lblCardApptSub.Text = $"{apptsToday.Count(x => x.Status == "Completed")} completed";
 
-                // 3. Clinical Alerts (Missed Meds)
                 var missedMeds = await _db.MedicationSchedules
                     .Where(s => s.IsMissed && !s.IsTaken)
                     .Join(_db.Patients, s => s.PatientID, p => p.PatientID, (s, p) => new { s, p })
                     .Where(x => x.p.AttendingDoctor == _doctor.FullName)
+                    .Select(x => new { x.s.ScheduledDate, x.s.ScheduledTime, x.p.PatientID, x.p.FullName })
+                    .ToListAsync();
+
+                var takenMeds = await _db.MedicationSchedules
+                    .Where(s => s.IsTaken && s.ScheduledDate == DateOnly.FromDateTime(today))
+                    .Join(_db.Patients, s => s.PatientID, p => p.PatientID, (s, p) => new { s, p })
+                    .Where(x => x.p.AttendingDoctor == _doctor.FullName)
+                    .Select(x => new { x.p.PatientID, x.p.FullName, x.s.MedicationName, x.s.ScheduledDate, x.s.ScheduledTime })
                     .ToListAsync();
 
                 lblCardAlertValue.Text = missedMeds.Count.ToString();
-                lblCardAlertSub.Text = missedMeds.Count > 0 ? $"{missedMeds.Count} critical issues" : "All patients on track";
                 lblCardAlertValue.ForeColor = missedMeds.Count > 0 ? Color.FromArgb(192, 57, 43) : Color.FromArgb(0, 168, 168);
 
-                // 4. Load Schedule Table
+                // 2. Load Schedule Table
                 dgvSchedule.Rows.Clear();
-                foreach (var item in apptsToday.OrderBy(x => x.a.AppointmentDate))
+                foreach (var item in apptsToday.OrderBy(x => x.AppointmentDate))
                 {
                     dgvSchedule.Rows.Add(
-                        item.a.AppointmentDate?.ToString("hh:mm tt") ?? "N/A",
-                        item.p.FullName,
-                        item.a.Notes,
-                        item.a.Status
+                        item.AppointmentDate?.ToString("hh:mm tt") ?? "N/A",
+                        item.FullName,
+                        item.Notes,
+                        item.Status
                     );
                 }
 
-                // 5. Generate Advanced Alerts
-                var doctorAlerts = new List<DoctorAlert>();
-
-                // A. Missed Meds
-                var groupedMissed = missedMeds.GroupBy(x => x.p.PatientID);
-                foreach (var group in groupedMissed)
-                {
-                    var patient = group.First().p;
-                    var uniqueDaysMissed = group.Select(x => x.s.ScheduledDate).Distinct().Count();
-                    
-                    if (uniqueDaysMissed >= 2)
-                    {
-                        doctorAlerts.Add(new DoctorAlert {
-                            Priority = "Urgent", Icon = "🔴",
-                            Title = $"{patient.FullName} missed medications for {uniqueDaysMissed} days",
-                            TimeText = "Action Required"
-                        });
-                    }
-                }
-
-                // B. Appointment Notifications Logic
-                var allUpcoming = await _db.Appointments
-                    .Where(a => a.AppointmentDate >= today && a.AppointmentDate < dayAfter 
-                           && (a.DoctorID == _doctor.StaffID || (a.DoctorID == null && a.DoctorName == _doctor.FullName)))
-                    .Join(_db.Patients, a => (int)a.PatientID, p => p.PatientID, (a, p) => new { a, p })
-                    .Where(x => x.p.AttendingDoctor == _doctor.FullName) // Strict patient assignment check
-                    .ToListAsync();
-
-                foreach (var item in allUpcoming)
-                {
-                    if (!item.a.AppointmentDate.HasValue) continue;
-                    var apptDate = item.a.AppointmentDate.Value;
-                    string timeStr = apptDate.ToString("hh:mm tt");
-
-                    // 1. Missed (Auto-updated above)
-                    if (item.a.Status == "Missed" && apptDate.Date == today)
-                    {
-                        doctorAlerts.Add(new DoctorAlert {
-                            Priority = "Urgent", Icon = "🔴",
-                            Title = $"{item.p.FullName}'s appointment was missed",
-                            TimeText = $"Scheduled for {timeStr}"
-                        });
-                    }
-                    // 2. 2 hours before
-                    else if (apptDate > now && apptDate <= now.AddHours(2) && apptDate.Date == today && item.a.Status == "Scheduled")
-                    {
-                        doctorAlerts.Add(new DoctorAlert {
-                            Priority = "Warning", Icon = "🟡",
-                            Title = $"{item.p.FullName} has an appointment in 2 hours at {timeStr}",
-                            TimeText = "Upcoming Today"
-                        });
-                    }
-                    // 3. 1 day before
-                    else if (apptDate.Date == today.AddDays(1) && item.a.Status == "Scheduled")
-                    {
-                        doctorAlerts.Add(new DoctorAlert {
-                            Priority = "Info", Icon = "🔵",
-                            Title = $"{item.p.FullName} has an appointment tomorrow at {timeStr}",
-                            TimeText = "Reminder"
-                        });
-                    }
-                }
-
-                // C. Treatment Plans ending soon
-                var endingPlans = await _db.TreatmentPlans
-                    .Where(tp => tp.EndDate >= today && tp.EndDate <= today.AddDays(3))
-                    .Join(_db.Patients, tp => tp.PatientID, p => p.PatientID, (tp, p) => new { tp, p })
-                    .Where(x => x.p.AttendingDoctor == _doctor.FullName)
-                    .ToListAsync();
-
-                foreach (var item in endingPlans)
-                {
-                    int daysLeft = (item.tp.EndDate.Date - today).Days;
-                    doctorAlerts.Add(new DoctorAlert {
-                        Priority = "Info",
-                        Icon = "🔵",
-                        Title = $"{item.p.FullName}'s treatment plan ends in {daysLeft} days",
-                        TimeText = $"Ends on {item.tp.EndDate:MMM dd}"
-                    });
-                }
-
-                // Sort by Priority (Urgent > Warning > Info)
-                var sortedAlerts = doctorAlerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList();
-                LoadAlerts(sortedAlerts);
+                // 3. Generate Alerts
+                GenerateAlerts(missedMeds.Select(m => new { m.PatientID, m.FullName, m.ScheduledDate, m.ScheduledTime }).ToList(), 
+                               apptsToday.Select(a => new { a.AppointmentDate, a.FullName, a.Status }).ToList(),
+                               takenMeds.Select(t => new { t.PatientID, t.FullName, t.MedicationName, t.ScheduledDate, t.ScheduledTime }).ToList());
             }
             catch (Exception) { }
         }
 
-        private void LoadAlerts(List<DoctorAlert> alerts)
+        private void GenerateAlerts(IEnumerable<dynamic> missedMeds, IEnumerable<dynamic> appts, IEnumerable<dynamic> takenMeds)
+        {
+            var alerts = new List<DoctorAlert>();
+            var now = DateTime.Now;
+
+            // Missed Meds
+            var grouped = missedMeds.GroupBy(x => x.PatientID);
+            foreach (var group in grouped)
+            {
+                var days = group.Select(x => x.ScheduledDate).Distinct().Count();
+                var latest = group.OrderByDescending(x => x.ScheduledDate).First(); // Just use the date for grouping time
+                string timeStr = latest.ScheduledTime != null ? latest.ScheduledTime.ToString("hh:mm tt") : "";
+                string dateStr = latest.ScheduledDate == DateOnly.FromDateTime(DateTime.Today) ? "Today" : latest.ScheduledDate.ToString("MMM dd");
+                string formattedTime = string.IsNullOrEmpty(timeStr) ? dateStr : $"{dateStr}, {timeStr}";
+
+                if (days >= 2)
+                {
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{group.First().FullName} missed meds for {days} days", TimeText = formattedTime });
+                }
+                else if (days == 1)
+                {
+                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"{group.First().FullName} missed meds recently", TimeText = formattedTime });
+                }
+            }
+
+            // Taken Meds
+            foreach(var taken in takenMeds)
+            {
+                string timeStr = taken.ScheduledTime != null ? taken.ScheduledTime.ToString("hh:mm tt") : "";
+                string dateStr = taken.ScheduledDate == DateOnly.FromDateTime(DateTime.Today) ? "Today" : taken.ScheduledDate.ToString("MMM dd");
+                string formattedTime = string.IsNullOrEmpty(timeStr) ? dateStr : $"{dateStr}, {timeStr}";
+
+                alerts.Add(new DoctorAlert { Priority = "Info", Icon = "🟢", Title = $"{taken.FullName} took {taken.MedicationName}", TimeText = formattedTime });
+            }
+
+            // Appts
+            foreach (var appt in appts)
+            {
+                if (appt.AppointmentDate == null) continue;
+                DateTime dt = appt.AppointmentDate;
+                if (appt.Status == "Missed" && dt.Date == DateTime.Today)
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{appt.FullName} missed appointment", TimeText = dt.ToString("hh:mm tt") });
+                else if (dt > now && dt <= now.AddHours(2) && appt.Status == "Scheduled")
+                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"Appt with {appt.FullName} in 2h", TimeText = "Upcoming" });
+            }
+
+            var sorted = alerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList();
+            DisplayAlerts(sorted);
+        }
+
+        private void DisplayAlerts(List<DoctorAlert> alerts)
         {
             pnlAlert1.Visible = alerts.Count > 0;
             pnlAlert2.Visible = alerts.Count > 1;
             pnlAlert3.Visible = alerts.Count > 2;
 
-            if (alerts.Count > 0)
-            {
-                lblAlert1Icon.Text = alerts[0].Icon;
-                lblAlert1Text.Text = alerts[0].Title;
-                lblAlert1Time.Text = alerts[0].TimeText;
-            }
-            if (alerts.Count > 1)
-            {
-                lblAlert2Icon.Text = alerts[1].Icon;
-                lblAlert2Text.Text = alerts[1].Title;
-                lblAlert2Time.Text = alerts[1].TimeText;
-            }
-            if (alerts.Count > 2)
-            {
-                lblAlert3Icon.Text = alerts[2].Icon;
-                lblAlert3Text.Text = alerts[2].Title;
-                lblAlert3Time.Text = alerts[2].TimeText;
-            }
+            if (alerts.Count > 0) { lblAlert1Icon.Text = alerts[0].Icon; lblAlert1Text.Text = alerts[0].Title; lblAlert1Time.Text = alerts[0].TimeText; }
+            if (alerts.Count > 1) { lblAlert2Icon.Text = alerts[1].Icon; lblAlert2Text.Text = alerts[1].Title; lblAlert2Time.Text = alerts[1].TimeText; }
+            if (alerts.Count > 2) { lblAlert3Icon.Text = alerts[2].Icon; lblAlert3Text.Text = alerts[2].Title; lblAlert3Time.Text = alerts[2].TimeText; }
         }
 
         private class DoctorAlert

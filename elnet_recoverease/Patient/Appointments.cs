@@ -26,8 +26,8 @@ namespace elnet_recoverease
 
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
-                this.Load += async (s, e) => await LoadAppointmentData();
-                dgvAppts.CellContentClick += dgvAppts_CellContentClick;
+                this.Load += new EventHandler(Appointments_Load);
+                dgvAppts.CellContentClick += new DataGridViewCellEventHandler(dgvAppts_CellContentClick);
             }
         }
 
@@ -96,35 +96,36 @@ namespace elnet_recoverease
             }
         }
 
-        private void WireNavigation()
+        private async void Appointments_Load(object sender, EventArgs e)
         {
-            // Register click events for panels and their children
-            RegisterNavClick(btnNavDashboard, (s, e) => OpenForm(new Patient_Dashboard()));
-            RegisterNavClick(btnNavProfile, (s, e) => OpenForm(new Patient_Profile()));
-            RegisterNavClick(btnNavMeds, (s, e) => OpenForm(new Medications()));
-            RegisterNavClick(btnNavAppointments, (s, e) => { /* Already here */ });
-            RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
-
-            btnLogout.Click += (s, e) => {
-                UserSession.Logout();
-                new Login().Show();
-                this.Close();
-            };
+            await LoadAppointmentData();
         }
 
-        private void RegisterNavClick(Panel panel, EventHandler handler)
+        private void WireNavigation()
         {
-            panel.Click += handler;
-            foreach (Control c in panel.Controls)
-            {
-                c.Click += (s, e) => handler(panel, e);
-            }
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(btnNavMeds, new EventHandler(btnNavMeds_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavTreatment, new EventHandler(btnNavTreatment_Click));
+
+            btnLogout.Click += new EventHandler(btnLogout_Click);
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Dashboard()); }
+        private void btnNavProfile_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Profile()); }
+        private void btnNavMeds_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Medications()); }
+        private void btnNavAppointments_Click(object sender, EventArgs e) { /* Already here */ }
+        private void btnNavTreatment_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Treatment_Plans()); }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
         }
 
         private void OpenForm(Form childForm)
         {
-            childForm.Show();
-            this.Close(); // Use Close for consistency
+            NavigationHelper.SwitchForm(this, childForm);
         }
 
         private void LoadLogo()

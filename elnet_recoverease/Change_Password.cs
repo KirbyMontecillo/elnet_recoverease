@@ -12,19 +12,48 @@ namespace elnet_recoverease
         [DllImport("user32.DLL", EntryPoint = "SendMessage")]
         private extern static void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int CS_DROPSHADOW = 0x20000;
+                CreateParams cp = base.CreateParams;
+                cp.ClassStyle |= CS_DROPSHADOW;
+                return cp;
+            }
+        }
+
         public Change_Password()
         {
             InitializeComponent();
             
             // Dragging
-            this.pnlHeader.MouseDown += (s, e) => {
-                ReleaseCapture();
-                SendMessage(this.Handle, 0x112, 0xf012, 0);
-            };
+            this.pnlHeader.MouseDown += new MouseEventHandler(this.pnlHeader_MouseDown);
 
-            this.btnClose.Click += (s, e) => this.Close();
-            this.btnCancel.Click += (s, e) => this.Close();
-            this.btnUpdate.Click += (s, e) => UpdatePassword();
+            this.btnClose.Click += new EventHandler(this.btnClose_Click);
+            this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
+            this.btnUpdate.Click += new EventHandler(this.btnUpdate_Click);
+        }
+
+        private void pnlHeader_MouseDown(object sender, MouseEventArgs e)
+        {
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            UpdatePassword();
         }
 
         private void UpdatePassword()

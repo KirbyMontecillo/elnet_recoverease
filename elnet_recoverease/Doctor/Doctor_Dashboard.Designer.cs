@@ -282,7 +282,7 @@ namespace elnet_recoverease.Doctor
             // Sidebar bottom
             this.pnlSidebarBottom.BackColor = clrNavy;
             this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Height = 40;
             this.pnlSidebarBottom.Padding = new System.Windows.Forms.Padding(20, 12, 16, 12);
 
             this.lblSidebarFooter.Text = "Secure Healthcare Platform";
@@ -302,6 +302,7 @@ namespace elnet_recoverease.Doctor
             this.btnLogout.Location = new System.Drawing.Point(16, 32);
             this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnLogout.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLogout.Visible = false;
 
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);

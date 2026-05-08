@@ -58,8 +58,8 @@ namespace elnet_recoverease.Admin
             Color clrSec = Color.FromArgb(113, 128, 150);
             Color clrBorder = Color.FromArgb(226, 232, 240);
             Color clrTeal = Color.FromArgb(0, 168, 168);
-            Font fntLabel = new Font("Segoe UI", 9F, FontStyle.Bold);
-            Font fntInput = new Font("Segoe UI", 10.5F);
+            Font fntLabel = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            Font fntInput = new Font("Segoe UI", 9.5F);
 
             // Header
             this.pnlHeader.Dock = DockStyle.Top;
@@ -73,7 +73,7 @@ namespace elnet_recoverease.Admin
             this.lblTitle.ForeColor = clrMain;
 
             this.lblSubtitle.Text = "Update the clinical details for this item";
-            this.lblSubtitle.Font = new Font("Segoe UI", 9.5F);
+            this.lblSubtitle.Font = new Font("Segoe UI", 9F);
             this.lblSubtitle.ForeColor = clrSec;
             this.lblSubtitle.Location = new Point(24, 48);
             this.lblSubtitle.AutoSize = true;
@@ -84,6 +84,7 @@ namespace elnet_recoverease.Admin
             this.btnClose.FlatStyle = FlatStyle.Flat;
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.Cursor = Cursors.Hand;
+            this.btnClose.DialogResult = DialogResult.Cancel;
             this.pnlHeader.Controls.AddRange(new Control[] { this.lblTitle, this.lblSubtitle, this.btnClose });
 
             this.pnlDivider1.Dock = DockStyle.Top;
@@ -165,6 +166,7 @@ namespace elnet_recoverease.Admin
             this.btnCancel.FlatStyle = FlatStyle.Flat;
             this.btnCancel.FlatAppearance.BorderColor = clrBorder;
             this.btnCancel.Font = new Font("Segoe UI", 9F);
+            this.btnCancel.DialogResult = DialogResult.Cancel;
             this.btnSave.Text = "Save changes";
             this.btnSave.Location = new Point(380, 22);
             this.btnSave.Size = new Size(130, 36);

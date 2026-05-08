@@ -15,12 +15,21 @@ namespace elnet_recoverease
         public Patient_Profile()
         {
             InitializeComponent();
+            
+            // Force Layout fix to prevent overlapping
+            pnlMain.Controls.Remove(pnlTopBar);
+            pnlMain.Controls.Remove(pnlContent);
+            pnlMain.Controls.Add(pnlContent);
+            pnlMain.Controls.Add(pnlTopBar);
+            pnlTopBar.SendToBack();
+            pnlContent.BringToFront();
+
             LoadLogo();
             WireNavigation();
-            
+
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
-                this.Load += async (s, e) => await LoadPatientData();
+                this.Load += new EventHandler(Patient_Profile_Load);
             }
         }
 
@@ -46,17 +55,17 @@ namespace elnet_recoverease
                     lblPatientName.Text = patient.FullName;
                     lblPatientId.Text = $"Patient ID: P-{patient.PatientID:D4}";
                     lblPatientAge.Text = $"Birth Date: {patient.DateOfBirth:MMM dd, yyyy}  |  Gender: {patient.Gender ?? "Not Specified"}";
-                    
+
                     // Avatar initials
                     string initialsText = "";
                     string fullName = patient.FullName ?? "Patient";
                     string[] nameParts = fullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    
+
                     if (nameParts.Length > 0) initialsText += nameParts[0][0];
                     if (nameParts.Length > 1) initialsText += nameParts[nameParts.Length - 1][0];
-                    
+
                     if (string.IsNullOrEmpty(initialsText)) initialsText = "P";
-                    
+
                     lblAvatarInitials.Text = initialsText.ToUpper();
                     lblAvatarLargeInitials.Text = initialsText.ToUpper();
 
@@ -76,12 +85,12 @@ namespace elnet_recoverease
 
                     // Medical Overview
                     lblBloodVal.Text = patient.BloodType ?? "N/A";
-                    
+
                     // Priority: Use consultation data if available, fallback to profile data
                     lblHeightVal.Text = latestConsultation?.Height ?? patient.Height ?? "N/A";
                     lblWeightVal.Text = latestConsultation?.Weight ?? patient.Weight ?? "N/A";
-                    
-                    lblAllergiesVal.Text = patient.Allergies ?? "None Reported";
+
+
 
                     // 3. Fetch Attending Doctor Info
                     if (!string.IsNullOrEmpty(patient.AttendingDoctor))
@@ -110,39 +119,41 @@ namespace elnet_recoverease
 
         private void WireNavigation()
         {
-            RegisterNavClick(btnNavDashboard, (s, e) => OpenForm(new Patient_Dashboard()));
-            RegisterNavClick(btnNavProfile, (s, e) => { /* Already here */ });
-            RegisterNavClick(btnNavMeds, (s, e) => OpenForm(new Medications()));
-            RegisterNavClick(btnNavAppointments, (s, e) => OpenForm(new Appointments()));
-            RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(btnNavMeds, new EventHandler(btnNavMeds_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavTreatment, new EventHandler(btnNavTreatment_Click));
 
-            btnLogout.Click += (s, e) => {
-                UserSession.Logout();
-                new Login().Show();
-                this.Close();
-            };
+            btnLogout.Click += new EventHandler(btnLogout_Click);
 
-            btnEditPersonal.Click += async (s, e) => {
-                using (var editForm = new Edit_Patient_Profile())
-                {
-                    if (editForm.ShowDialog() == DialogResult.OK)
-                    {
-                        await LoadPatientData(); // Refresh labels
-                    }
-                }
-            };
         }
 
-        private void RegisterNavClick(Panel panel, EventHandler handler)
+        private void btnNavDashboard_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Dashboard()); }
+        private void btnNavProfile_Click(object sender, EventArgs e) { /* Already here */ }
+        private void btnNavMeds_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Medications()); }
+        private void btnNavAppointments_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Appointments()); }
+        private void btnNavTreatment_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Treatment_Plans()); }
+
+        private void btnLogout_Click(object sender, EventArgs e)
         {
-            panel.Click += handler;
-            foreach (Control c in panel.Controls) c.Click += (s, e) => handler(panel, e);
+            NavigationHelper.Logout(this);
+        }
+
+        private async void btnEditPersonal_Click(object sender, EventArgs e)
+        {
+            using (var editForm = new Edit_Patient_Profile())
+            {
+                if (editForm.ShowDialog() == DialogResult.OK)
+                {
+                    await LoadPatientData(); // Refresh labels
+                }
+            }
         }
 
         private void OpenForm(Form childForm)
         {
-            childForm.Show();
-            this.Close();
+            NavigationHelper.SwitchForm(this, childForm);
         }
 
         private void LoadLogo()
@@ -160,9 +171,11 @@ namespace elnet_recoverease
             }
         }
 
-        private void Patient_Profile_Load(object sender, EventArgs e)
+        private async void Patient_Profile_Load(object sender, EventArgs e)
         {
-
+            await LoadPatientData();
         }
+
+
     }
 }

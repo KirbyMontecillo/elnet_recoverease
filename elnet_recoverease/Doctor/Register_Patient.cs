@@ -12,18 +12,44 @@ namespace elnet_recoverease.Doctor
 {
     public partial class Register_Patient : Form
     {
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int CS_DROPSHADOW = 0x20000;
+                CreateParams cp = base.CreateParams;
+                cp.ClassStyle |= CS_DROPSHADOW;
+                return cp;
+            }
+        }
+
         public Register_Patient()
         {
             InitializeComponent();
-            this.btnSave.Click += (s, e) => SavePatient();
-            this.btnCancel.Click += (s, e) => this.Close();
+            this.btnSave.Click += new EventHandler(this.btnSave_Click);
+            this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
             
             // Auto-fill Doctor
             this.txtAttendingDoctor.Text = elnet_recoverease.Core.UserSession.CurrentStaff?.FullName ?? "N/A";
 
             // Auto-calculate Age
-            this.dtpDOB.ValueChanged += (s, e) => CalculateAge();
+            this.dtpDOB.ValueChanged += new EventHandler(this.dtpDOB_ValueChanged);
             CalculateAge(); // Initial call
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SavePatient();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void dtpDOB_ValueChanged(object sender, EventArgs e)
+        {
+            CalculateAge();
         }
 
         private void CalculateAge()

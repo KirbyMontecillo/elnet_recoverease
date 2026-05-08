@@ -14,6 +14,17 @@ namespace elnet_recoverease.Admin
         [DllImport("user32.DLL", EntryPoint = "SendMessage")]
         private extern static void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
 
+        private const int CS_DROPSHADOW = 0x00020000;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ClassStyle |= CS_DROPSHADOW;
+                return cp;
+            }
+        }
+
         private int _medicationId;
 
         public Edit_Medicine()
@@ -35,14 +46,31 @@ namespace elnet_recoverease.Admin
 
         private void SetupEvents()
         {
-            this.pnlHeader.MouseDown += (s, e) => {
-                ReleaseCapture();
-                SendMessage(this.Handle, 0x112, 0xf012, 0);
-            };
+            this.pnlHeader.MouseDown += new MouseEventHandler(this.pnlHeader_MouseDown);
+            this.btnClose.Click += new EventHandler(this.btnClose_Click);
+            this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
+            this.btnSave.Click += new EventHandler(this.btnSave_Click);
+        }
 
-            this.btnClose.Click += (s, e) => this.Close();
-            this.btnCancel.Click += (s, e) => this.Close();
-            this.btnSave.Click += (s, e) => SaveChanges();
+        private void pnlHeader_MouseDown(object sender, MouseEventArgs e)
+        {
+            ReleaseCapture();
+            SendMessage(this.Handle, 0x112, 0xf012, 0);
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveChanges();
         }
 
         private void LoadMedicationData()
@@ -130,7 +158,9 @@ namespace elnet_recoverease.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving medication: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string msg = ex.Message;
+                if (ex.InnerException != null) msg += "\n\nDetails: " + ex.InnerException.Message;
+                MessageBox.Show("Error saving medication: " + msg, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

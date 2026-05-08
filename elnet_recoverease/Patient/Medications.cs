@@ -23,21 +23,39 @@ namespace elnet_recoverease
         public Medications()
         {
             InitializeComponent();
+
+            // Force Layout fix to prevent overlapping
+            pnlMain.Controls.Remove(pnlTopBar);
+            pnlMain.Controls.Remove(pnlContent);
+            pnlMain.Controls.Add(pnlContent);
+            pnlMain.Controls.Add(pnlTopBar);
+            pnlTopBar.SendToBack();
+            pnlContent.BringToFront();
+
             LoadLogo();
             WireNavigation();
             WireTabs();
 
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
-                this.Load += async (s, e) => await LoadMedicationData();
+                this.Load += new EventHandler(Medications_Load);
             }
         }
 
         private void WireTabs()
         {
-            btnTabMorning.Click += (s, e) => { SwitchTab("Morning", btnTabMorning); RefreshTimeline(); };
-            btnTabNoon.Click += (s, e) => { SwitchTab("Noon", btnTabNoon); RefreshTimeline(); };
-            btnTabEvening.Click += (s, e) => { SwitchTab("Evening", btnTabEvening); RefreshTimeline(); };
+            btnTabMorning.Click += new EventHandler(btnTabMorning_Click);
+            btnTabNoon.Click += new EventHandler(btnTabNoon_Click);
+            btnTabEvening.Click += new EventHandler(btnTabEvening_Click);
+        }
+
+        private void btnTabMorning_Click(object sender, EventArgs e) { SwitchTab("Morning", btnTabMorning); RefreshTimeline(); }
+        private void btnTabNoon_Click(object sender, EventArgs e) { SwitchTab("Noon", btnTabNoon); RefreshTimeline(); }
+        private void btnTabEvening_Click(object sender, EventArgs e) { SwitchTab("Evening", btnTabEvening); RefreshTimeline(); }
+
+        private async void Medications_Load(object sender, EventArgs e)
+        {
+            await LoadMedicationData();
         }
 
         private void SwitchTab(string tab, Button activeBtn)
@@ -179,13 +197,30 @@ namespace elnet_recoverease
             var card = new Panel { Location = new Point(60, 5), Size = new Size(pnl.Width - 70, 40), BackColor = Color.FromArgb(230, 245, 245), Padding = new Padding(10, 8, 10, 8), Cursor = Cursors.Hand };
             
             var chk = new CheckBox { Text = $"{schedule.MedicationName} ({schedule.DosageUnit})", Checked = schedule.IsTaken, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9), ForeColor = Color.FromArgb(30, 41, 59) };
-            chk.CheckedChanged += async (s, e) => {
+            chk.Tag = new { Schedule = schedule, Circle = circle };
+            chk.CheckedChanged += new EventHandler(Medication_CheckedChanged);
+
+            card.Controls.Add(chk);
+            pnl.Controls.AddRange(new Control[] { circle, lblTime, card });
+            
+            return pnl;
+        }
+
+        private async void Medication_CheckedChanged(object sender, EventArgs e)
+        {
+            if (sender is CheckBox chk && chk.Tag != null)
+            {
+                // Accessing anonymous type properties via dynamic or reflection - using dynamic for brevity in this specific UI case
+                dynamic data = chk.Tag;
+                MedicationSchedule schedule = data.Schedule;
+                Panel circle = data.Circle;
+
                 schedule.IsTaken = chk.Checked;
                 schedule.IsMissed = !chk.Checked && (schedule.ScheduledTime < TimeOnly.FromDateTime(DateTime.Now));
                 _db.Update(schedule);
                 await _db.SaveChangesAsync();
                 circle.BackColor = GetTimelineColor(schedule);
-                
+
                 // Refresh adherence score on the card
                 var patientId = UserSession.CurrentPatient.PatientID;
                 var allSchedules = await _db.MedicationSchedules.Where(m => m.PatientID == patientId).ToListAsync();
@@ -196,12 +231,7 @@ namespace elnet_recoverease
                     double score = (double)pastSchedules.Count(sch => sch.IsTaken) / pastSchedules.Count * 100;
                     lblCardAdhrValue.Text = $"{score:F0}%";
                 }
-            };
-
-            card.Controls.Add(chk);
-            pnl.Controls.AddRange(new Control[] { circle, lblTime, card });
-            
-            return pnl;
+            }
         }
 
         private Color GetTimelineColor(MedicationSchedule s)
@@ -213,29 +243,29 @@ namespace elnet_recoverease
 
         private void WireNavigation()
         {
-            RegisterNavClick(btnNavDashboard, (s, e) => OpenForm(new Patient_Dashboard()));
-            RegisterNavClick(btnNavProfile, (s, e) => OpenForm(new Patient_Profile()));
-            RegisterNavClick(btnNavMeds, (s, e) => { /* Already here */ });
-            RegisterNavClick(btnNavAppointments, (s, e) => OpenForm(new Appointments()));
-            RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(btnNavMeds, new EventHandler(btnNavMeds_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavTreatment, new EventHandler(btnNavTreatment_Click));
 
-            btnLogout.Click += (s, e) => {
-                UserSession.Logout();
-                new Login().Show();
-                this.Close();
-            };
+            btnLogout.Click += new EventHandler(btnLogout_Click);
         }
 
-        private void RegisterNavClick(Panel panel, EventHandler handler)
+        private void btnNavDashboard_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Dashboard()); }
+        private void btnNavProfile_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Profile()); }
+        private void btnNavMeds_Click(object sender, EventArgs e) { /* Already here */ }
+        private void btnNavAppointments_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Appointments()); }
+        private void btnNavTreatment_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Treatment_Plans()); }
+
+        private void btnLogout_Click(object sender, EventArgs e)
         {
-            panel.Click += handler;
-            foreach (Control c in panel.Controls) c.Click += (s, e) => handler(panel, e);
+            NavigationHelper.Logout(this);
         }
 
         private void OpenForm(Form childForm)
         {
-            childForm.Show();
-            this.Close();
+            NavigationHelper.SwitchForm(this, childForm);
         }
 
         private void LoadLogo()

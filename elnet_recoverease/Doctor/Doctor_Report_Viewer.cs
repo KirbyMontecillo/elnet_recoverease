@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using elnet_recoverease.Data;
 using elnet_recoverease.Models;
+using elnet_recoverease.Core;
 using Microsoft.Web.WebView2.Core;
 
 namespace elnet_recoverease.Doctor
@@ -148,6 +149,7 @@ namespace elnet_recoverease.Doctor
             _currentTo = dateTo;
             _currentDoctor = doctor;
 
+            ScheduleManager.UpdateMissedSchedules();
             string contentHtml = "";
             using (var db = new AppDbContext())
             {
@@ -188,7 +190,7 @@ namespace elnet_recoverease.Doctor
                                  join m in db.Medications on s.MedicationID equals m.MedicationID
                                  where s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly
                                  && p.AttendingDoctor.ToLower() == doctorLower
-                                 && !s.IsTaken && s.ScheduledDate < nowOnly
+                                 && s.IsMissed
                                  select new { p.FullName, m.MedicationName, s.ScheduledDate, s.ScheduledTime })
                                  .OrderByDescending(x => x.ScheduledDate).ToList();
 

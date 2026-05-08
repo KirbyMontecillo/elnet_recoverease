@@ -72,7 +72,7 @@ namespace elnet_recoverease.Doctor
             btnCancel.Location = new Point(270, 355);
             btnCancel.Size = new Size(80, 40);
             btnCancel.FlatStyle = FlatStyle.Flat;
-            btnCancel.Click += (s, e) => this.Close();
+            btnCancel.Click += new EventHandler(btnCancel_Click);
 
             btnSaveNote.Click += BtnSaveNote_Click;
 
@@ -81,6 +81,11 @@ namespace elnet_recoverease.Doctor
             this.Controls.Add(rtxtNoteContent);
             this.Controls.Add(btnSaveNote);
             this.Controls.Add(btnCancel);
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private async void BtnSaveNote_Click(object? sender, EventArgs e)

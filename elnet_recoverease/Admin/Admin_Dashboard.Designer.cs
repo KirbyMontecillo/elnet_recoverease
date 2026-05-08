@@ -115,13 +115,19 @@ namespace elnet_recoverease.Admin
 
             // Sidebar
             this.pnlSidebar.BackColor = clrNavy;
+            this.btnNavProfile = new System.Windows.Forms.Panel();
+            this.lblNavProfileIcon = new System.Windows.Forms.Label();
+            this.lblNavProfileText = new System.Windows.Forms.Label();
+            // Sidebar Setup
+            this.pnlSidebar.BackColor = Color.FromArgb(238, 243, 247);
+            this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
+            this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavReports);
             this.pnlSidebar.Controls.Add(this.btnNavPatients);
             this.pnlSidebar.Controls.Add(this.btnNavStaff);
             this.pnlSidebar.Controls.Add(this.btnNavDashboard);
             this.pnlSidebar.Controls.Add(this.pnlNavDivider);
             this.pnlSidebar.Controls.Add(this.pnlLogoArea);
-            this.pnlSidebar.Controls.Add(this.pnlSidebarBottom);
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Location = new System.Drawing.Point(0, 0);
             this.pnlSidebar.Name = "pnlSidebar";
@@ -129,46 +135,52 @@ namespace elnet_recoverease.Admin
             this.pnlSidebar.TabIndex = 0;
 
             // Logo Area
+            this.pnlLogoArea.BackColor = Color.FromArgb(238, 243, 247);
             this.pnlLogoArea.Controls.Add(this.picLogo);
             this.pnlLogoArea.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlLogoArea.Location = new System.Drawing.Point(0, 0);
             this.pnlLogoArea.Name = "pnlLogoArea";
-            this.pnlLogoArea.Padding = new System.Windows.Forms.Padding(16, 18, 8, 8);
-            this.pnlLogoArea.Size = new System.Drawing.Size(260, 90);
+            this.pnlLogoArea.Padding = new System.Windows.Forms.Padding(35, 25, 35, 15);
+            this.pnlLogoArea.Size = new System.Drawing.Size(260, 120);
             this.pnlLogoArea.TabIndex = 0;
 
             this.picLogo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picLogo.Location = new System.Drawing.Point(16, 18);
+            this.picLogo.Location = new System.Drawing.Point(35, 25);
             this.picLogo.Name = "picLogo";
-            this.picLogo.Size = new System.Drawing.Size(236, 64);
+            this.picLogo.Size = new System.Drawing.Size(190, 80);
             this.picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picLogo.TabIndex = 0;
             this.picLogo.TabStop = false;
 
-            this.pnlNavDivider.BackColor = System.Drawing.Color.FromArgb(208, 219, 232);
+            this.pnlNavDivider.BackColor = System.Drawing.Color.FromArgb(226, 232, 240);
             this.pnlNavDivider.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlNavDivider.Location = new System.Drawing.Point(0, 90);
+            this.pnlNavDivider.Location = new System.Drawing.Point(0, 120);
             this.pnlNavDivider.Name = "pnlNavDivider";
             this.pnlNavDivider.Size = new System.Drawing.Size(260, 1);
             this.pnlNavDivider.TabIndex = 1;
 
-            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "\u229E", "Admin Dashboard", true, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
-            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
+            // Navigation Items
+            SetupNavItem(this.btnNavProfile, this.lblNavProfileIcon, this.lblNavProfileText, "👤", "My Profile", false, clrNavyActive, clrWhite);
             SetupNavItem(this.btnNavReports, this.lblNavReportsIcon, this.lblNavReportsText, "📊", "System Reports", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavPatients, this.lblNavPatientsIcon, this.lblNavPatientsText, "💊", "Medication List", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavStaff, this.lblNavStaffIcon, this.lblNavStaffText, "🩺", "Staff Management", false, clrNavyActive, clrWhite);
+            SetupNavItem(this.btnNavDashboard, this.lblNavDashIcon, this.lblNavDashText, "⊞", "Admin Dashboard", true, clrNavyActive, clrWhite);
 
             // Sidebar Bottom
             this.pnlSidebarBottom.Controls.Add(this.lblSidebarFooter);
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);
             this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Location = new System.Drawing.Point(0, 830);
+            this.pnlSidebarBottom.Location = new System.Drawing.Point(0, 840);
             this.pnlSidebarBottom.Name = "pnlSidebarBottom";
-            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 70);
+            this.pnlSidebarBottom.Size = new System.Drawing.Size(260, 60);
             this.pnlSidebarBottom.TabIndex = 7;
-            this.lblSidebarFooter.AutoSize = true;
+
+            this.lblSidebarFooter.AutoSize = false;
+            this.lblSidebarFooter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSidebarFooter.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(100, 120, 145);
-            this.lblSidebarFooter.Location = new System.Drawing.Point(20, 10);
+            this.lblSidebarFooter.ForeColor = System.Drawing.Color.FromArgb(160, 174, 192);
+            this.lblSidebarFooter.Location = new System.Drawing.Point(0, 0);
+            this.lblSidebarFooter.TextAlign = ContentAlignment.MiddleCenter;
             this.lblSidebarFooter.Text = "RecoverEase Admin Portal";
             this.btnLogout.FlatAppearance.BorderSize = 0;
             this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -180,6 +192,7 @@ namespace elnet_recoverease.Admin
             this.btnLogout.TabIndex = 1;
             this.btnLogout.Text = "⇠  Sign Out";
             this.btnLogout.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLogout.Visible = false;
 
             // TopBar
             this.pnlTopBar.BackColor = clrWhite;
@@ -220,6 +233,7 @@ namespace elnet_recoverease.Admin
             this.lblSearchIcon.Margin = new System.Windows.Forms.Padding(10, 5, 10, 0);
             this.lblSearchIcon.Text = "🔍";
             this.lblSearchIcon.Cursor = Cursors.Hand;
+            this.lblSearchIcon.Visible = false;
 
             this.lblNotifIcon.AutoSize = true;
             this.lblNotifIcon.Font = new System.Drawing.Font("Segoe UI", 16F);
@@ -227,6 +241,7 @@ namespace elnet_recoverease.Admin
             this.lblNotifIcon.Margin = new System.Windows.Forms.Padding(10, 5, 10, 0);
             this.lblNotifIcon.Text = "🔔";
             this.lblNotifIcon.Cursor = Cursors.Hand;
+            this.lblNotifIcon.Visible = false;
 
             this.pnlAvatarTop.BackColor = System.Drawing.Color.FromArgb(226, 232, 240);
             this.pnlAvatarTop.Controls.Add(this.lblAvatarInitials);
@@ -234,6 +249,7 @@ namespace elnet_recoverease.Admin
             this.pnlAvatarTop.Name = "pnlAvatarTop";
             this.pnlAvatarTop.Size = new System.Drawing.Size(40, 40);
             this.pnlAvatarTop.TabIndex = 2;
+            this.pnlAvatarTop.Visible = false;
             this.lblAvatarInitials.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAvatarInitials.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.lblAvatarInitials.ForeColor = System.Drawing.Color.FromArgb(74, 85, 104);
@@ -265,7 +281,7 @@ namespace elnet_recoverease.Admin
             this.flpStats.Dock = System.Windows.Forms.DockStyle.Top;
             this.flpStats.Location = new System.Drawing.Point(24, 24);
             this.flpStats.Name = "flpStats";
-            this.flpStats.Size = new System.Drawing.Size(1292, 220);
+            this.flpStats.Size = new System.Drawing.Size(1292, 140);
             this.flpStats.TabIndex = 0;
 
             // Stat Card 1: Patients
@@ -274,23 +290,24 @@ namespace elnet_recoverease.Admin
             this.pnlStatPatients.Controls.Add(this.lblStatPatientsVal);
             this.pnlStatPatients.Controls.Add(this.lblStatPatientsTitle);
             this.pnlStatPatients.Controls.Add(this.lblStatPatientsTrend);
-            this.pnlStatPatients.Margin = new System.Windows.Forms.Padding(0, 0, 20, 20);
-            this.pnlStatPatients.Size = new System.Drawing.Size(240, 180);
+            this.pnlStatPatients.Margin = new System.Windows.Forms.Padding(0, 0, 15, 20);
+            this.pnlStatPatients.Size = new System.Drawing.Size(310, 110);
             this.pnlStatPatients.BorderStyle = BorderStyle.FixedSingle;
-            this.lblStatPatientsTitle.AutoSize = true;
-            this.lblStatPatientsTitle.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblStatPatientsTitle.ForeColor = System.Drawing.Color.FromArgb(113, 128, 150);
-            this.lblStatPatientsTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblStatPatientsTitle.Location = new System.Drawing.Point(15, 10);
+            this.lblStatPatientsTitle.Size = new System.Drawing.Size(280, 20);
             this.lblStatPatientsTitle.Text = "Total patients";
+            
             this.lblStatPatientsVal.AutoSize = true;
-            this.lblStatPatientsVal.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.lblStatPatientsVal.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblStatPatientsVal.ForeColor = System.Drawing.Color.FromArgb(45, 55, 72);
-            this.lblStatPatientsVal.Location = new System.Drawing.Point(18, 45);
+            this.lblStatPatientsVal.Location = new System.Drawing.Point(12, 32);
             this.lblStatPatientsVal.Text = "0";
+            
             this.lblStatPatientsTrend.AutoSize = true;
             this.lblStatPatientsTrend.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatPatientsTrend.ForeColor = System.Drawing.Color.FromArgb(72, 187, 120);
-            this.lblStatPatientsTrend.Location = new System.Drawing.Point(20, 100);
+            this.lblStatPatientsTrend.Location = new System.Drawing.Point(15, 80);
             this.lblStatPatientsTrend.Text = "↑ 0 this week";
 
             // Stat Card 2: Doctors
@@ -299,23 +316,24 @@ namespace elnet_recoverease.Admin
             this.pnlStatDoctors.Controls.Add(this.lblStatDoctorsVal);
             this.pnlStatDoctors.Controls.Add(this.lblStatDoctorsTitle);
             this.pnlStatDoctors.Controls.Add(this.lblStatDoctorsTrend);
-            this.pnlStatDoctors.Margin = new System.Windows.Forms.Padding(0, 0, 20, 20);
-            this.pnlStatDoctors.Size = new System.Drawing.Size(240, 180);
+            this.pnlStatDoctors.Margin = new System.Windows.Forms.Padding(0, 0, 15, 20);
+            this.pnlStatDoctors.Size = new System.Drawing.Size(310, 110);
             this.pnlStatDoctors.BorderStyle = BorderStyle.FixedSingle;
-            this.lblStatDoctorsTitle.AutoSize = true;
-            this.lblStatDoctorsTitle.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblStatDoctorsTitle.ForeColor = System.Drawing.Color.FromArgb(113, 128, 150);
-            this.lblStatDoctorsTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblStatDoctorsTitle.Location = new System.Drawing.Point(15, 10);
+            this.lblStatDoctorsTitle.Size = new System.Drawing.Size(280, 20);
             this.lblStatDoctorsTitle.Text = "Active doctors";
+            
             this.lblStatDoctorsVal.AutoSize = true;
-            this.lblStatDoctorsVal.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.lblStatDoctorsVal.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblStatDoctorsVal.ForeColor = System.Drawing.Color.FromArgb(45, 55, 72);
-            this.lblStatDoctorsVal.Location = new System.Drawing.Point(18, 45);
+            this.lblStatDoctorsVal.Location = new System.Drawing.Point(12, 32);
             this.lblStatDoctorsVal.Text = "0";
+            
             this.lblStatDoctorsTrend.AutoSize = true;
             this.lblStatDoctorsTrend.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatDoctorsTrend.ForeColor = System.Drawing.Color.FromArgb(72, 187, 120);
-            this.lblStatDoctorsTrend.Location = new System.Drawing.Point(20, 100);
+            this.lblStatDoctorsTrend.Location = new System.Drawing.Point(15, 80);
             this.lblStatDoctorsTrend.Text = "↑ 0 this week";
 
             // Stat Card 3: Appointments
@@ -324,23 +342,24 @@ namespace elnet_recoverease.Admin
             this.pnlStatAppointments.Controls.Add(this.lblStatAppointmentsVal);
             this.pnlStatAppointments.Controls.Add(this.lblStatAppointmentsTitle);
             this.pnlStatAppointments.Controls.Add(this.lblStatAppointmentsSub);
-            this.pnlStatAppointments.Margin = new System.Windows.Forms.Padding(0, 0, 20, 20);
-            this.pnlStatAppointments.Size = new System.Drawing.Size(240, 180);
+            this.pnlStatAppointments.Margin = new System.Windows.Forms.Padding(0, 0, 15, 20);
+            this.pnlStatAppointments.Size = new System.Drawing.Size(310, 110);
             this.pnlStatAppointments.BorderStyle = BorderStyle.FixedSingle;
-            this.lblStatAppointmentsTitle.AutoSize = true;
-            this.lblStatAppointmentsTitle.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblStatAppointmentsTitle.ForeColor = System.Drawing.Color.FromArgb(113, 128, 150);
-            this.lblStatAppointmentsTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblStatAppointmentsTitle.Location = new System.Drawing.Point(15, 10);
+            this.lblStatAppointmentsTitle.Size = new System.Drawing.Size(280, 20);
             this.lblStatAppointmentsTitle.Text = "Appointments today";
+            
             this.lblStatAppointmentsVal.AutoSize = true;
-            this.lblStatAppointmentsVal.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.lblStatAppointmentsVal.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblStatAppointmentsVal.ForeColor = System.Drawing.Color.FromArgb(45, 55, 72);
-            this.lblStatAppointmentsVal.Location = new System.Drawing.Point(18, 45);
+            this.lblStatAppointmentsVal.Location = new System.Drawing.Point(12, 32);
             this.lblStatAppointmentsVal.Text = "0";
+            
             this.lblStatAppointmentsSub.AutoSize = true;
             this.lblStatAppointmentsSub.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatAppointmentsSub.ForeColor = System.Drawing.Color.FromArgb(113, 128, 150);
-            this.lblStatAppointmentsSub.Location = new System.Drawing.Point(20, 100);
+            this.lblStatAppointmentsSub.Location = new System.Drawing.Point(15, 80);
             this.lblStatAppointmentsSub.Text = "0 remaining";
 
             // Stat Card 4: Missed Medications
@@ -349,23 +368,24 @@ namespace elnet_recoverease.Admin
             this.pnlStatMissedMeds.Controls.Add(this.lblStatMissedMedsVal);
             this.pnlStatMissedMeds.Controls.Add(this.lblStatMissedMedsTitle);
             this.pnlStatMissedMeds.Controls.Add(this.lblStatMissedMedsSub);
-            this.pnlStatMissedMeds.Margin = new System.Windows.Forms.Padding(0, 0, 20, 20);
-            this.pnlStatMissedMeds.Size = new System.Drawing.Size(240, 180);
+            this.pnlStatMissedMeds.Margin = new System.Windows.Forms.Padding(0, 0, 0, 20);
+            this.pnlStatMissedMeds.Size = new System.Drawing.Size(310, 110);
             this.pnlStatMissedMeds.BorderStyle = BorderStyle.FixedSingle;
-            this.lblStatMissedMedsTitle.AutoSize = true;
-            this.lblStatMissedMedsTitle.Font = new System.Drawing.Font("Segoe UI", 9.5F);
             this.lblStatMissedMedsTitle.ForeColor = System.Drawing.Color.FromArgb(113, 128, 150);
-            this.lblStatMissedMedsTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblStatMissedMedsTitle.Location = new System.Drawing.Point(15, 10);
+            this.lblStatMissedMedsTitle.Size = new System.Drawing.Size(280, 20);
             this.lblStatMissedMedsTitle.Text = "Missed medications";
+            
             this.lblStatMissedMedsVal.AutoSize = true;
-            this.lblStatMissedMedsVal.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.lblStatMissedMedsVal.Font = new System.Drawing.Font("Segoe UI", 22F, System.Drawing.FontStyle.Bold);
             this.lblStatMissedMedsVal.ForeColor = System.Drawing.Color.FromArgb(197, 48, 48);
-            this.lblStatMissedMedsVal.Location = new System.Drawing.Point(18, 45);
+            this.lblStatMissedMedsVal.Location = new System.Drawing.Point(12, 32);
             this.lblStatMissedMedsVal.Text = "0";
+            
             this.lblStatMissedMedsSub.AutoSize = true;
             this.lblStatMissedMedsSub.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatMissedMedsSub.ForeColor = System.Drawing.Color.FromArgb(197, 48, 48);
-            this.lblStatMissedMedsSub.Location = new System.Drawing.Point(20, 100);
+            this.lblStatMissedMedsSub.Location = new System.Drawing.Point(15, 80);
             this.lblStatMissedMedsSub.Text = "⚠ needs review";
             
             // Critical Alert Banner
@@ -379,6 +399,7 @@ namespace elnet_recoverease.Admin
             this.pnlCriticalAlert.Name = "pnlCriticalAlert";
             this.pnlCriticalAlert.Size = new System.Drawing.Size(1292, 60);
             this.pnlCriticalAlert.TabIndex = 4;
+            this.pnlCriticalAlert.Visible = false;
             this.pnlCriticalAlert.Padding = new System.Windows.Forms.Padding(15, 0, 15, 0);
 
             this.lblAlertIcon.AutoSize = true;
@@ -408,7 +429,7 @@ namespace elnet_recoverease.Admin
             this.tlpMainGrid.Controls.Add(this.pnlAdherenceCard, 0, 0);
             this.tlpMainGrid.Controls.Add(this.pnlActivityCard, 1, 0);
             this.tlpMainGrid.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tlpMainGrid.Location = new System.Drawing.Point(24, 260);
+            this.tlpMainGrid.Location = new System.Drawing.Point(24, 180);
             this.tlpMainGrid.Name = "tlpMainGrid";
             this.tlpMainGrid.RowCount = 1;
             this.tlpMainGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 450F));
@@ -485,7 +506,7 @@ namespace elnet_recoverease.Admin
             this.pnlRecentPatientsCard.Controls.Add(this.lblViewAllPatients);
             this.pnlRecentPatientsCard.Controls.Add(this.lblRecentPatientsTitle);
             this.pnlRecentPatientsCard.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlRecentPatientsCard.Location = new System.Drawing.Point(24, 730);
+            this.pnlRecentPatientsCard.Location = new System.Drawing.Point(24, 650);
             this.pnlRecentPatientsCard.Name = "pnlRecentPatientsCard";
             this.pnlRecentPatientsCard.Padding = new System.Windows.Forms.Padding(20);
             this.pnlRecentPatientsCard.Size = new System.Drawing.Size(1292, 300);
@@ -504,6 +525,7 @@ namespace elnet_recoverease.Admin
             this.lblViewAllPatients.ForeColor = System.Drawing.Color.FromArgb(49, 151, 149);
             this.lblViewAllPatients.Location = new System.Drawing.Point(1150, 22);
             this.lblViewAllPatients.Text = "View all patients";
+            this.lblViewAllPatients.Visible = false;
 
             this.dgvRecentPatients.BackgroundColor = clrWhite;
             this.dgvRecentPatients.BorderStyle = BorderStyle.None;
@@ -574,22 +596,33 @@ namespace elnet_recoverease.Admin
 
         private void SetupNavItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, string icoChar, string label, bool isActive, System.Drawing.Color activeColor, System.Drawing.Color whiteColor)
         {
+            pnl.SuspendLayout();
             pnl.Cursor = System.Windows.Forms.Cursors.Hand;
             pnl.Dock = System.Windows.Forms.DockStyle.Top;
-            pnl.Size = new System.Drawing.Size(260, 48);
-            if (isActive) pnl.BackColor = activeColor;
-            ico.AutoSize = true;
+            pnl.Height = 56;
+            pnl.BackColor = isActive ? activeColor : System.Drawing.Color.Transparent;
+
+            ico.AutoSize = false;
+            ico.Size = new System.Drawing.Size(56, 56);
+            ico.Location = new System.Drawing.Point(0, 0);
             ico.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
             ico.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            ico.Location = new System.Drawing.Point(20, 11);
+            ico.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             ico.Text = icoChar;
-            txt.AutoSize = true;
-            txt.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+
+            txt.AutoSize = false;
+            txt.Size = new System.Drawing.Size(190, 56);
+            txt.Location = new System.Drawing.Point(56, 0);
+            txt.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             txt.ForeColor = isActive ? whiteColor : System.Drawing.Color.FromArgb(45, 55, 72);
-            txt.Location = new System.Drawing.Point(64, 13);
+            txt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             txt.Text = label;
+
+            pnl.Controls.Clear();
             pnl.Controls.Add(ico);
             pnl.Controls.Add(txt);
+            pnl.ResumeLayout(false);
+            pnl.PerformLayout();
         }
 
         private System.Windows.Forms.Panel pnlSidebar;
@@ -608,6 +641,9 @@ namespace elnet_recoverease.Admin
         private System.Windows.Forms.Panel btnNavReports;
         private System.Windows.Forms.Label lblNavReportsIcon;
         private System.Windows.Forms.Label lblNavReportsText;
+        private System.Windows.Forms.Panel btnNavProfile;
+        private System.Windows.Forms.Label lblNavProfileIcon;
+        private System.Windows.Forms.Label lblNavProfileText;
         private System.Windows.Forms.Panel pnlSidebarBottom;
         private System.Windows.Forms.Label lblSidebarFooter;
         private System.Windows.Forms.Button btnLogout;

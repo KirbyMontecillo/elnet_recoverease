@@ -1,6 +1,10 @@
 using elnet_recoverease.Core;
 using elnet_recoverease.Models;
 using System.Data;
+using System.Linq;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace elnet_recoverease.Admin
@@ -10,17 +14,63 @@ namespace elnet_recoverease.Admin
         public Admin_Dashboard()
         {
             InitializeComponent();
-            try { this.picLogo.Image = System.Drawing.Image.FromFile(@"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png"); } catch { }
-            
-            // Wire up navigation
-            NavigationHelper.WireNavButton(this.btnNavStaff, () => NavigationHelper.SwitchForm(this, new Staff_List()));
-            NavigationHelper.WireNavButton(this.btnNavReports, () => NavigationHelper.SwitchForm(this, new Admin_Report()));
-            NavigationHelper.WireNavButton(this.btnNavPatients, () => NavigationHelper.SwitchForm(this, new Medication_List()));
-            this.btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
 
-            this.Load += (s, e) => {
-                LoadDashboardData();
-            };
+            SetupForm();
+        }
+
+        private void SetupForm()
+        {
+            try 
+            { 
+                string logoPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\images\logo.png");
+                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
+                if (System.IO.File.Exists(logoPath)) this.picLogo.Image = System.Drawing.Image.FromFile(logoPath); 
+            } 
+            catch { }
+            
+            // Navigation - Classic way (No lambdas in form)
+            NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
+            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(this.pnlAvatarTop, new EventHandler(btnNavProfile_Click));
+            this.lblAvatarInitials.Click += new EventHandler(btnNavProfile_Click);
+            this.btnLogout.Click += new EventHandler(btnLogout_Click);
+
+            this.Load += new EventHandler(Admin_Dashboard_Load);
+        }
+
+        private void Admin_Dashboard_Load(object sender, EventArgs e)
+        {
+            ScheduleManager.UpdateMissedSchedules();
+            LoadDashboardData();
+            this.ActiveControl = lblPageTitle;
+            pnlContent.AutoScrollPosition = new Point(0, 0);
+        }
+
+        private void btnNavStaff_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Staff_List());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Admin_Report());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Medication_List());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Admin_Profile());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
         }
 
         private void LoadDashboardData()
@@ -29,88 +79,81 @@ namespace elnet_recoverease.Admin
             {
                 using (var db = new elnet_recoverease.Data.AppDbContext())
                 {
-                    // 1. Stats Summary
-                    var totalPatients = db.Patients.Count();
-                    lblStatPatientsVal.Text = totalPatients.ToString();
-                    
-                    var activeDoctors = db.Staff.Count(s => s.Role == "Doctor" && s.Status == "Active");
-                    lblStatDoctorsVal.Text = activeDoctors.ToString();
+                    // 1. Stats Summary - Optimized (using Count directly on DB)
+                    lblStatPatientsVal.Text = db.Patients.Count().ToString();
+                    lblStatDoctorsVal.Text = db.Staff.Count(s => s.Role == "Doctor" && s.Status == "Active").ToString();
                     
                     var today = DateOnly.FromDateTime(DateTime.Now);
-                    var appointmentsToday = db.Appointments.AsEnumerable()
-                        .Count(a => a.AppointmentDate.HasValue && DateOnly.FromDateTime(a.AppointmentDate.Value) == today);
+                    // For AppointmentDate (DateTime), we need a range for today
+                    var startToday = DateTime.Today;
+                    var endToday = startToday.AddDays(1);
+                    
+                    var appointmentsToday = db.Appointments
+                        .Count(a => a.AppointmentDate >= startToday && a.AppointmentDate < endToday);
+                    
                     lblStatAppointmentsVal.Text = appointmentsToday.ToString();
-                    lblStatAppointmentsSub.Text = $"{appointmentsToday} remaining"; // Simplified logic
+                    lblStatAppointmentsSub.Text = $"{appointmentsToday} scheduled";
 
-                    var missedMedsCount = db.MedicationSchedules.Count(m => m.IsMissed && m.ScheduledDate == today);
+                    var missedMedsCount = db.MedicationSchedules
+                        .Count(m => m.IsMissed && m.ScheduledDate == today);
                     lblStatMissedMedsVal.Text = missedMedsCount.ToString();
                     
-                    // Critical Alert Visibility
-                    pnlCriticalAlert.Visible = missedMedsCount > 0;
                     if (missedMedsCount > 0)
                     {
-                        lblAlertText.Text = $"{missedMedsCount} patients have missed their scheduled medications today — immediate follow-up recommended.";
+                        lblAlertText.Text = $"{missedMedsCount} patients have missed medications today — follow-up recommended.";
                     }
 
-                    // 2. Patient Adherence by Doctor
+                    // 2. Patient Adherence by Doctor - Optimized
                     LoadAdherenceData(db);
 
                     // 3. Recent Activity
                     LoadRecentActivity(db);
 
-                    // 4. Recent Patients Table
+                    // 4. Recent Patients Table - Optimized
                     LoadRecentPatients(db);
                 }
             }
-            catch (Exception)
-            {
-                // Silence or log
-            }
+            catch (Exception) { }
         }
 
         private void LoadAdherenceData(elnet_recoverease.Data.AppDbContext db)
         {
             flpAdherence.Controls.Clear();
-            var doctors = db.Staff.Where(s => s.Role == "Doctor" && s.Status == "Active").ToList();
-            var allPatients = db.Patients.ToList();
-            var allSchedules = db.MedicationSchedules.ToList();
+            
+            // Optimization: Get doctor stats in one go
+            var doctorStats = db.Staff
+                .Where(s => s.Role == "Doctor" && s.Status == "Active")
+                .Select(doc => new {
+                    doc.FullName,
+                    TakenCount = db.MedicationSchedules
+                        .Count(s => db.Patients.Where(p => p.AttendingDoctor == doc.FullName).Select(p => p.PatientID).Contains(s.PatientID) && s.IsTaken),
+                    TotalCount = db.MedicationSchedules
+                        .Count(s => db.Patients.Where(p => p.AttendingDoctor == doc.FullName).Select(p => p.PatientID).Contains(s.PatientID))
+                })
+                .ToList();
 
-            foreach (var doc in doctors)
+            foreach (var stats in doctorStats)
             {
-                // Find patients for this doctor
-                var docPatients = allPatients.Where(p => p.AttendingDoctor == doc.FullName).Select(p => p.PatientID).ToList();
-                
-                int percentage = 0;
-                if (docPatients.Count > 0)
-                {
-                    // Find schedules for these patients
-                    var docSchedules = allSchedules.Where(s => docPatients.Contains(s.PatientID)).ToList();
-                    if (docSchedules.Count > 0)
-                    {
-                        int taken = docSchedules.Count(s => s.IsTaken);
-                        percentage = (int)((taken * 100.0) / docSchedules.Count);
-                    }
-                }
-
-                AddAdherenceItem(doc.FullName, percentage);
+                int percentage = stats.TotalCount > 0 ? (int)(stats.TakenCount * 100.0 / stats.TotalCount) : 0;
+                AddAdherenceItem(stats.FullName, percentage);
             }
 
-            if (doctors.Count == 0)
+            if (doctorStats.Count == 0)
             {
-                flpAdherence.Controls.Add(new Label { Text = "No doctor data available", ForeColor = Color.Gray, AutoSize = true, Font = new Font("Segoe UI", 9) });
+                flpAdherence.Controls.Add(new Label { Text = "No data", ForeColor = Color.Gray, AutoSize = true });
             }
         }
 
         private void AddAdherenceItem(string name, int percentage)
         {
-            var pnl = new Panel { Width = flpAdherence.Width - 25, Height = 50, Margin = new Padding(0, 0, 0, 10) };
+            var pnl = new Panel { Width = flpAdherence.Width - 25, Height = 40, Margin = new Padding(0, 0, 0, 5) };
             var lblName = new Label { Text = name, AutoSize = true, Location = new Point(0, 5), Font = new Font("Segoe UI", 9) };
             
-            var pnlBarBg = new Panel { Width = 150, Height = 8, BackColor = Color.FromArgb(237, 242, 247), Location = new Point(120, 12) };
-            var pnlBarFill = new Panel { Width = (int)(150 * (percentage / 100.0)), Height = 8, BackColor = Color.FromArgb(49, 151, 149), Dock = DockStyle.Left };
+            var pnlBarBg = new Panel { Width = 120, Height = 6, BackColor = Color.FromArgb(237, 242, 247), Location = new Point(120, 12) };
+            var pnlBarFill = new Panel { Width = (int)(120 * (percentage / 100.0)), Height = 6, BackColor = Color.FromArgb(49, 151, 149), Dock = DockStyle.Left };
             pnlBarBg.Controls.Add(pnlBarFill);
 
-            var lblPct = new Label { Text = $"{percentage}%", AutoSize = true, Location = new Point(280, 5), Font = new Font("Segoe UI", 9, FontStyle.Bold) };
+            var lblPct = new Label { Text = $"{percentage}%", AutoSize = true, Location = new Point(250, 5), Font = new Font("Segoe UI", 9, FontStyle.Bold) };
 
             pnl.Controls.Add(lblName);
             pnl.Controls.Add(pnlBarBg);
@@ -125,23 +168,29 @@ namespace elnet_recoverease.Admin
             var patients = db.Patients.OrderByDescending(p => p.CreatedAt).Take(3).ToList();
             foreach (var p in patients)
             {
-                AddActivityItem("👤", $"New patient {p.FullName} registered", "1 hr ago");
+                AddActivityItem("👤", $"New patient {p.FullName}", "Recently");
             }
 
-            var missedMeds = db.MedicationSchedules.Where(m => m.IsMissed).OrderByDescending(m => m.ScheduledDate).Take(2).ToList();
+            var missedMeds = db.MedicationSchedules
+                .Where(m => m.IsMissed)
+                .OrderByDescending(m => m.ScheduledDate)
+                .Take(2)
+                .Select(m => new { m.PatientID })
+                .ToList();
+
             foreach (var m in missedMeds)
             {
                 var p = db.Patients.Find(m.PatientID);
-                AddActivityItem("💊", $"{p?.FullName ?? "Patient"} missed morning medication", "10 min ago");
+                AddActivityItem("💊", $"{p?.FullName ?? "Patient"} missed medication", "Action req.");
             }
         }
 
         private void AddActivityItem(string icon, string text, string time)
         {
-            var pnl = new Panel { Width = flpActivity.Width - 25, Height = 60, Margin = new Padding(0, 0, 0, 10) };
-            var lblIcon = new Label { Text = icon, Font = new Font("Segoe UI", 14), Location = new Point(5, 10), Size = new Size(30, 30), TextAlign = ContentAlignment.MiddleCenter };
-            var lblText = new Label { Text = text, AutoSize = true, Location = new Point(45, 10), Font = new Font("Segoe UI", 9, FontStyle.Bold) };
-            var lblTime = new Label { Text = time, AutoSize = true, Location = new Point(45, 30), ForeColor = Color.Gray, Font = new Font("Segoe UI", 8) };
+            var pnl = new Panel { Width = flpActivity.Width - 25, Height = 50, Margin = new Padding(0, 0, 0, 5) };
+            var lblIcon = new Label { Text = icon, Font = new Font("Segoe UI", 12), Location = new Point(5, 5), Size = new Size(25, 25) };
+            var lblText = new Label { Text = text, AutoSize = true, Location = new Point(35, 5), Font = new Font("Segoe UI", 8, FontStyle.Bold) };
+            var lblTime = new Label { Text = time, AutoSize = true, Location = new Point(35, 22), ForeColor = Color.Gray, Font = new Font("Segoe UI", 7) };
 
             pnl.Controls.Add(lblIcon);
             pnl.Controls.Add(lblText);
@@ -151,44 +200,36 @@ namespace elnet_recoverease.Admin
 
         private void LoadRecentPatients(elnet_recoverease.Data.AppDbContext db)
         {
-            var recentPatients = db.Patients
+            // Optimization: Fetch only what's needed for the top 10 patients
+            var now = DateTime.Now;
+            var data = db.Patients
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(10)
-                .ToList();
-
-            var schedules = db.MedicationSchedules.ToList();
-            var appointments = db.Appointments.ToList();
-
-            var data = recentPatients.Select(p => {
-                // Calculate patient specific adherence
-                var pSchedules = schedules.Where(s => s.PatientID == p.PatientID).ToList();
-                string adherence = "0%";
-                if (pSchedules.Count > 0)
-                {
-                    int taken = pSchedules.Count(s => s.IsTaken);
-                    adherence = $"{(int)((taken * 100.0) / pSchedules.Count)}%";
-                }
-
-                // Get next appointment
-                var nextAppt = appointments
-                    .Where(a => a.PatientID == p.PatientID && a.AppointmentDate >= DateTime.Now)
-                    .OrderBy(a => a.AppointmentDate)
-                    .FirstOrDefault();
-                string apptStr = nextAppt?.AppointmentDate?.ToString("MMM dd, yyyy") ?? "No appt";
-
-                return new
-                {
+                .Select(p => new {
                     p.FullName,
                     Doctor = p.AttendingDoctor,
-                    Plan = "Standard", // This could be a real field in Patient if needed
-                    NextAppt = apptStr,
-                    Adherence = adherence,
+                    Plan = "Standard",
+                    NextApptDate = db.Appointments
+                        .Where(a => a.PatientID == p.PatientID && a.AppointmentDate >= now)
+                        .OrderBy(a => a.AppointmentDate)
+                        .Select(a => a.AppointmentDate)
+                        .FirstOrDefault(),
+                    AdherenceValue = db.MedicationSchedules.Where(s => s.PatientID == p.PatientID).Count() > 0
+                        ? (int)(db.MedicationSchedules.Where(s => s.PatientID == p.PatientID && s.IsTaken).Count() * 100.0 / db.MedicationSchedules.Where(s => s.PatientID == p.PatientID).Count())
+                        : 0,
                     p.Status
-                };
-            }).ToList();
+                })
+                .ToList()
+                .Select(x => new {
+                    x.FullName,
+                    x.Doctor,
+                    x.Plan,
+                    NextAppt = x.NextApptDate?.ToString("MMM dd") ?? "None",
+                    Adherence = $"{x.AdherenceValue}%",
+                    x.Status
+                }).ToList();
 
             dgvRecentPatients.DataSource = data;
         }
     }
 }
-

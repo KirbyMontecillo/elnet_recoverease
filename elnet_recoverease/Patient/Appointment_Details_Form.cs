@@ -77,9 +77,14 @@ namespace elnet_recoverease
                 Cursor = Cursors.Hand
             };
             btnClose.FlatAppearance.BorderSize = 0;
-            btnClose.Click += (s, e) => this.Close();
+            btnClose.Click += new EventHandler(btnClose_Click);
             pnlFooter.Controls.Add(btnClose);
             this.Controls.Add(pnlFooter);
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void LoadAppointmentData()

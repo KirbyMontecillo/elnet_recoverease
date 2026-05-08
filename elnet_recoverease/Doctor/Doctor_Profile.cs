@@ -20,9 +20,19 @@ namespace elnet_recoverease.Doctor
             InitializeNavigation();
             LoadProfileData();
             
-            btnEditProfile.Click += (s, e) => ToggleEditMode(true);
-            btnSaveProfile.Click += (s, e) => SaveProfile();
+            btnEditProfile.Click += new EventHandler(btnEditProfile_Click);
+            btnSaveProfile.Click += new EventHandler(btnSaveProfile_Click);
             btnUploadPic.Click += BtnUploadPic_Click;
+        }
+
+        private void btnEditProfile_Click(object sender, EventArgs e)
+        {
+            ToggleEditMode(true);
+        }
+
+        private void btnSaveProfile_Click(object sender, EventArgs e)
+        {
+            SaveProfile();
         }
 
         private void LoadProfileData()
@@ -159,11 +169,36 @@ namespace elnet_recoverease.Doctor
                 picLogo.SizeMode = PictureBoxSizeMode.Zoom;
             } catch { }
 
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavAppointments, () => NavigationHelper.SwitchForm(this, new Appointments()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            btnLogout.Click += new EventHandler(btnLogout_Click);
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnNavAppointments_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Appointments());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Reports());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
         }
     }
 }

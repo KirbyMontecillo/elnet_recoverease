@@ -17,6 +17,18 @@ namespace elnet_recoverease.Admin
         private int _staffId;
         private bool _isReadOnly;
 
+        // Add Drop Shadow effect
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int CS_DROPSHADOW = 0x20000;
+                CreateParams cp = base.CreateParams;
+                cp.ClassStyle |= CS_DROPSHADOW;
+                return cp;
+            }
+        }
+
         public Edit_Staff()
         {
             InitializeComponent();
@@ -44,7 +56,6 @@ namespace elnet_recoverease.Admin
             txtEmail.ReadOnly = true;
             txtContact.ReadOnly = true;
             txtUsername.ReadOnly = true;
-            txtPassword.Enabled = false;
             cmbRole.Enabled = false;
             cmbSpecialty.Enabled = false;
             txtSpecialty.ReadOnly = true;
@@ -54,15 +65,36 @@ namespace elnet_recoverease.Admin
 
         private void SetupEvents()
         {
-            this.pnlHeader.MouseDown += (s, e) => {
+            this.pnlHeader.MouseDown += new MouseEventHandler(Header_MouseDown);
+            this.cmbRole.SelectedIndexChanged += new EventHandler(Role_SelectedIndexChanged);
+            this.btnClose.Click += new EventHandler(HandleClose);
+            this.btnCancel.Click += new EventHandler(HandleClose);
+            this.btnSave.Click += new EventHandler(HandleSave);
+        }
+
+        private void Header_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
                 ReleaseCapture();
                 SendMessage(this.Handle, 0x112, 0xf012, 0);
-            };
+            }
+        }
 
-            this.cmbRole.SelectedIndexChanged += (s, e) => ToggleSpecialtyInput();
-            this.btnClose.Click += (s, e) => this.Close();
-            this.btnCancel.Click += (s, e) => this.Close();
-            this.btnSave.Click += (s, e) => SaveChanges();
+        private void Role_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToggleSpecialtyInput();
+        }
+
+        private void HandleClose(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+
+        private void HandleSave(object sender, EventArgs e)
+        {
+            SaveChanges();
         }
 
         private void LoadStaffData(Staff s)
@@ -124,9 +156,9 @@ namespace elnet_recoverease.Admin
         private void SaveChanges()
         {
             if (string.IsNullOrWhiteSpace(txtFirstName.Text) || string.IsNullOrWhiteSpace(txtLastName.Text) || 
-                string.IsNullOrWhiteSpace(txtUsername.Text) || (string.IsNullOrWhiteSpace(txtPassword.Text) && _staffId == 0))
+                string.IsNullOrWhiteSpace(txtUsername.Text))
             {
-                MessageBox.Show("Please fill in required fields including credentials.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -140,23 +172,22 @@ namespace elnet_recoverease.Admin
                     if (_staffId == 0)
                     {
                         // Check if username exists
-                        if (db.Users.Any(u => u.Username == txtUsername.Text.Trim()))
+                        string newUsername = txtUsername.Text.Trim();
+                        if (db.Users.Any(u => u.Username == newUsername))
                         {
                             MessageBox.Show("Username already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
 
                         user = new User { 
-                            Username = txtUsername.Text.Trim(),
-                            PasswordHash = txtPassword.Text.Trim(),
-                            Role = cmbRole.SelectedItem.ToString(),
+                            Username = newUsername,
+                            PasswordHash = "123", // Default password
+                            Role = cmbRole.SelectedItem?.ToString() ?? "Staff",
                             CreatedAt = DateTime.Now,
                             IsFirstLogin = true
                         };
-                        db.Users.Add(user);
-                        db.SaveChanges(); // Get UserID
-
-                        staff = new Staff { UserID = user.UserID, Status = "Active" };
+                        
+                        staff = new Staff { User = user, Status = "Active" };
                         db.Staff.Add(staff);
                     }
                     else
@@ -167,17 +198,28 @@ namespace elnet_recoverease.Admin
                         user = db.Users.Find(staff.UserID);
                         if (user != null)
                         {
-                            user.Role = cmbRole.SelectedItem.ToString();
-                            if (!string.IsNullOrWhiteSpace(txtPassword.Text)) user.PasswordHash = txtPassword.Text.Trim();
+                            string newUsername = txtUsername.Text.Trim();
+                            if (user.Username != newUsername)
+                            {
+                                if (db.Users.Any(u => u.Username == newUsername))
+                                {
+                                    MessageBox.Show("Username already exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                                user.Username = newUsername;
+                            }
+                            user.Role = cmbRole.SelectedItem?.ToString() ?? "Staff";
                         }
                     }
 
-                    string selectedRole = cmbRole.SelectedItem.ToString();
+                    string selectedRole = cmbRole.SelectedItem?.ToString() ?? "Staff";
                     staff.FullName = $"{txtFirstName.Text.Trim()} {txtLastName.Text.Trim()}";
                     staff.Role = selectedRole;
                     staff.Specialty = (selectedRole == "Doctor") ? cmbSpecialty.Text : txtSpecialty.Text.Trim();
                     staff.Email = txtEmail.Text.Trim();
                     staff.ContactNumber = txtContact.Text.Trim();
+                    staff.LicenseNumber = staff.LicenseNumber ?? "PENDING"; // Fix NULL constraint
+                    staff.CreatedAt = dtpDateHired.Value; // Sync with UI
 
                     db.SaveChanges();
                     MessageBox.Show(_staffId == 0 ? "Staff registered successfully!" : "Staff details updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -187,7 +229,9 @@ namespace elnet_recoverease.Admin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving staff: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string msg = ex.Message;
+                if (ex.InnerException != null) msg += "\n\nDetails: " + ex.InnerException.Message;
+                MessageBox.Show("Error saving staff: " + msg, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

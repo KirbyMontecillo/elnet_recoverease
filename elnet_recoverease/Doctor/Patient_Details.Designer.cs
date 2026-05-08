@@ -108,7 +108,7 @@ namespace elnet_recoverease.Doctor
             SetupBaseNav(btnNavPatients, lblNavPatientsIcon, lblNavPatientsText, "👥", "My Patients", true, clrNavy, clrNavyActive, clrWhite);
             SetupBaseNav(btnNavDashboard, lblNavDashIcon, lblNavDashText, "⊞", "Dashboard", false, clrNavy, clrNavyActive, clrWhite);
             this.pnlSidebarBottom.Dock = DockStyle.Bottom;
-            this.pnlSidebarBottom.Height = 100;
+            this.pnlSidebarBottom.Height = 0;
             this.btnLogout = new Button { 
                 Text = "Sign Out", 
                 Dock = DockStyle.Bottom, 
@@ -122,6 +122,7 @@ namespace elnet_recoverease.Doctor
                 Padding = new Padding(20, 0, 0, 0)
             };
             this.btnLogout.FlatAppearance.BorderSize = 0;
+            this.btnLogout.Visible = false;
             this.pnlSidebarBottom.Controls.Add(this.btnLogout);
             this.pnlSidebar.Controls.Add(this.btnNavProfile);
             this.pnlSidebar.Controls.Add(this.btnNavReports);

@@ -18,12 +18,21 @@ namespace elnet_recoverease
         public Patient_Dashboard()
         {
             InitializeComponent();
+
+            // Force Layout fix to prevent overlapping
+            pnlMain.Controls.Remove(pnlTopBar);
+            pnlMain.Controls.Remove(pnlContent);
+            pnlMain.Controls.Add(pnlContent);
+            pnlMain.Controls.Add(pnlTopBar);
+            pnlTopBar.SendToBack();
+            pnlContent.BringToFront();
+
             LoadLogo();
             WireNavigation();
 
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
-                this.Load += async (s, e) => await LoadDashboardData();
+                this.Load += new EventHandler(Patient_Dashboard_Load);
                 StartRefreshTimer();
             }
         }
@@ -32,8 +41,18 @@ namespace elnet_recoverease
         {
             _refreshTimer = new System.Windows.Forms.Timer();
             _refreshTimer.Interval = 30000; // Refresh every 30 seconds for precision
-            _refreshTimer.Tick += async (s, e) => await LoadDashboardData();
+            _refreshTimer.Tick += new EventHandler(RefreshTimer_Tick);
             _refreshTimer.Start();
+        }
+
+        private async void Patient_Dashboard_Load(object sender, EventArgs e)
+        {
+            await LoadDashboardData();
+        }
+
+        private async void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            await LoadDashboardData();
         }
 
         private async Task LoadDashboardData()
@@ -254,11 +273,13 @@ namespace elnet_recoverease
 
             // Click handling
             pnl.Cursor = Cursors.Hand;
-            pnl.Click += (s, e) => rem.Action?.Invoke();
+            pnl.Tag = rem;
+            pnl.Click += new EventHandler(Reminder_Click);
             foreach (Control c in pnl.Controls)
             {
                 c.Cursor = Cursors.Hand;
-                c.Click += (s, e) => rem.Action?.Invoke();
+                c.Tag = rem;
+                c.Click += new EventHandler(Reminder_Control_Click);
             }
 
             // Priority colors
@@ -279,6 +300,22 @@ namespace elnet_recoverease
             }
         }
 
+        private void Reminder_Click(object sender, EventArgs e)
+        {
+            if (sender is Panel pnl && pnl.Tag is PatientReminder rem)
+            {
+                rem.Action?.Invoke();
+            }
+        }
+
+        private void Reminder_Control_Click(object sender, EventArgs e)
+        {
+            if (sender is Control ctrl && ctrl.Tag is PatientReminder rem)
+            {
+                rem.Action?.Invoke();
+            }
+        }
+
         private class PatientReminder
         {
             public int Priority { get; set; }
@@ -290,32 +327,29 @@ namespace elnet_recoverease
 
         private void WireNavigation()
         {
-            RegisterNavClick(btnNavDashboard, (s, e) => { /* Already on Dashboard */ });
-            RegisterNavClick(btnNavProfile, (s, e) => OpenForm(new Patient_Profile()));
-            RegisterNavClick(btnNavMeds, (s, e) => OpenForm(new Medications()));
-            RegisterNavClick(btnNavAppointments, (s, e) => OpenForm(new Appointments()));
-            RegisterNavClick(btnNavTreatment, (s, e) => OpenForm(new Treatment_Plans()));
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(btnNavMeds, new EventHandler(btnNavMeds_Click));
+            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
+            NavigationHelper.WireNavButton(btnNavTreatment, new EventHandler(btnNavTreatment_Click));
 
-            btnLogout.Click += (s, e) => {
-                UserSession.Logout();
-                new Login().Show();
-                this.Close();
-            };
+            btnLogout.Click += new EventHandler(btnLogout_Click);
         }
 
-        private void RegisterNavClick(Panel panel, EventHandler handler)
+        private void btnNavDashboard_Click(object sender, EventArgs e) { /* Already here */ }
+        private void btnNavProfile_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Patient_Profile()); }
+        private void btnNavMeds_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Medications()); }
+        private void btnNavAppointments_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Appointments()); }
+        private void btnNavTreatment_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Treatment_Plans()); }
+
+        private void btnLogout_Click(object sender, EventArgs e)
         {
-            panel.Click += handler;
-            foreach (Control c in panel.Controls)
-            {
-                c.Click += (s, e) => handler(panel, e);
-            }
+            NavigationHelper.Logout(this);
         }
 
         private void OpenForm(Form childForm)
         {
-            childForm.Show();
-            this.Close(); // Use Close for consistency
+            NavigationHelper.SwitchForm(this, childForm);
         }
 
         private void LoadLogo()

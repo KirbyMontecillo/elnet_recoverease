@@ -48,29 +48,18 @@ namespace elnet_recoverease.Doctor
                 lblAvatarInitials.Text = GetInitials(_doctor.FullName);
             }
 
-            // Navigation Handlers (with click bubbling)
-            NavigationHelper.WireNavButton(btnNavDashboard, () => NavigationHelper.SwitchForm(this, new Doctor_Dashboard()));
-            NavigationHelper.WireNavButton(btnNavPatients, () => NavigationHelper.SwitchForm(this, new Patient_List()));
-            NavigationHelper.WireNavButton(btnNavReports, () => NavigationHelper.SwitchForm(this, new Reports()));
-            NavigationHelper.WireNavButton(btnNavProfile, () => NavigationHelper.SwitchForm(this, new Doctor_Profile()));
-            btnLogout.Click += (s, e) => NavigationHelper.Logout(this);
+            // Navigation Handlers
+            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
+            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
+            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
+            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            btnLogout.Click += new EventHandler(btnLogout_Click);
 
             // Filter Handlers
-            dtpFilterDate.ValueChanged += (s, e) => {
-                _userChangedDate = true;
-                LoadAppointments();
-            };
-            cmbFilterStatus.SelectedIndexChanged += (s, e) => LoadAppointments();
+            dtpFilterDate.ValueChanged += new EventHandler(dtpFilterDate_ValueChanged);
+            cmbFilterStatus.SelectedIndexChanged += new EventHandler(cmbFilterStatus_SelectedIndexChanged);
 
-            btnNewAppointment.Click += (s, e) => {
-                using (var apptForm = new Appointment_Form())
-                {
-                    if (apptForm.ShowDialog() == DialogResult.OK)
-                    {
-                        LoadAppointments();
-                    }
-                }
-            };
+            btnNewAppointment.Click += new EventHandler(btnNewAppointment_Click);
 
             // Grid Customization
             dgvAppointments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -79,32 +68,77 @@ namespace elnet_recoverease.Doctor
             
             dgvAppointments.CellFormatting += DgvAppointments_CellFormatting;
             dgvAppointments.CellPainting += Dgv_CellPainting; // Stylized buttons
-            dgvAppointments.CellContentClick += (s, e) => {
-                if (e.RowIndex >= 0 && dgvAppointments.Columns[e.ColumnIndex].HeaderText == "ACTION") {
-                    string status = dgvAppointments.Rows[e.RowIndex].Cells[2].Value?.ToString();
-                    if (status == "Scheduled") {
-                        var apptId = (int)dgvAppointments.Rows[e.RowIndex].Tag;
-                        StartConsultation(apptId);
-                    }
+            dgvAppointments.CellContentClick += new DataGridViewCellEventHandler(dgvAppointments_CellContentClick);
+            dgvAppointments.CellDoubleClick += new DataGridViewCellEventHandler(dgvAppointments_CellDoubleClick);
+        }
+
+        private void btnNavDashboard_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+        }
+
+        private void btnNavPatients_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Patient_List());
+        }
+
+        private void btnNavReports_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Reports());
+        }
+
+        private void btnNavProfile_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.SwitchForm(this, new Doctor_Profile());
+        }
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this);
+        }
+
+        private void dtpFilterDate_ValueChanged(object sender, EventArgs e)
+        {
+            _userChangedDate = true;
+            LoadAppointments();
+        }
+
+        private void cmbFilterStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadAppointments();
+        }
+
+        private void btnNewAppointment_Click(object sender, EventArgs e)
+        {
+            using (var apptForm = new Appointment_Form())
+            {
+                if (apptForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadAppointments();
                 }
-            };
-            dgvAppointments.CellDoubleClick += (s, e) => {
-                if (e.RowIndex >= 0) {
+            }
+        }
+
+        private void dgvAppointments_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvAppointments.Columns[e.ColumnIndex].HeaderText == "ACTION") {
+                string status = dgvAppointments.Rows[e.RowIndex].Cells[2].Value?.ToString();
+                if (status == "Scheduled") {
                     var apptId = (int)dgvAppointments.Rows[e.RowIndex].Tag;
                     StartConsultation(apptId);
                 }
-            };
-        }
-
-        private void AttachNavEvents(Panel pnl, Action action)
-        {
-            pnl.Click += (s, e) => action();
-            foreach (Control c in pnl.Controls)
-            {
-                c.Click += (s, e) => action();
-                c.Cursor = Cursors.Hand;
             }
         }
+
+        private void dgvAppointments_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0) {
+                var apptId = (int)dgvAppointments.Rows[e.RowIndex].Tag;
+                StartConsultation(apptId);
+            }
+        }
+
+
 
         private string GetInitials(string name)
         {

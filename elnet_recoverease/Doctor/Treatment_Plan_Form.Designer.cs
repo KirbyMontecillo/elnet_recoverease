@@ -245,7 +245,7 @@ namespace elnet_recoverease.Doctor
             // Sidebar bottom
             this.pnlSidebarBottom.BackColor = clrNavy;
             this.pnlSidebarBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlSidebarBottom.Height = 70;
+            this.pnlSidebarBottom.Height = 40;
             this.pnlSidebarBottom.Padding = new System.Windows.Forms.Padding(20, 12, 16, 12);
 
             this.lblSidebarFooter.Text = "Secure Healthcare Platform";
