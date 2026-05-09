@@ -44,12 +44,7 @@ namespace elnet_recoverease.Doctor
             dtpStartDate.Value = DateTime.Now;
             dtpEndDate.Value = DateTime.Now.AddMonths(1);
 
-            // Side nav
-            NavigationHelper.WireNavButton(btnNavDashboard, new EventHandler(btnNavDashboard_Click));
-            NavigationHelper.WireNavButton(btnNavPatients, new EventHandler(btnNavPatients_Click));
-            NavigationHelper.WireNavButton(btnNavAppointments, new EventHandler(btnNavAppointments_Click));
-            NavigationHelper.WireNavButton(btnNavReports, new EventHandler(btnNavReports_Click));
-            NavigationHelper.WireNavButton(btnNavProfile, new EventHandler(btnNavProfile_Click));
+            // Sidebar Nav removed as this is now a modal dialog
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -62,30 +57,7 @@ namespace elnet_recoverease.Doctor
             this.Close();
         }
 
-        private void btnNavDashboard_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
-        }
-
-        private void btnNavPatients_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Patient_List());
-        }
-
-        private void btnNavAppointments_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Appointments());
-        }
-
-        private void btnNavReports_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Reports());
-        }
-
-        private void btnNavProfile_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Doctor_Profile());
-        }
+        // Navigation removed as this is now a modal dialog
 
 
         private async void BtnSave_Click(object sender, EventArgs e)

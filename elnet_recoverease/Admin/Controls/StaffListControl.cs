@@ -4,61 +4,42 @@ using System.Linq;
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
 
-namespace elnet_recoverease.Admin
+namespace elnet_recoverease.Admin.Controls
 {
-    public partial class Staff_List : Form
+    public partial class StaffListControl : UserControl
     {
         private List<Models.Staff> _allStaff = new List<Models.Staff>();
 
-        public Staff_List()
+        public StaffListControl()
         {
             InitializeComponent();
-            
-            SetupForm();
+            SetupControl();
         }
 
-        private void SetupForm()
+        private void SetupControl()
         {
-            try 
-            { 
-                string logoPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\images\logo.png");
-                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
-                if (System.IO.File.Exists(logoPath)) this.picLogo.Image = System.Drawing.Image.FromFile(logoPath); 
-            } 
-            catch { }
-
-            // Navigation - Classic way
-            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
-            NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
-            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
-            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
-            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
-            NavigationHelper.WireNavButton(this.pnlAvatarTop, new EventHandler(btnNavProfile_Click));
-            this.btnLogout.Click += new EventHandler(btnLogout_Click);
-
-            // Filters
+            this.Load += new EventHandler(StaffListControl_Load);
+            this.txtSearch.TextChanged += new EventHandler(txtSearch_TextChanged);
             this.cmbRoleFilter.SelectedIndexChanged += new EventHandler(FilterControls_Changed);
             this.cmbStatusFilter.SelectedIndexChanged += new EventHandler(FilterControls_Changed);
-
-            // Actions
             this.dgvStaff.CellContentClick += new DataGridViewCellEventHandler(dgvStaff_CellContentClick);
+            this.dgvStaff.CellFormatting += new DataGridViewCellFormattingEventHandler(dgvStaff_CellFormatting);
+            this.btnAddStaff.Click += new EventHandler(btnAddStaff_Click);
             
-            this.Load += new EventHandler(Staff_List_Load);
+            // Hover effects for Add button
+            this.btnAddStaff.MouseEnter += (s, e) => this.btnAddStaff.BackColor = Color.FromArgb(0, 140, 140);
+            this.btnAddStaff.MouseLeave += (s, e) => this.btnAddStaff.BackColor = Color.FromArgb(0, 168, 168);
+            
+            this.cmbRoleFilter.SelectedIndex = 0;
+            this.cmbStatusFilter.SelectedIndex = 0;
         }
 
-        private void Staff_List_Load(object sender, EventArgs e)
+        private void StaffListControl_Load(object sender, EventArgs e)
         {
             LoadStaffData();
-            this.ActiveControl = lblPageTitle;
         }
-
-        private void btnNavDashboard_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Admin_Dashboard()); }
-        private void btnNavStaff_Click(object sender, EventArgs e) { /* Current Form */ }
-        private void btnNavReports_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Admin_Report()); }
-        private void btnNavPatients_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Medication_List()); }
-        private void btnNavProfile_Click(object sender, EventArgs e) { NavigationHelper.SwitchForm(this, new Admin_Profile()); }
-        private void btnLogout_Click(object sender, EventArgs e) { NavigationHelper.Logout(this); }
 
         private void btnAddStaff_Click(object sender, EventArgs e)
         {
@@ -108,7 +89,6 @@ namespace elnet_recoverease.Admin
 
             dgvStaff.Rows.Clear();
 
-            // Optimization: Get counts from DB instead of loading all patients
             using (var db = new AppDbContext())
             {
                 foreach (var s in filtered)
@@ -120,11 +100,52 @@ namespace elnet_recoverease.Admin
                         patientCountStr = $"{count} patients";
                     }
 
-                    var rowIndex = dgvStaff.Rows.Add(s.FullName, s.Role, s.Specialty, patientCountStr, s.Status, "👁 View", "✏ Edit", "🗑 Delete");
+                    var rowIndex = dgvStaff.Rows.Add(s.FullName, s.Role, s.Specialty, patientCountStr, s.Status);
                     dgvStaff.Rows[rowIndex].Tag = s.StaffID;
                 }
             }
             lblShowingCount.Text = $"Showing {filtered.Count} of {_allStaff.Count}";
+        }
+
+        private void dgvStaff_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            // Status Badge Styling
+            if (dgvStaff.Columns[e.ColumnIndex].Name == "colStatus")
+            {
+                if (e.Value != null)
+                {
+                    string status = e.Value.ToString();
+                    if (status == "Active")
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(56, 161, 105);
+                        e.CellStyle.BackColor = Color.FromArgb(198, 246, 213);
+                    }
+                    else
+                    {
+                        e.CellStyle.ForeColor = Color.FromArgb(113, 128, 150);
+                        e.CellStyle.BackColor = Color.FromArgb(237, 242, 247);
+                    }
+                    e.FormattingApplied = true;
+                }
+            }
+
+            // Action Buttons Styling
+            if (dgvStaff.Columns[e.ColumnIndex] is DataGridViewButtonColumn)
+            {
+                e.CellStyle.Padding = new Padding(5, 10, 5, 10);
+                if (dgvStaff.Columns[e.ColumnIndex].Name == "colDelete")
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(197, 48, 48);
+                    e.CellStyle.SelectionForeColor = Color.FromArgb(197, 48, 48);
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.FromArgb(27, 58, 107);
+                    e.CellStyle.SelectionForeColor = Color.FromArgb(27, 58, 107);
+                }
+            }
         }
 
         private void dgvStaff_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -132,6 +153,7 @@ namespace elnet_recoverease.Admin
             if (e.RowIndex < 0) return;
             int staffId = (int)dgvStaff.Rows[e.RowIndex].Tag;
 
+            // Adjust indices based on the columns added in designer
             if (e.ColumnIndex == colView.Index || e.ColumnIndex == colEdit.Index)
             {
                 var staff = _allStaff.FirstOrDefault(s => s.StaffID == staffId);

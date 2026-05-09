@@ -7,21 +7,18 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace elnet_recoverease.Admin
+namespace elnet_recoverease.Admin.Controls
 {
-    public partial class Medication_List : Form
+    public partial class MedicationListControl : UserControl
     {
         private List<Medication> _allMeds = new List<Medication>();
         private System.Windows.Forms.Timer _searchTimer;
 
-        public Medication_List()
+        public MedicationListControl()
         {
             InitializeComponent();
-            
             InitializeSearchTimer();
-            SetupForm();
-            LoadMedicationData();
-            this.Load += new System.EventHandler(Medication_List_Load);
+            SetupControl();
         }
 
         private void InitializeSearchTimer()
@@ -37,65 +34,21 @@ namespace elnet_recoverease.Admin
             FilterMedications();
         }
 
-        private void SetupForm()
+        private void SetupControl()
         {
-            try 
-            { 
-                string logoPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\images\logo.png");
-                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
-                if (System.IO.File.Exists(logoPath)) this.picLogo.Image = Image.FromFile(logoPath); 
-            } 
-            catch { }
-            
-            // Navigation
-            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
-            NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
-            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
-            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
-            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
-            NavigationHelper.WireNavButton(this.pnlAvatarTop, new EventHandler(btnNavProfile_Click));
-            this.btnLogout.Click += new System.EventHandler(btnLogout_Click);
-
-            // Filters
+            this.Load += new System.EventHandler(MedicationListControl_Load);
+            this.txtSearch.TextChanged += new System.EventHandler(txtSearch_TextChanged);
             this.cmbFormFilter.SelectedIndexChanged += new System.EventHandler(cmbFormFilter_SelectedIndexChanged);
-
-            // Actions
             this.dgvMeds.CellContentClick += new DataGridViewCellEventHandler(dgvMeds_CellContentClick);
+            this.btnAddMed.Click += new System.EventHandler(btnAddMed_Click);
+
+            if (this.cmbFormFilter.Items.Count > 0)
+                this.cmbFormFilter.SelectedIndex = 0;
         }
 
-        private void Medication_List_Load(object sender, EventArgs e)
+        private void MedicationListControl_Load(object sender, EventArgs e)
         {
-            this.ActiveControl = lblPageTitle;
-        }
-
-        private void btnNavDashboard_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Admin_Dashboard());
-        }
-
-        private void btnNavStaff_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Staff_List());
-        }
-
-        private void btnNavPatients_Click(object sender, EventArgs e)
-        {
-            /* Current Form */
-        }
-
-        private void btnNavReports_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Admin_Report());
-        }
-
-        private void btnNavProfile_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Admin_Profile());
-        }
-
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.Logout(this);
+            LoadMedicationData();
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -123,14 +76,14 @@ namespace elnet_recoverease.Admin
             if (e.RowIndex < 0) return;
             int medId = (int)dgvMeds.Rows[e.RowIndex].Tag;
 
-            if (e.ColumnIndex == 4) // Edit
+            if (e.ColumnIndex == colEdit.Index) // Edit
             {
                 using (var form = new Edit_Medicine(medId))
                 {
                     if (form.ShowDialog() == DialogResult.OK) LoadMedicationData();
                 }
             }
-            else if (e.ColumnIndex == 5) // Delete
+            else if (e.ColumnIndex == colDelete.Index) // Delete
             {
                 if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
@@ -196,16 +149,13 @@ namespace elnet_recoverease.Admin
 
             dgvMeds.Rows.Clear();
             
-            // Optimization: Batch row adding if there were many, but dgvMeds is usually small enough.
             foreach (var m in filtered)
             {
                 var rowIndex = dgvMeds.Rows.Add(
                     $"{m.MedicationName} \n({m.Category})",
                     m.DosageUnit,
                     m.Form,
-                    m.Frequency,
-                    "✏ Edit",
-                    "🗑 Delete"
+                    m.Frequency
                 );
                 dgvMeds.Rows[rowIndex].Tag = m.MedicationID;
             }

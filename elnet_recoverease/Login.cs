@@ -60,11 +60,11 @@ namespace elnet_recoverease
 
                         if (user.Role == "Admin")
                         {
-                            NavigationHelper.SwitchForm(this, new Admin.Admin_Dashboard());
+                            NavigationHelper.SwitchForm(this, new Admin.Forms.AdminMainForm());
                         }
                         else if (user.Role == "Doctor")
                         {
-                            NavigationHelper.SwitchForm(this, new Doctor.Doctor_Dashboard());
+                            NavigationHelper.SwitchForm(this, new Doctor.Forms.DoctorMainForm());
                         }
                         else
                         {

@@ -20,7 +20,7 @@ namespace elnet_recoverease.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=RecoverEaseDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS01;Database=RecoverEaseDB;Trusted_Connection=True;TrustServerCertificate=True;Connect Timeout=10;");
         }
 
         public void EnsureSchemaUpdated()

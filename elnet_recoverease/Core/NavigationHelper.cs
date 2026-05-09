@@ -71,12 +71,11 @@ namespace elnet_recoverease.Core
             target.FormClosed += new FormClosedEventHandler(TargetForm_Closed);
         }
 
-        private static void TargetForm_Closed(object sender, FormClosedEventArgs e)
+        private static void TargetForm_Closed(object? sender, FormClosedEventArgs e)
         {
-            if (Application.OpenForms.Count == 0 || (Application.OpenForms.Count == 1 && Application.OpenForms[0] is Login))
-            {
-                // Logic to exit or show login
-            }
+            // If the main window is closed, we should exit the application.
+            // Since we Hide the Login form instead of closing it, we must explicitly exit.
+            Application.Exit();
         }
 
         public static void Logout(Form current)

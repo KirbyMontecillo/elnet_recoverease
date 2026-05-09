@@ -1,15 +1,14 @@
+using System;
+using System.IO;
+using System.Windows.Forms;
+
 namespace elnet_recoverease
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
 
             try
@@ -23,7 +22,8 @@ namespace elnet_recoverease
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Database schema update failed:\n\n{ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"Database schema update failed:\n\n{ex.Message}\n\nThis usually happens if SQL Server is not running or the connection string is incorrect.", 
+                            "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
 

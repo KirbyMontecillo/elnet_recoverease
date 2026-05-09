@@ -1,6 +1,6 @@
-namespace elnet_recoverease.Admin
+namespace elnet_recoverease.Admin.Controls
 {
-    partial class Report_Viewer
+    partial class ReportViewerControl
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -13,7 +13,7 @@ namespace elnet_recoverease.Admin
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Component Designer generated code
 
         private void InitializeComponent()
         {
@@ -33,15 +33,13 @@ namespace elnet_recoverease.Admin
             this.webView.TabIndex = 0;
             this.webView.ZoomFactor = 1D;
             // 
-            // Report_Viewer
+            // ReportViewerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1200, 800);
             this.Controls.Add(this.webView);
-            this.Name = "Report_Viewer";
-            this.Text = "RecoverEase - Report Preview";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Name = "ReportViewerControl";
+            this.Size = new System.Drawing.Size(1200, 800);
             ((System.ComponentModel.ISupportInitialize)(this.webView)).EndInit();
             this.ResumeLayout(false);
         }

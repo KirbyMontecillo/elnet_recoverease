@@ -6,72 +6,32 @@ using elnet_recoverease.Core;
 using elnet_recoverease.Data;
 using elnet_recoverease.Models;
 
-namespace elnet_recoverease.Admin
+namespace elnet_recoverease.Admin.Controls
 {
-    public partial class Admin_Profile : Form
+    public partial class AdminProfileControl : UserControl
     {
         private bool _isEditMode = false;
         private AppDbContext _db = new AppDbContext();
 
-        public Admin_Profile()
+        public AdminProfileControl()
         {
             InitializeComponent();
-            SetupForm();
+            SetupControl();
         }
 
-        private void SetupForm()
+        private void SetupControl()
         {
-            try 
-            { 
-                string logoPath = System.IO.Path.Combine(Application.StartupPath, @"..\..\..\images\logo.png");
-                if (!System.IO.File.Exists(logoPath)) logoPath = @"C:\Users\Kirby\OneDrive\Desktop\elnet_recoverease\elnet_recoverease\images\logo.png";
-                if (System.IO.File.Exists(logoPath)) this.picLogo.Image = Image.FromFile(logoPath); 
-            } 
-            catch { }
+            this.btnEditProfile.Click += new EventHandler(btnEditProfile_Click);
+            this.btnSaveProfile.Click += new EventHandler(btnSaveProfile_Click);
+            this.btnUploadPic.Click += new EventHandler(btnUploadPic_Click);
+            this.btnLogoutProfile.Click += new EventHandler(btnLogoutProfile_Click);
 
-            // Navigation
-            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
-            NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
-            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
-            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
-            this.btnLogout.Click += new EventHandler(btnLogout_Click);
-
-            // Actions
-            btnEditProfile.Click += new EventHandler(btnEditProfile_Click);
-            btnSaveProfile.Click += new EventHandler(btnSaveProfile_Click);
-            btnUploadPic.Click += new EventHandler(btnUploadPic_Click);
-
-            this.Load += new EventHandler(Admin_Profile_Load);
+            this.Load += new EventHandler(AdminProfileControl_Load);
         }
 
-        private void Admin_Profile_Load(object sender, EventArgs e)
+        private void AdminProfileControl_Load(object sender, EventArgs e)
         {
             LoadProfileData();
-        }
-
-        private void btnNavDashboard_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Admin_Dashboard());
-        }
-
-        private void btnNavStaff_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Staff_List());
-        }
-
-        private void btnNavPatients_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Medication_List());
-        }
-
-        private void btnNavReports_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.SwitchForm(this, new Admin_Report());
-        }
-
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-            NavigationHelper.Logout(this);
         }
 
         private void btnEditProfile_Click(object sender, EventArgs e)
@@ -136,17 +96,15 @@ namespace elnet_recoverease.Admin
             txtEmail.Text = staff.Email ?? "Not specified";
             txtAddress.Text = staff.ClinicAddress ?? "Not specified";
 
-            if (!string.IsNullOrEmpty(staff.FullName))
-            {
-                var parts = staff.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length > 1) lblAvatarInitials.Text = (parts[0][0].ToString() + parts[parts.Length - 1][0].ToString()).ToUpper();
-                else if (parts.Length == 1) lblAvatarInitials.Text = parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpper();
-            }
-
             if (!string.IsNullOrEmpty(staff.ProfileImagePath) && System.IO.File.Exists(staff.ProfileImagePath))
             {
                 try { picProfileLarge.Image = Image.FromFile(staff.ProfileImagePath); } catch { }
             }
+            
+            // Inform the parent form to update the Avatar initials if necessary
+            var mainForm = this.FindForm() as Forms.AdminMainForm;
+            // The top bar initials might be handled directly in the MainForm loading,
+            // but we ensure the local fields are updated.
         }
 
         private void ToggleEditMode(bool editing)
@@ -157,6 +115,7 @@ namespace elnet_recoverease.Admin
             btnEditProfile.Visible = !editing;
             btnSaveProfile.Visible = editing;
             btnUploadPic.Visible = editing;
+            btnLogoutProfile.Visible = !editing;
 
             txtExperience.ReadOnly = !editing;
             txtAffiliations.ReadOnly = !editing;
@@ -203,10 +162,14 @@ namespace elnet_recoverease.Admin
                 MessageBox.Show("Error saving profile: " + ex.Message);
             }
         }
-
-        private void lblContactInfoTitle_Click(object sender, EventArgs e)
+        private void btnLogoutProfile_Click(object sender, EventArgs e)
         {
-
+            if (MessageBox.Show("Are you sure you want to sign out?", "Confirm Logout", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                var mainForm = this.FindForm();
+                if (mainForm != null) NavigationHelper.Logout(mainForm);
+            }
         }
     }
 }

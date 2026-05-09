@@ -1,25 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using elnet_recoverease.Core;
+using elnet_recoverease.Data;
+using Microsoft.Web.WebView2.Core;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Shared;
-using System.IO;
-using System.Diagnostics;
-using Microsoft.Web.WebView2.Core;
-using elnet_recoverease.Data;
-using elnet_recoverease.Models;
-using elnet_recoverease.Core;
-using Microsoft.EntityFrameworkCore;
 
-namespace elnet_recoverease.Admin
+namespace elnet_recoverease.Admin.Controls
 {
-    public partial class Report_Viewer : Form
+    public partial class ReportViewerControl : UserControl
     {
         private AppDbContext _db = new AppDbContext();
         private string _currentReportType = "";
@@ -27,7 +22,7 @@ namespace elnet_recoverease.Admin
         private DateTime _currentTo;
         private string _currentDoctor = "";
 
-        public Report_Viewer()
+        public ReportViewerControl()
         {
             InitializeComponent();
             InitializeWebView();
@@ -38,7 +33,7 @@ namespace elnet_recoverease.Admin
         {
             ToolStrip ts = new ToolStrip();
             ts.Dock = DockStyle.Top;
-            ts.ImageScalingSize = new Size(24, 24);
+            ts.ImageScalingSize = new System.Drawing.Size(24, 24);
 
             ToolStripButton btnPrint = new ToolStripButton("🖨️ Print", null, new EventHandler(btnPrint_Click));
             ToolStripButton btnPdf = new ToolStripButton("💾 Save as PDF", null, new EventHandler(btnPdf_Click));
@@ -334,7 +329,12 @@ namespace elnet_recoverease.Admin
                 string fullPath = Path.Combine(tempFolder, fileName);
                 report.ExportToDisk(ExportFormatType.PortableDocFormat, fullPath);
                 webView.CoreWebView2.Navigate(fullPath);
-                this.Text = $"Crystal Report: {reportName}";
+                
+                // Optional: Update parent form title if required
+                var mainForm = this.FindForm();
+                if (mainForm != null) {
+                    mainForm.Text = $"Crystal Report: {reportName}";
+                }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
