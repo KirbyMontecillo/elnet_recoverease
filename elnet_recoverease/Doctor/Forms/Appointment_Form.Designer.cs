@@ -68,7 +68,7 @@ namespace elnet_recoverease.Doctor
             // Form Settings
             this.ClientSize = new System.Drawing.Size(680, 850);
             this.BackColor = System.Drawing.Color.White;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Schedule Appointment";
 
@@ -90,6 +90,16 @@ namespace elnet_recoverease.Doctor
             
             this.pnlHeader.Controls.Add(this.lblHeaderTitle);
             this.pnlHeader.Controls.Add(this.lblHeaderSub);
+
+            var btnClose = new System.Windows.Forms.Label();
+            btnClose.Text = "✕";
+            btnClose.ForeColor = System.Drawing.Color.White;
+            btnClose.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            btnClose.Location = new System.Drawing.Point(640, 15);
+            btnClose.AutoSize = true;
+            btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnClose.Click += (s, e) => this.Close();
+            this.pnlHeader.Controls.Add(btnClose);
 
             // Content Panel
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;

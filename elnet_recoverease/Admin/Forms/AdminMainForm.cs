@@ -29,14 +29,60 @@ namespace elnet_recoverease.Admin.Forms
             // Default View
             LoadDashboard();
 
-            // Wire Up Sidebar Events
+            this.btnLogout.Click += new EventHandler(btnLogout_Click);
+
+            // 1. Setup UI First
+            SetupSidebar();
+
+            // 2. Wire Up Events
             NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
             NavigationHelper.WireNavButton(this.btnNavStaff, new EventHandler(btnNavStaff_Click));
             NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
             NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
             NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
-            
-            this.btnLogout.Click += new EventHandler(btnLogout_Click);
+        }
+
+        private void SetupSidebar()
+        {
+            Color activeColor = Color.FromArgb(27, 58, 107);
+            Color whiteColor = Color.White;
+
+            SetupNavItem(btnNavDashboard, lblNavDashIcon, lblNavDashText, "📊", "Dashboard", true, activeColor, whiteColor);
+            SetupNavItem(btnNavStaff, lblNavStaffIcon, lblNavStaffText, "👥", "Staff Management", false, activeColor, whiteColor);
+            SetupNavItem(btnNavPatients, lblNavPatientsIcon, lblNavPatientsText, "💊", "Medication List", false, activeColor, whiteColor);
+            SetupNavItem(btnNavReports, lblNavReportsIcon, lblNavReportsText, "📋", "System Reports", false, activeColor, whiteColor);
+            SetupNavItem(btnNavProfile, lblNavProfileIcon, lblNavProfileText, "👤", "My Profile", false, activeColor, whiteColor);
+        }
+
+        private void SetupNavItem(Panel pnl, Label ico, Label txt, string icoChar, string label, bool isActive, Color activeColor, Color whiteColor)
+        {
+            pnl.SuspendLayout();
+            pnl.Cursor = Cursors.Hand;
+            pnl.Dock = DockStyle.Top;
+            pnl.Height = 56;
+            pnl.BackColor = isActive ? activeColor : Color.Transparent;
+
+            ico.AutoSize = false;
+            ico.Size = new Size(56, 56);
+            ico.Location = new Point(0, 0);
+            ico.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            ico.ForeColor = isActive ? whiteColor : Color.FromArgb(45, 55, 72);
+            ico.TextAlign = ContentAlignment.MiddleCenter;
+            ico.Text = icoChar;
+
+            txt.AutoSize = false;
+            txt.Size = new Size(190, 56);
+            txt.Location = new Point(56, 0);
+            txt.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
+            txt.ForeColor = isActive ? whiteColor : Color.FromArgb(45, 55, 72);
+            txt.TextAlign = ContentAlignment.MiddleLeft;
+            txt.Text = label;
+
+            pnl.Controls.Clear();
+            pnl.Controls.Add(ico);
+            pnl.Controls.Add(txt);
+            pnl.ResumeLayout(false);
+            pnl.PerformLayout();
         }
 
         public void LoadControl(UserControl control, string title, Panel navPanel = null)

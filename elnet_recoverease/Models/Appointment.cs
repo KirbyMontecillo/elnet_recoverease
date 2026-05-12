@@ -36,6 +36,6 @@ namespace elnet_recoverease.Models
 
         // Navigation Properties
         public string? PatientName { get; set; }
-        public virtual Patient Patient { get; set; }
+        public virtual elnet_recoverease.Models.Patient Patient { get; set; }
     }
 }

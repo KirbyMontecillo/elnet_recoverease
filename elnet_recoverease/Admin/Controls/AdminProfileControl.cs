@@ -21,12 +21,6 @@ namespace elnet_recoverease.Admin.Controls
 
         private void SetupControl()
         {
-            this.btnEditProfile.Click += new EventHandler(btnEditProfile_Click);
-            this.btnSaveProfile.Click += new EventHandler(btnSaveProfile_Click);
-            this.btnUploadPic.Click += new EventHandler(btnUploadPic_Click);
-            this.btnLogoutProfile.Click += new EventHandler(btnLogoutProfile_Click);
-
-            this.Load += new EventHandler(AdminProfileControl_Load);
         }
 
         private void AdminProfileControl_Load(object sender, EventArgs e)

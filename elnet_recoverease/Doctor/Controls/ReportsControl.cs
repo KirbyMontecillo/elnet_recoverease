@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using elnet_recoverease.Core;
 using elnet_recoverease.Data;
+using elnet_recoverease.Doctor.Forms;
 
 namespace elnet_recoverease.Doctor.Controls
 {
@@ -15,9 +16,6 @@ namespace elnet_recoverease.Doctor.Controls
         {
             InitializeComponent();
             _currentDoctorName = UserSession.CurrentStaff?.FullName ?? "Unknown Doctor";
-            
-            btnGenerateReport.Click += new EventHandler(btnGenerateReport_Click);
-            btnPreview.Click += new EventHandler(btnPreview_Click);
         }
 
         private void btnGenerateReport_Click(object sender, EventArgs e) => GenerateReport();
@@ -66,6 +64,7 @@ namespace elnet_recoverease.Doctor.Controls
             try
             {
                 var viewer = new Doctor_Report_Viewer();
+                viewer.WindowState = FormWindowState.Maximized;
                 viewer.Show();
                 viewer.GenerateLiveReport(_selectedReport, dtpFrom.Value, dtpTo.Value, _currentDoctorName);
             }

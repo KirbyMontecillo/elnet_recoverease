@@ -14,7 +14,7 @@ namespace elnet_recoverease.Doctor
     public partial class Appointment_Form : Form
     {
         private AppDbContext _db = new AppDbContext();
-        private Patient _selectedPatient;
+        private elnet_recoverease.Models.Patient _selectedPatient;
         private int? _patientId;
         private string _selectedTime = "";
 
@@ -31,6 +31,15 @@ namespace elnet_recoverease.Doctor
             _db.EnsureSchemaUpdated();
 
             this.Load += new EventHandler(Appointment_Form_Load);
+
+            // Add Dragging logic to pnlHeader
+            pnlHeader.MouseDown += (s, e) => {
+                if (e.Button == MouseButtons.Left) {
+                    pnlHeader.Capture = false;
+                    Message m = Message.Create(this.Handle, 0xA1, new IntPtr(2), IntPtr.Zero);
+                    this.DefWndProc(ref m);
+                }
+            };
         }
 
         private async void Appointment_Form_Load(object sender, EventArgs e)
@@ -261,7 +270,7 @@ namespace elnet_recoverease.Doctor
 
         private void cmbPatientSearch_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbPatientSearch.SelectedIndex != -1 && cmbPatientSearch.SelectedItem is Patient p)
+            if (cmbPatientSearch.SelectedIndex != -1 && cmbPatientSearch.SelectedItem is elnet_recoverease.Models.Patient p)
             {
                 UpdatePatientCard(p);
             }
@@ -271,7 +280,7 @@ namespace elnet_recoverease.Doctor
             }
         }
 
-        private void UpdatePatientCard(Patient p)
+        private void UpdatePatientCard(elnet_recoverease.Models.Patient p)
         {
             _selectedPatient = p;
             pnlPatientCard.Visible = true;

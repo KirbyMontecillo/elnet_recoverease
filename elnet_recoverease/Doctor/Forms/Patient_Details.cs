@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using elnet_recoverease.Core;
 using Microsoft.EntityFrameworkCore;
+using elnet_recoverease.Doctor.Forms;
 
 namespace elnet_recoverease.Doctor
 {
@@ -14,7 +15,7 @@ namespace elnet_recoverease.Doctor
     {
         private AppDbContext _db = new AppDbContext();
         private int _patientId;
-        private Patient _patient;
+        private elnet_recoverease.Models.Patient _patient;
         private List<Appointment> _currentAppts;
 
         public Patient_Details(int patientId)
@@ -47,7 +48,8 @@ namespace elnet_recoverease.Doctor
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Patient_List());
+            if (this.ParentForm is DoctorMainForm main) main.LoadPatientList();
+            else this.Close();
         }
 
         private void btnUpdatePlan_Click(object sender, EventArgs e)
@@ -68,27 +70,27 @@ namespace elnet_recoverease.Doctor
 
         private void btnNavDashboard_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Doctor_Dashboard());
+            if (this.ParentForm is DoctorMainForm main) main.LoadDashboard();
         }
 
         private void btnNavPatients_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Patient_List());
+            if (this.ParentForm is DoctorMainForm main) main.LoadPatientList();
         }
 
         private void btnNavAppointments_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Appointments());
+            if (this.ParentForm is DoctorMainForm main) main.LoadAppointments();
         }
 
         private void btnNavReports_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Reports());
+            if (this.ParentForm is DoctorMainForm main) main.LoadReports();
         }
 
         private void btnNavProfile_Click(object sender, EventArgs e)
         {
-            NavigationHelper.SwitchForm(this, new Doctor_Profile());
+            if (this.ParentForm is DoctorMainForm main) main.LoadProfile();
         }
 
         private void LoadPatientData()

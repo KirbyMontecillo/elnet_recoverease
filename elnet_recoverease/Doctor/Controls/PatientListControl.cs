@@ -27,12 +27,6 @@ namespace elnet_recoverease.Doctor.Controls
 
         private void InitializeUI()
         {
-            btnSearch.Click += new EventHandler(btnSearch_Click);
-            txtSearch.KeyDown += new KeyEventHandler(txtSearch_KeyDown);
-            btnAddPatient.Click += new EventHandler(btnAddPatient_Click);
-
-            dgvPatients.CellContentClick += new DataGridViewCellEventHandler(dgvPatients_CellContentClick);
-            dgvPatients.CellPainting += new DataGridViewCellPaintingEventHandler(Dgv_CellPainting);
         }
 
         private void btnSearch_Click(object sender, EventArgs e) => LoadPatientsData(txtSearch.Text);

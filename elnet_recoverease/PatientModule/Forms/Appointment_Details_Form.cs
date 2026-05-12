@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using elnet_recoverease.Data;
 using elnet_recoverease.Models;
 
-namespace elnet_recoverease
+namespace elnet_recoverease.PatientStation.Forms
 {
     public partial class Appointment_Details_Form : Form
     {

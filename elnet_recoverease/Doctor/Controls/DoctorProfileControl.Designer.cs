@@ -3,6 +3,7 @@ namespace elnet_recoverease.Doctor.Controls
     partial class DoctorProfileControl
     {
         private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Button btnLogout;
 
         protected override void Dispose(bool disposing)
         {
@@ -12,8 +13,6 @@ namespace elnet_recoverease.Doctor.Controls
             }
             base.Dispose(disposing);
         }
-
-        #region Component Designer generated code
 
         private void InitializeComponent()
         {
@@ -27,6 +26,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnEditProfile = new System.Windows.Forms.Button();
             this.btnSaveProfile = new System.Windows.Forms.Button();
             this.btnUploadPic = new System.Windows.Forms.Button();
+            this.btnLogout = new System.Windows.Forms.Button();
             this.pnlProfessionalInfo = new System.Windows.Forms.Panel();
             this.lblProfInfoTitle = new System.Windows.Forms.Label();
             this.lblLicenseLabel = new System.Windows.Forms.Label();
@@ -57,6 +57,7 @@ namespace elnet_recoverease.Doctor.Controls
             System.Drawing.Color clrBg = System.Drawing.Color.FromArgb(242, 247, 250);
             System.Drawing.Color clrNavyActive = System.Drawing.Color.FromArgb(27, 58, 107);
             System.Drawing.Color clrTextMid = System.Drawing.Color.FromArgb(100, 120, 145);
+            System.Drawing.Color clrRed = System.Drawing.Color.FromArgb(220, 38, 38);
 
             // pnlContent
             this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -69,7 +70,6 @@ namespace elnet_recoverease.Doctor.Controls
             this.pnlProfileHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlProfileHeader.Height = 180;
             this.pnlProfileHeader.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlProfileHeader.Margin = new System.Windows.Forms.Padding(0, 0, 0, 25);
 
             this.picProfileLarge.BackColor = System.Drawing.Color.FromArgb(230, 235, 240);
             this.picProfileLarge.Location = new System.Drawing.Point(25, 25);
@@ -107,6 +107,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnEditProfile.ForeColor = clrTeal;
             this.btnEditProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEditProfile.FlatAppearance.BorderColor = clrTeal;
+            this.btnEditProfile.Click += new System.EventHandler(this.btnEditProfile_Click);
 
             this.btnSaveProfile.Text = "💾 Save Profile";
             this.btnSaveProfile.Size = new System.Drawing.Size(140, 40);
@@ -116,6 +117,18 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnSaveProfile.ForeColor = clrWhite;
             this.btnSaveProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSaveProfile.Visible = false;
+            this.btnSaveProfile.Click += new System.EventHandler(this.btnSaveProfile_Click);
+
+            this.btnLogout.Text = "🚪 Logout";
+            this.btnLogout.Size = new System.Drawing.Size(140, 40);
+            this.btnLogout.Location = new System.Drawing.Point(920, 75);
+            this.btnLogout.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.btnLogout.BackColor = System.Drawing.Color.FromArgb(254, 242, 242);
+            this.btnLogout.ForeColor = clrRed;
+            this.btnLogout.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLogout.FlatAppearance.BorderColor = clrRed;
+            this.btnLogout.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            this.btnLogout.Click += new System.EventHandler(this.BtnLogout_Click);
 
             this.pnlProfileHeader.Controls.Add(this.picProfileLarge);
             this.pnlProfileHeader.Controls.Add(this.lblDoctorName);
@@ -124,6 +137,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.pnlProfileHeader.Controls.Add(this.txtBioEdit);
             this.pnlProfileHeader.Controls.Add(this.btnEditProfile);
             this.pnlProfileHeader.Controls.Add(this.btnSaveProfile);
+            this.pnlProfileHeader.Controls.Add(this.btnLogout);
 
             // Professional Info
             this.pnlProfessionalInfo.BackColor = clrWhite;
@@ -171,6 +185,8 @@ namespace elnet_recoverease.Doctor.Controls
             this.pnlContactInfo.ResumeLayout(false);
             this.pnlContactInfo.PerformLayout();
             this.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.DoctorProfileControl_Load);
+            this.SizeChanged += new System.EventHandler(this.DoctorProfileControl_SizeChanged);
         }
 
         private void ConfigField(System.Windows.Forms.Panel p, System.Windows.Forms.Label lbl, System.Windows.Forms.TextBox txt, string label, int x, int y)
@@ -191,8 +207,6 @@ namespace elnet_recoverease.Doctor.Controls
             p.Controls.Add(lbl);
             p.Controls.Add(txt);
         }
-
-        #endregion
 
         private System.Windows.Forms.Panel pnlContent;
         private System.Windows.Forms.Panel pnlProfileHeader;

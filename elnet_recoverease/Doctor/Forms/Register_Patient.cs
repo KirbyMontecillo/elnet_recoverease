@@ -32,6 +32,21 @@ namespace elnet_recoverease.Doctor
             // Auto-fill Doctor
             this.txtAttendingDoctor.Text = elnet_recoverease.Core.UserSession.CurrentStaff?.FullName ?? "N/A";
 
+            // Add Dragging logic to pnlTitle (last control added to this.Controls in Designer)
+            foreach (Control c in this.Controls)
+            {
+                if (c is Panel p && p.Dock == DockStyle.Top)
+                {
+                    p.MouseDown += (s, e) => {
+                        if (e.Button == MouseButtons.Left) {
+                            p.Capture = false;
+                            Message m = Message.Create(this.Handle, 0xA1, new IntPtr(2), IntPtr.Zero);
+                            this.DefWndProc(ref m);
+                        }
+                    };
+                }
+            }
+
             // Auto-calculate Age
             this.dtpDOB.ValueChanged += new EventHandler(this.dtpDOB_ValueChanged);
             CalculateAge(); // Initial call

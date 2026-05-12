@@ -15,19 +15,20 @@ namespace elnet_recoverease.Doctor.Controls
     {
         private AppDbContext _db = new AppDbContext();
         private int _patientId;
-        private Patient _patient;
+        private elnet_recoverease.Models.Patient _patient;
         private List<Appointment> _currentAppts;
 
         public PatientDetailsControl(int patientId)
         {
             InitializeComponent();
             _patientId = patientId;
-            
-            this.Load += (s, e) => LoadPatientData();
-            btnBack.Click += (s, e) => {
-                if (this.ParentForm is DoctorMainForm main) main.LoadPatientList();
-            };
-            btnUpdatePlan.Click += btnUpdatePlan_Click;
+        }
+
+        private void PatientDetailsControl_Load(object sender, EventArgs e) => LoadPatientData();
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (this.ParentForm is DoctorMainForm main) main.LoadPatientList();
         }
 
         private void btnUpdatePlan_Click(object sender, EventArgs e)

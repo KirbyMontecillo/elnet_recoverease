@@ -9,6 +9,7 @@ using elnet_recoverease.Data;
 using elnet_recoverease.Models;
 using elnet_recoverease.Core;
 using Microsoft.EntityFrameworkCore;
+using elnet_recoverease.Doctor.Forms;
 
 namespace elnet_recoverease.Doctor.Controls
 {
@@ -28,15 +29,6 @@ namespace elnet_recoverease.Doctor.Controls
 
         private void InitializeUI()
         {
-            dtpFilterDate.ValueChanged += new EventHandler(dtpFilterDate_ValueChanged);
-            cmbFilterStatus.SelectedIndexChanged += new EventHandler(cmbFilterStatus_SelectedIndexChanged);
-            btnNewAppointment.Click += new EventHandler(btnNewAppointment_Click);
-
-            dgvAppointments.CellFormatting += DgvAppointments_CellFormatting;
-            dgvAppointments.CellPainting += Dgv_CellPainting;
-            dgvAppointments.CellContentClick += new DataGridViewCellEventHandler(dgvAppointments_CellContentClick);
-            dgvAppointments.CellDoubleClick += new DataGridViewCellEventHandler(dgvAppointments_CellDoubleClick);
-
             SetupColumns();
         }
 

@@ -68,7 +68,7 @@ namespace elnet_recoverease
                         }
                         else
                         {
-                            NavigationHelper.SwitchForm(this, new Patient_Dashboard());
+                            NavigationHelper.SwitchForm(this, new PatientStation.Forms.PatientMainForm());
                         }
                     }
                     else

@@ -36,12 +36,6 @@ namespace elnet_recoverease.Admin.Controls
 
         private void SetupControl()
         {
-            this.Load += new System.EventHandler(MedicationListControl_Load);
-            this.txtSearch.TextChanged += new System.EventHandler(txtSearch_TextChanged);
-            this.cmbFormFilter.SelectedIndexChanged += new System.EventHandler(cmbFormFilter_SelectedIndexChanged);
-            this.dgvMeds.CellContentClick += new DataGridViewCellEventHandler(dgvMeds_CellContentClick);
-            this.btnAddMed.Click += new System.EventHandler(btnAddMed_Click);
-
             if (this.cmbFormFilter.Items.Count > 0)
                 this.cmbFormFilter.SelectedIndex = 0;
         }

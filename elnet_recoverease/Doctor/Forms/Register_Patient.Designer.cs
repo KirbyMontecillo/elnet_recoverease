@@ -56,7 +56,7 @@ namespace elnet_recoverease.Doctor
             this.ClientSize = new System.Drawing.Size(650, 950);
             this.Text = "Patient Registration";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.BackColor = clrBg;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -75,6 +75,16 @@ namespace elnet_recoverease.Doctor
             lblTitle.Location = new System.Drawing.Point(20, 15);
             lblTitle.AutoSize = true;
             pnlTitle.Controls.Add(lblTitle);
+
+            var btnClose = new System.Windows.Forms.Label();
+            btnClose.Text = "✕";
+            btnClose.ForeColor = System.Drawing.Color.White;
+            btnClose.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            btnClose.Location = new System.Drawing.Point(610, 15);
+            btnClose.AutoSize = true;
+            btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            btnClose.Click += (s, e) => this.Close();
+            pnlTitle.Controls.Add(btnClose);
 
             // Names row
             var lblFN = new System.Windows.Forms.Label(); lblFN.Text = "FIRST NAME"; lblFN.Location = new System.Drawing.Point(50, 80); lblFN.AutoSize = true; lblFN.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold); lblFN.ForeColor = System.Drawing.Color.DimGray;

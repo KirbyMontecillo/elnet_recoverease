@@ -17,10 +17,49 @@ namespace elnet_recoverease.Doctor.Controls
         {
             InitializeComponent();
             LoadProfileData();
-            
-            btnEditProfile.Click += new EventHandler(btnEditProfile_Click);
-            btnSaveProfile.Click += new EventHandler(btnSaveProfile_Click);
-            btnUploadPic.Click += BtnUploadPic_Click;
+        }
+
+        private void DoctorProfileControl_Load(object sender, EventArgs e) => SetupProfileButtons();
+        private void DoctorProfileControl_SizeChanged(object sender, EventArgs e) => SetupProfileButtons();
+
+        private void SetupProfileButtons()
+        {
+            // Force buttons into the header in case designer is stripping them
+            pnlProfileHeader.Controls.Add(btnEditProfile);
+            pnlProfileHeader.Controls.Add(btnLogout);
+            pnlProfileHeader.Controls.Add(btnSaveProfile);
+            pnlProfileHeader.Controls.Add(btnUploadPic);
+
+            btnEditProfile.Location = new Point(pnlProfileHeader.Width - 160, 25);
+            btnEditProfile.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnEditProfile.Visible = true;
+            btnEditProfile.BringToFront();
+
+            btnLogout.Location = new Point(pnlProfileHeader.Width - 160, 75);
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnLogout.Visible = true;
+            btnLogout.BringToFront();
+
+            btnSaveProfile.Location = new Point(pnlProfileHeader.Width - 160, 25);
+            btnSaveProfile.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSaveProfile.Visible = false;
+            btnSaveProfile.BringToFront();
+
+            // Setup Upload Pic Button as an overlay
+            btnUploadPic.Text = "📷";
+            btnUploadPic.Size = new Size(35, 35);
+            btnUploadPic.Location = new Point(picProfileLarge.Right - 35, picProfileLarge.Bottom - 35);
+            btnUploadPic.FlatStyle = FlatStyle.Flat;
+            btnUploadPic.BackColor = Color.FromArgb(240, 245, 250);
+            btnUploadPic.ForeColor = Color.FromArgb(0, 168, 168);
+            btnUploadPic.FlatAppearance.BorderColor = Color.FromArgb(0, 168, 168);
+            btnUploadPic.Visible = false;
+            btnUploadPic.BringToFront();
+        }
+
+        private void BtnLogout_Click(object sender, EventArgs e)
+        {
+            NavigationHelper.Logout(this.FindForm());
         }
 
         private void btnEditProfile_Click(object sender, EventArgs e) => ToggleEditMode(true);
@@ -61,6 +100,7 @@ namespace elnet_recoverease.Doctor.Controls
             txtBioEdit.Visible = editing;
             btnEditProfile.Visible = !editing;
             btnSaveProfile.Visible = editing;
+            btnUploadPic.Visible = editing;
 
             var textboxes = new[] { txtLicense, txtExperience, txtAffiliations, txtPhone, txtEmail, txtAddress };
             foreach (var tb in textboxes)

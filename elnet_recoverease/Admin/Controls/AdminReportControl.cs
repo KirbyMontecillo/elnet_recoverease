@@ -20,10 +20,6 @@ namespace elnet_recoverease.Admin.Controls
 
         private void SetupControl()
         {
-            this.Load += new EventHandler(AdminReportControl_Load);
-            this.btnGenerateReport.Click += new EventHandler(btnGenerateReport_Click);
-            this.btnPreview.Click += new EventHandler(btnPreview_Click);
-            
             LoadDoctors();
             InitializeReportCards();
         }

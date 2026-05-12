@@ -20,14 +20,6 @@ namespace elnet_recoverease.Admin.Controls
 
         private void SetupControl()
         {
-            this.Load += new EventHandler(StaffListControl_Load);
-            this.txtSearch.TextChanged += new EventHandler(txtSearch_TextChanged);
-            this.cmbRoleFilter.SelectedIndexChanged += new EventHandler(FilterControls_Changed);
-            this.cmbStatusFilter.SelectedIndexChanged += new EventHandler(FilterControls_Changed);
-            this.dgvStaff.CellContentClick += new DataGridViewCellEventHandler(dgvStaff_CellContentClick);
-            this.dgvStaff.CellFormatting += new DataGridViewCellFormattingEventHandler(dgvStaff_CellFormatting);
-            this.btnAddStaff.Click += new EventHandler(btnAddStaff_Click);
-            
             // Hover effects for Add button
             this.btnAddStaff.MouseEnter += (s, e) => this.btnAddStaff.BackColor = Color.FromArgb(0, 140, 140);
             this.btnAddStaff.MouseLeave += (s, e) => this.btnAddStaff.BackColor = Color.FromArgb(0, 168, 168);

@@ -334,6 +334,7 @@ namespace elnet_recoverease.Admin.Controls
             this.Name = "AdminDashboardControl";
             this.Padding = new System.Windows.Forms.Padding(24);
             this.Size = new System.Drawing.Size(1340, 810);
+            this.Load += new System.EventHandler(this.AdminDashboardControl_Load);
 
             this.tlpStats.ResumeLayout(false);
             this.pnlStatPatients.ResumeLayout(false);

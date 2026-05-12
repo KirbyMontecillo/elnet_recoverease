@@ -165,6 +165,8 @@ namespace elnet_recoverease.Admin.Controls
             this.dgvStaff.RowHeadersVisible = false;
             this.dgvStaff.RowTemplate.Height = 65;
             this.dgvStaff.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvStaff.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStaff_CellContentClick);
+            this.dgvStaff.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvStaff_CellFormatting);
 
             this.colName.HeaderText = "Name";
             this.colRole.HeaderText = "Role";
@@ -219,16 +221,19 @@ namespace elnet_recoverease.Admin.Controls
             this.txtSearch.Location = new System.Drawing.Point(100, 21);
             this.txtSearch.Size = new System.Drawing.Size(260, 31);
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             
             this.cmbRoleFilter.Items.AddRange(new object[] { "All roles", "Doctor", "Admin" });
             this.cmbRoleFilter.Location = new System.Drawing.Point(380, 21);
             this.cmbRoleFilter.Size = new System.Drawing.Size(180, 31);
             this.cmbRoleFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbRoleFilter.SelectedIndexChanged += new System.EventHandler(this.FilterControls_Changed);
             
             this.cmbStatusFilter.Items.AddRange(new object[] { "All status", "Active", "Inactive" });
             this.cmbStatusFilter.Location = new System.Drawing.Point(580, 21);
             this.cmbStatusFilter.Size = new System.Drawing.Size(180, 31);
             this.cmbStatusFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStatusFilter.SelectedIndexChanged += new System.EventHandler(this.FilterControls_Changed);
 
             // pnlListHeader
             this.pnlListHeader.Controls.Add(this.lblListTitle);
@@ -246,6 +251,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnAddStaff.Location = new System.Drawing.Point(1108, 15);
             this.btnAddStaff.Size = new System.Drawing.Size(160, 45);
             this.btnAddStaff.Text = "+ Add new staff";
+            this.btnAddStaff.Click += new System.EventHandler(this.btnAddStaff_Click);
 
             // StaffListControl
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -256,6 +262,7 @@ namespace elnet_recoverease.Admin.Controls
             this.Name = "StaffListControl";
             this.Padding = new System.Windows.Forms.Padding(24);
             this.Size = new System.Drawing.Size(1340, 810);
+            this.Load += new System.EventHandler(this.StaffListControl_Load);
 
             this.pnlListCard.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvStaff)).EndInit();

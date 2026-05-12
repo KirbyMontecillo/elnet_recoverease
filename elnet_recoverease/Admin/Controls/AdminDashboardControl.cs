@@ -19,7 +19,6 @@ namespace elnet_recoverease.Admin.Controls
 
         private void SetupControl()
         {
-            this.Load += new EventHandler(AdminDashboardControl_Load);
         }
 
         private void AdminDashboardControl_Load(object sender, EventArgs e)

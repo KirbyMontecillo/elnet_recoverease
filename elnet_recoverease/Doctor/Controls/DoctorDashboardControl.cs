@@ -21,9 +21,103 @@ namespace elnet_recoverease.Doctor.Controls
         public DoctorDashboardControl()
         {
             InitializeComponent();
+            SetupDashboardLayout();
             _doctor = UserSession.CurrentStaff;
             InitializeAsyncData();
             StartNotifTimer();
+        }
+
+        private void SetupDashboardLayout()
+        {
+            // Setup stat cards (Teal, Navy, Green, Orange)
+            SetupStatCard(cardPatients, "TOTAL PATIENTS", lblCardPatTitle, lblCardPatValue, lblCardPatIcon, "👥", lblCardPatSub, "Active under care", Color.FromArgb(0, 168, 168), 0);
+            SetupStatCard(cardAppt, "APPOINTMENTS", lblCardApptTitle, lblCardApptValue, lblCardApptIcon, "📅", lblCardApptSub, "Remaining today", Color.FromArgb(27, 58, 107), 1);
+            SetupStatCard(cardPending, "PENDING REPORTS", lblCardPendTitle, lblCardPendValue, lblCardPendIcon, "📋", lblCardPendSub, "Needs review", Color.FromArgb(39, 174, 96), 2);
+            SetupStatCard(cardAlerts, "CLINICAL ALERTS", lblCardAlertTitle, lblCardAlertValue, lblCardAlertIcon, "⚠️", lblCardAlertSub, "Requires attention", Color.FromArgb(230, 126, 34), 3);
+
+            // Setup alert items
+            SetupAlertItem(pnlAlert1, lblAlert1Icon, lblAlert1Text, lblAlert1Time, Color.FromArgb(220, 38, 38));
+            SetupAlertItem(pnlAlert2, lblAlert2Icon, lblAlert2Text, lblAlert2Time, Color.FromArgb(220, 38, 38));
+            SetupAlertItem(pnlAlert3, lblAlert3Icon, lblAlert3Text, lblAlert3Time, Color.FromArgb(217, 119, 6));
+        }
+
+        private void SetupStatCard(System.Windows.Forms.Panel card, string title, System.Windows.Forms.Label lblTitle, System.Windows.Forms.Label lblValue, System.Windows.Forms.Label lblIcon, string ico, System.Windows.Forms.Label lblSub, string sub, System.Drawing.Color color, int index)
+        {
+            card.BackColor = System.Drawing.Color.White;
+            card.Margin = new System.Windows.Forms.Padding(index == 0 ? 0 : 12, 0, index == 3 ? 0 : 12, 0);
+            card.Dock = System.Windows.Forms.DockStyle.Fill;
+            card.Padding = new System.Windows.Forms.Padding(0);
+
+            // Add Top Strip
+            var pnlTopStrip = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 4, BackColor = color };
+            
+            lblTitle.Text = title;
+            lblTitle.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold);
+            lblTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
+            lblTitle.Location = new System.Drawing.Point(20, 18);
+            lblTitle.AutoSize = true;
+
+            lblValue.Text = "0";
+            lblValue.Font = new System.Drawing.Font("Segoe UI", 32F, System.Drawing.FontStyle.Bold);
+            lblValue.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            lblValue.Location = new System.Drawing.Point(15, 40);
+            lblValue.AutoSize = true;
+
+            lblIcon.Text = ico;
+            lblIcon.Font = new System.Drawing.Font("Segoe UI", 40F);
+            lblIcon.ForeColor = System.Drawing.Color.FromArgb(40, color.R, color.G, color.B);
+            lblIcon.Location = new System.Drawing.Point(110, 30);
+            lblIcon.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            lblIcon.AutoSize = true;
+
+            lblSub.Text = sub;
+            lblSub.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
+            lblSub.ForeColor = color;
+            lblSub.Location = new System.Drawing.Point(20, 115);
+            lblSub.AutoSize = true;
+
+            card.Controls.Clear();
+            card.Controls.Add(lblIcon);
+            card.Controls.Add(lblValue);
+            card.Controls.Add(lblTitle);
+            card.Controls.Add(lblSub);
+            card.Controls.Add(pnlTopStrip);
+            
+            lblIcon.SendToBack();
+        }
+
+        private void SetupAlertItem(System.Windows.Forms.Panel pnl, System.Windows.Forms.Label ico, System.Windows.Forms.Label txt, System.Windows.Forms.Label time, System.Drawing.Color statusColor)
+        {
+            pnl.Dock = System.Windows.Forms.DockStyle.Top;
+            pnl.Height = 85;
+            pnl.Padding = new System.Windows.Forms.Padding(0);
+            pnl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 12);
+            pnl.BackColor = System.Drawing.Color.White;
+            pnl.Visible = false;
+
+            var pnlStatus = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Left, Width = 4, BackColor = statusColor };
+            
+            ico.Font = new System.Drawing.Font("Segoe UI", 12F);
+            ico.Location = new System.Drawing.Point(15, 20);
+            ico.ForeColor = statusColor;
+            ico.AutoSize = true;
+
+            txt.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
+            txt.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            txt.Location = new System.Drawing.Point(45, 18);
+            txt.Size = new System.Drawing.Size(240, 45);
+            txt.AutoEllipsis = true;
+
+            time.Font = new System.Drawing.Font("Segoe UI", 8F);
+            time.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184);
+            time.Location = new System.Drawing.Point(47, 58);
+            time.AutoSize = true;
+
+            pnl.Controls.Clear();
+            pnl.Controls.Add(txt);
+            pnl.Controls.Add(time);
+            pnl.Controls.Add(ico);
+            pnl.Controls.Add(pnlStatus);
         }
 
         private async void InitializeAsyncData()

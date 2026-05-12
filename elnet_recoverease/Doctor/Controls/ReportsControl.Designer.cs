@@ -93,6 +93,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.btnPreview.Size = new System.Drawing.Size(120, 42);
             this.btnPreview.Font = new System.Drawing.Font("Segoe UI Semibold", 9F);
+            this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
 
             this.btnGenerateReport.Text = "🖨️ Generate Report";
             this.btnGenerateReport.BackColor = clrTeal;
@@ -101,6 +102,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnGenerateReport.FlatAppearance.BorderSize = 0;
             this.btnGenerateReport.Size = new System.Drawing.Size(180, 42);
             this.btnGenerateReport.Font = new System.Drawing.Font("Segoe UI Bold", 9F);
+            this.btnGenerateReport.Click += new System.EventHandler(this.btnGenerateReport_Click);
 
             pnlFilterActions.Controls.Add(this.btnGenerateReport);
             pnlFilterActions.Controls.Add(this.btnPreview);

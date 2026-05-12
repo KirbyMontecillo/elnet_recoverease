@@ -11,7 +11,7 @@ namespace elnet_recoverease.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         
         // Navigation properties (optional for EF)
-        public virtual Patient? Patient { get; set; }
+        public virtual elnet_recoverease.Models.Patient? Patient { get; set; }
         public virtual Staff? Staff { get; set; }
     }
 }

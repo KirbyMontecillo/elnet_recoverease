@@ -118,6 +118,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnPreview.Size = new System.Drawing.Size(120, 35);
             this.btnPreview.Text = "👁️ Preview";
             this.btnPreview.UseVisualStyleBackColor = false;
+            this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
             
             // btnGenerateReport
             this.btnGenerateReport.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
@@ -129,6 +130,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnGenerateReport.Size = new System.Drawing.Size(120, 35);
             this.btnGenerateReport.Text = "🖨️ Generate";
             this.btnGenerateReport.UseVisualStyleBackColor = false;
+            this.btnGenerateReport.Click += new System.EventHandler(this.btnGenerateReport_Click);
             
             // pnlReportSelection
             this.pnlReportSelection.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -164,6 +166,7 @@ namespace elnet_recoverease.Admin.Controls
             this.Name = "AdminReportControl";
             this.Padding = new System.Windows.Forms.Padding(30);
             this.Size = new System.Drawing.Size(1340, 810);
+            this.Load += new System.EventHandler(this.AdminReportControl_Load);
             
             this.pnlPreview.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.wvPreview)).EndInit();

@@ -115,6 +115,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnUploadPic.Text = "📷";
             this.btnUploadPic.UseVisualStyleBackColor = false;
             this.btnUploadPic.Visible = false;
+            this.btnUploadPic.Click += new System.EventHandler(this.btnUploadPic_Click);
             
             // btnEditProfile
             this.btnEditProfile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
@@ -128,6 +129,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnEditProfile.Size = new System.Drawing.Size(140, 45);
             this.btnEditProfile.Text = "✏️ Edit Profile";
             this.btnEditProfile.UseVisualStyleBackColor = false;
+            this.btnEditProfile.Click += new System.EventHandler(this.btnEditProfile_Click);
             
             // btnSaveProfile
             this.btnSaveProfile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
@@ -141,6 +143,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnSaveProfile.Text = "💾 Save Changes";
             this.btnSaveProfile.UseVisualStyleBackColor = false;
             this.btnSaveProfile.Visible = false;
+            this.btnSaveProfile.Click += new System.EventHandler(this.btnSaveProfile_Click);
             
             // lblBioContent
             this.lblBioContent.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -195,6 +198,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnLogoutProfile.Size = new System.Drawing.Size(140, 45);
             this.btnLogoutProfile.Text = "⇠ Sign Out";
             this.btnLogoutProfile.UseVisualStyleBackColor = false;
+            this.btnLogoutProfile.Click += new System.EventHandler(this.btnLogoutProfile_Click);
             
             // Fields configuration
             ConfigField(this.pnlContactInfo, this.lblEmailLabel, this.txtEmail, "Email Address", 25, 65);
@@ -213,6 +217,7 @@ namespace elnet_recoverease.Admin.Controls
             this.Name = "AdminProfileControl";
             this.Padding = new System.Windows.Forms.Padding(30, 20, 30, 20);
             this.Size = new System.Drawing.Size(1340, 810);
+            this.Load += new System.EventHandler(this.AdminProfileControl_Load);
             
             this.pnlContactInfo.ResumeLayout(false);
             this.pnlContactInfo.PerformLayout();
