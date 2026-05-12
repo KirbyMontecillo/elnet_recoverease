@@ -65,13 +65,26 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
 
             this.btnUpdatePlan.Text = "+ Update Treatment Plan";
-            this.btnUpdatePlan.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.btnUpdatePlan.Location = new System.Drawing.Point(820, 10);
-            this.btnUpdatePlan.Size = new System.Drawing.Size(200, 35);
+            this.btnUpdatePlan.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.btnUpdatePlan.Location = new Point(820, 10);
+            this.btnUpdatePlan.Size = new Size(200, 35);
             this.btnUpdatePlan.BackColor = clrTeal;
             this.btnUpdatePlan.ForeColor = clrWhite;
-            this.btnUpdatePlan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdatePlan.FlatStyle = FlatStyle.Flat;
+            this.btnUpdatePlan.Font = new Font("Segoe UI Semibold", 9F);
             this.btnUpdatePlan.Click += new System.EventHandler(this.btnUpdatePlan_Click);
+
+            this.btnActivate.Text = "Discharge Patient";
+            this.btnActivate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.btnActivate.Location = new Point(570, 25);
+            this.btnActivate.Size = new Size(200, 45);
+            this.btnActivate.BackColor = Color.White;
+            this.btnActivate.ForeColor = Color.FromArgb(71, 85, 105);
+            this.btnActivate.FlatStyle = FlatStyle.Flat;
+            this.btnActivate.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+            this.btnActivate.Font = new Font("Segoe UI Semibold", 9F);
+            this.btnActivate.Cursor = Cursors.Hand;
+            this.btnActivate.Click += new System.EventHandler(this.btnActivate_Click);
 
             this.pnlActionHeader.Controls.Add(this.btnBack);
             this.pnlActionHeader.Controls.Add(this.btnUpdatePlan);
@@ -92,13 +105,16 @@ namespace elnet_recoverease.Doctor.Controls
             this.lblStatusBadge.Text = "ACTIVE";
             this.lblStatusBadge.BackColor = clrTeal;
             this.lblStatusBadge.ForeColor = clrWhite;
-            this.lblStatusBadge.Location = new System.Drawing.Point(250, 35);
-            this.lblStatusBadge.Size = new System.Drawing.Size(80, 25);
-            this.lblStatusBadge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblStatusBadge.Location = new System.Drawing.Point(25, 92);
+            this.lblStatusBadge.AutoSize = true;
+            this.lblStatusBadge.Padding = new Padding(10, 3, 10, 3);
+            this.lblStatusBadge.Font = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+            this.lblStatusBadge.TextAlign = ContentAlignment.MiddleCenter;
 
             this.pnlPatientHeader.Controls.Add(this.lblPatientName);
             this.pnlPatientHeader.Controls.Add(this.lblPatientId);
             this.pnlPatientHeader.Controls.Add(this.lblStatusBadge);
+            this.pnlPatientHeader.Controls.Add(this.btnActivate);
 
             // Main Stack (Split Layout)
             this.pnlMainStack.Dock = System.Windows.Forms.DockStyle.Top;

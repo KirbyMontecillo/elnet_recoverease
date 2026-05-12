@@ -276,12 +276,12 @@ namespace elnet_recoverease.PatientStation.Controls
             ico.AutoSize = true; 
             ico.Font = new System.Drawing.Font("Segoe UI", 14F);
             
-            txt.Location = new System.Drawing.Point(48, 14); 
-            txt.Size = new System.Drawing.Size(250, 22); 
+            txt.Location = new System.Drawing.Point(65, 14); 
+            txt.Size = new System.Drawing.Size(240, 22); 
             txt.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             txt.ForeColor = System.Drawing.Color.FromArgb(30, 41, 59);
             
-            tm.Location = new System.Drawing.Point(48, 38); 
+            tm.Location = new System.Drawing.Point(65, 38); 
             tm.Font = new System.Drawing.Font("Segoe UI", 8.5F); 
             tm.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             

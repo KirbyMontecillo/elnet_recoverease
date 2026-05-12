@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using elnet_recoverease.Core;
 using elnet_recoverease.Doctor.Forms;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace elnet_recoverease.Doctor.Controls
 {
@@ -17,6 +19,9 @@ namespace elnet_recoverease.Doctor.Controls
         private int _patientId;
         private elnet_recoverease.Models.Patient _patient;
         private List<Appointment> _currentAppts;
+
+        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn(int nL, int nT, int nR, int nB, int nW, int nH);
 
         public PatientDetailsControl(int patientId)
         {
@@ -55,6 +60,44 @@ namespace elnet_recoverease.Doctor.Controls
 
                 lblPatientName.Text = _patient.FullName;
                 lblPatientId.Text = $"Patient ID: {_patient.PatientID:D4}";
+
+                // Status Badge
+                lblStatusBadge.Text = (_patient.Status ?? "Active").ToUpper();
+                if (lblStatusBadge.Text == "DISCHARGED")
+                {
+                    lblStatusBadge.BackColor = Color.FromArgb(71, 85, 105); // Slate
+                    btnActivate.Text = "↺ Re-activate Patient";
+                    btnActivate.BackColor = Color.FromArgb(0, 168, 168); // Teal for primary action
+                    btnActivate.ForeColor = Color.White;
+                    btnActivate.FlatAppearance.BorderColor = Color.FromArgb(0, 168, 168);
+                }
+                else
+                {
+                    lblStatusBadge.BackColor = Color.FromArgb(0, 168, 168); // Teal
+                    btnActivate.Text = "Discharge Patient";
+                    btnActivate.BackColor = Color.White;
+                    btnActivate.ForeColor = Color.FromArgb(71, 85, 105);
+                    btnActivate.FlatAppearance.BorderColor = Color.FromArgb(203, 213, 225);
+                }
+
+                // Apply region after text is set for AutoSize to take effect
+                this.BeginInvoke((MethodInvoker)delegate {
+                    if (lblStatusBadge.Width > 0)
+                        lblStatusBadge.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, lblStatusBadge.Width, lblStatusBadge.Height, 8, 8));
+                });
+
+                // Ensure buttons are visible and properly parented
+                if (!pnlPatientHeader.Controls.Contains(btnActivate)) pnlPatientHeader.Controls.Add(btnActivate);
+                
+                btnActivate.Visible = true;
+                btnActivate.BringToFront();
+                
+                // Position status action button explicitly
+                btnActivate.Location = new Point(pnlPatientHeader.Width - btnActivate.Width - 25, 35);
+
+                // Hide update plan button if patient is discharged
+                btnUpdatePlan.Visible = (lblStatusBadge.Text != "DISCHARGED");
+                if (btnUpdatePlan.Visible) btnUpdatePlan.BringToFront();
 
                 // Update Labels and Panels (Reuse logic from Form version)
                 PopulateMedInfo(appts.FirstOrDefault());
@@ -129,8 +172,42 @@ namespace elnet_recoverease.Doctor.Controls
             pnlApptHistory.Controls.Clear();
             pnlApptHistory.Controls.Add(new Label { Text = "🗓️ History", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
             var dgv = new DataGridView { Location = new Point(25, 70), Size = new Size(pnlApptHistory.Width - 50, 200), BackgroundColor = Color.White, BorderStyle = BorderStyle.None, SelectionMode = DataGridViewSelectionMode.FullRowSelect, RowHeadersVisible = false, AllowUserToAddRows = false, ReadOnly = true, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
-            dgv.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd"), Status = a.Status }).ToList();
+            dgv.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd, yyyy"), Status = a.Status, Action = "View Details" }).ToList();
+            
+            dgv.CellContentClick += (s, e) => {
+                if (e.RowIndex >= 0 && _currentAppts != null) {
+                    var appt = _currentAppts[e.RowIndex];
+                    using (var session = new Clinical_Session(appt.AppointmentID)) {
+                        session.ShowDialog();
+                        LoadPatientData();
+                    }
+                }
+            };
+            
             pnlApptHistory.Controls.Add(dgv);
+        }
+
+        private async void btnActivate_Click(object sender, EventArgs e)
+        {
+            string currentStatus = _patient.Status ?? "Active";
+            string newStatus = currentStatus == "Discharged" ? "Active" : "Discharged";
+            string confirmMsg = currentStatus == "Discharged" 
+                ? $"Are you sure you want to re-activate {_patient.FullName} for new treatment?" 
+                : $"Are you sure you want to discharge {_patient.FullName} from active care?";
+
+            if (MessageBox.Show(confirmMsg, "Confirm Status Change", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                using (var db = new AppDbContext())
+                {
+                    var p = db.Patients.Find(_patientId);
+                    if (p != null)
+                    {
+                        p.Status = newStatus;
+                        await db.SaveChangesAsync();
+                        LoadPatientData();
+                    }
+                }
+            }
         }
     }
 }

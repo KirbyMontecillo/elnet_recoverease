@@ -9,6 +9,7 @@ using elnet_recoverease.Data;
 using elnet_recoverease.Models;
 using elnet_recoverease.Core;
 using Microsoft.EntityFrameworkCore;
+using elnet_recoverease.Shared;
 
 namespace elnet_recoverease.Doctor.Controls
 {
@@ -17,6 +18,7 @@ namespace elnet_recoverease.Doctor.Controls
         private AppDbContext _db = new AppDbContext();
         private Staff _doctor;
         private System.Windows.Forms.Timer _notifTimer;
+        private List<DoctorAlert> _currentAlerts = new List<DoctorAlert>();
 
         public DoctorDashboardControl()
         {
@@ -214,37 +216,80 @@ namespace elnet_recoverease.Doctor.Controls
                     );
                 }
 
-                // 3. Generate Alerts
+                // 3. New Alerts: Patients missing treatment plans
+                var patientsNoPlan = await _db.Patients
+                    .Where(p => p.AttendingDoctor == _doctor.FullName && (p.Status == "Active" || p.Status == null))
+                    .Where(p => !_db.TreatmentPlans.Any(tp => tp.PatientID == p.PatientID))
+                    .Select(p => new { p.PatientID, p.FullName })
+                    .ToListAsync();
+
+                // 4. New Alerts: Abnormal Vitals (Recent Sessions)
+                var recentSessions = await _db.Appointments
+                    .Where(a => a.Status == "Completed" && (a.DoctorID == _doctor.StaffID || a.DoctorName == _doctor.FullName))
+                    .OrderByDescending(a => a.AppointmentDate)
+                    .Take(10)
+                    .Select(a => new { a.BloodPressure, a.PatientID, a.PatientName, a.AppointmentDate })
+                    .ToListAsync();
+
+                // 5. New Alerts: Inactive Patients (No appointment in 14 days)
+                var fourteenDaysAgo = DateTime.Now.AddDays(-14);
+                var inactivePatients = await _db.Patients
+                    .Where(p => p.AttendingDoctor == _doctor.FullName && (p.Status == "Active" || p.Status == null))
+                    .Where(p => !_db.Appointments.Any(a => a.PatientID == p.PatientID && a.AppointmentDate > fourteenDaysAgo))
+                    .Select(p => new { p.FullName })
+                    .ToListAsync();
+
+                // 6. Generate Alerts
                 GenerateAlerts(missedMeds.Select(m => new { m.PatientID, m.FullName, m.ScheduledDate, m.ScheduledTime }).ToList(), 
                                apptsToday.Select(a => new { a.AppointmentDate, a.FullName, a.Status }).ToList(),
-                               takenMeds.Select(t => new { t.PatientID, t.FullName, t.MedicationName, t.ScheduledDate, t.ScheduledTime }).ToList());
+                               takenMeds.Select(t => new { t.PatientID, t.FullName, t.MedicationName, t.ScheduledDate, t.ScheduledTime }).ToList(),
+                               patientsNoPlan,
+                               recentSessions,
+                               inactivePatients);
             }
             catch { }
         }
 
-        private void GenerateAlerts(IEnumerable<dynamic> missedMeds, IEnumerable<dynamic> appts, IEnumerable<dynamic> takenMeds)
+        private void GenerateAlerts(IEnumerable<dynamic> missedMeds, IEnumerable<dynamic> appts, IEnumerable<dynamic> takenMeds, IEnumerable<dynamic> patientsNoPlan, IEnumerable<dynamic> recentSessions, IEnumerable<dynamic> inactivePatients)
         {
             var alerts = new List<DoctorAlert>();
             var now = DateTime.Now;
 
+            // Existing Med Alerts
             foreach (var group in missedMeds.GroupBy(x => x.PatientID))
             {
                 var days = group.Select(x => x.ScheduledDate).Distinct().Count();
                 var latest = group.OrderByDescending(x => x.ScheduledDate).First();
-                string timeStr = latest.ScheduledTime != null ? latest.ScheduledTime.ToString("hh:mm tt") : "";
                 string dateStr = latest.ScheduledDate == DateOnly.FromDateTime(DateTime.Today) ? "Today" : latest.ScheduledDate.ToString("MMM dd");
-                string formattedTime = string.IsNullOrEmpty(timeStr) ? dateStr : $"{dateStr}, {timeStr}";
-
-                if (days >= 2) alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{group.First().FullName} missed meds for {days} days", TimeText = formattedTime });
-                else alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"{group.First().FullName} missed meds recently", TimeText = formattedTime });
+                if (days >= 2) alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{group.First().FullName} missed meds", Message = $"Patient has missed their prescribed medication schedule for {days} consecutive days. Immediate follow-up is required to ensure treatment continuity.", TimeText = dateStr, Color = Color.FromArgb(220, 38, 38) });
+                else alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"{group.First().FullName} missed meds", Message = "Patient missed their most recent medication dose. Monitor adherence during the next check-in.", TimeText = dateStr, Color = Color.FromArgb(217, 119, 6) });
             }
 
+            // High BP Alerts (Recent Sessions)
+            foreach (var session in recentSessions)
+            {
+                if (IsAbnormalBP(session.BloodPressure))
+                {
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🩺", Title = $"High BP: {session.PatientName}", Message = $"Clinical session on {session.AppointmentDate:MMM dd} recorded a high blood pressure reading of {session.BloodPressure}. Evaluate if medication adjustment is necessary.", TimeText = session.AppointmentDate?.ToString("MMM dd") ?? "", Color = Color.FromArgb(220, 38, 38) });
+                }
+            }
+
+            // Missing Plan Alerts
+            foreach (var p in patientsNoPlan)
+            {
+                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "📝", Title = $"Missing Plan: {p.FullName}", Message = "This active patient does not have a finalized treatment plan. Please update their profile to include clinical goals.", TimeText = "Action Required", Color = Color.FromArgb(217, 119, 6) });
+            }
+
+            // Inactive Patient Alerts (14+ Days)
+            foreach (var p in inactivePatients)
+            {
+                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🛌", Title = $"Inactivity: {p.FullName}", Message = "This patient hasn't had a consultation or appointment update in over 14 days. Consider scheduling a check-in call.", TimeText = "14+ Days", Color = Color.FromArgb(217, 119, 6) });
+            }
+
+            // Existing Info/Appt Alerts
             foreach(var taken in takenMeds)
             {
-                string timeStr = taken.ScheduledTime != null ? taken.ScheduledTime.ToString("hh:mm tt") : "";
-                string dateStr = taken.ScheduledDate == DateOnly.FromDateTime(DateTime.Today) ? "Today" : taken.ScheduledDate.ToString("MMM dd");
-                string formattedTime = string.IsNullOrEmpty(timeStr) ? dateStr : $"{dateStr}, {timeStr}";
-                alerts.Add(new DoctorAlert { Priority = "Info", Icon = "🟢", Title = $"{taken.FullName} took {taken.MedicationName}", TimeText = formattedTime });
+                alerts.Add(new DoctorAlert { Priority = "Info", Icon = "🟢", Title = $"{taken.FullName} took {taken.MedicationName}", Message = "The patient successfully logged their medication intake. Adherence is on track.", TimeText = "Update", Color = Color.FromArgb(39, 174, 96) });
             }
 
             foreach (var appt in appts)
@@ -252,12 +297,23 @@ namespace elnet_recoverease.Doctor.Controls
                 if (appt.AppointmentDate == null) continue;
                 DateTime dt = appt.AppointmentDate;
                 if (appt.Status == "Missed" && dt.Date == DateTime.Today)
-                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{appt.FullName} missed appointment", TimeText = dt.ToString("hh:mm tt") });
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{appt.FullName} missed appt", Message = "The scheduled consultation for today was not completed. Verify if the patient needs to reschedule.", TimeText = dt.ToString("hh:mm tt"), Color = Color.FromArgb(220, 38, 38) });
                 else if (dt > now && dt <= now.AddHours(2) && appt.Status == "Scheduled")
-                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"Appt with {appt.FullName} in 2h", TimeText = "Upcoming" });
+                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"Upcoming Appt: {appt.FullName}", Message = "Scheduled consultation is starting in less than 2 hours.", TimeText = "Upcoming", Color = Color.FromArgb(217, 119, 6) });
             }
 
-            DisplayAlerts(alerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList());
+            _currentAlerts = alerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList();
+            DisplayAlerts(_currentAlerts);
+        }
+
+        private bool IsAbnormalBP(string bp)
+        {
+            if (string.IsNullOrEmpty(bp)) return false;
+            try {
+                var parts = bp.Split('/');
+                if (parts.Length == 2 && int.TryParse(parts[0], out int sys)) return sys >= 140; // Systolic >= 140
+            } catch {}
+            return false;
         }
 
         private void DisplayAlerts(List<DoctorAlert> alerts)
@@ -266,9 +322,50 @@ namespace elnet_recoverease.Doctor.Controls
             pnlAlert2.Visible = alerts.Count > 1;
             pnlAlert3.Visible = alerts.Count > 2;
 
-            if (alerts.Count > 0) { lblAlert1Icon.Text = alerts[0].Icon; lblAlert1Text.Text = alerts[0].Title; lblAlert1Time.Text = alerts[0].TimeText; }
-            if (alerts.Count > 1) { lblAlert2Icon.Text = alerts[1].Icon; lblAlert2Text.Text = alerts[1].Title; lblAlert2Time.Text = alerts[1].TimeText; }
-            if (alerts.Count > 2) { lblAlert3Icon.Text = alerts[2].Icon; lblAlert3Text.Text = alerts[2].Title; lblAlert3Time.Text = alerts[2].TimeText; }
+            if (alerts.Count > 0) { 
+                lblAlert1Icon.Text = alerts[0].Icon; lblAlert1Text.Text = alerts[0].Title; lblAlert1Time.Text = alerts[0].TimeText;
+                pnlAlert1.BackColor = alerts[0].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
+                WireAlertClick(pnlAlert1, 0);
+            }
+            if (alerts.Count > 1) { 
+                lblAlert2Icon.Text = alerts[1].Icon; lblAlert2Text.Text = alerts[1].Title; lblAlert2Time.Text = alerts[1].TimeText;
+                pnlAlert2.BackColor = alerts[1].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
+                WireAlertClick(pnlAlert2, 1);
+            }
+            if (alerts.Count > 2) { 
+                lblAlert3Icon.Text = alerts[2].Icon; lblAlert3Text.Text = alerts[2].Title; lblAlert3Time.Text = alerts[2].TimeText;
+                pnlAlert3.BackColor = alerts[2].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
+                WireAlertClick(pnlAlert3, 2);
+            }
+        }
+
+        private void WireAlertClick(Control container, int index)
+        {
+            container.Cursor = Cursors.Hand;
+            container.Click -= (s, e) => OpenAlertDetails(index);
+            container.Click += (s, e) => OpenAlertDetails(index);
+            foreach (Control c in container.Controls)
+            {
+                c.Cursor = Cursors.Hand;
+                c.Click -= (s, e) => OpenAlertDetails(index);
+                c.Click += (s, e) => OpenAlertDetails(index);
+            }
+        }
+
+        private void OpenAlertDetails(int index)
+        {
+            if (index < _currentAlerts.Count)
+            {
+                var alert = _currentAlerts[index];
+                using (var form = new Alert_Details_Form(alert.Icon, alert.Title, alert.Message, alert.TimeText, alert.Color))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        alert.IsRead = true;
+                        DisplayAlerts(_currentAlerts);
+                    }
+                }
+            }
         }
 
         private class DoctorAlert
@@ -276,7 +373,10 @@ namespace elnet_recoverease.Doctor.Controls
             public string Priority { get; set; } = "Info";
             public string Icon { get; set; } = "🔵";
             public string Title { get; set; } = "";
+            public string Message { get; set; } = "";
             public string TimeText { get; set; } = "";
+            public Color Color { get; set; } = Color.Gray;
+            public bool IsRead { get; set; } = false;
         }
     }
 }

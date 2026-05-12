@@ -211,7 +211,7 @@ namespace elnet_recoverease.PatientStation.Controls
         {
             btn.Text = text.ToUpper();
             btn.Dock = System.Windows.Forms.DockStyle.Left;
-            btn.Width = 85;
+            btn.Width = 100;
             btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
             btn.Font = new System.Drawing.Font("Segoe UI Bold", 8F, System.Drawing.FontStyle.Bold);

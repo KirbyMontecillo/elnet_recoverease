@@ -37,10 +37,15 @@ namespace elnet_recoverease.PatientStation.Controls
                     .OrderByDescending(p => p.CreatedAt)
                     .ToListAsync();
 
+                var isDischarged = elnet_recoverease.Core.UserSession.CurrentPatient?.Status == "Discharged";
+
                 if (plans.Any())
                 {
                     var latest = plans.First();
-                    lblCardActiveValue.Text = latest.StartDate.ToString("MMM dd") + " - " + latest.EndDate.ToString("MMM dd");
+                    if (isDischarged)
+                        lblCardActiveValue.Text = "Discharged / Completed";
+                    else
+                        lblCardActiveValue.Text = latest.StartDate.ToString("MMM dd") + " - " + latest.EndDate.ToString("MMM dd");
                 }
                 else { lblCardActiveValue.Text = "No Plan Found"; }
 
@@ -52,7 +57,8 @@ namespace elnet_recoverease.PatientStation.Controls
                     string details = p.PlanDetails ?? "No details provided.";
                     if (details.Length > 80) details = details.Substring(0, 77) + "...";
 
-                    dgvTreatments.Rows.Add(p.EndDate.ToString("MMM dd, yyyy"), details, attendingDoc, (p.EndDate >= DateTime.Now) ? "Active" : "Completed");
+                    string status = isDischarged ? "Completed" : ((p.EndDate >= DateTime.Now) ? "Active" : "Completed");
+                    dgvTreatments.Rows.Add(p.EndDate.ToString("MMM dd, yyyy"), details, attendingDoc, status);
                 }
 
                 if (dgvTreatments.Rows.Count == 0) dgvTreatments.Rows.Add("-", "No treatment history found.", "-", "-");

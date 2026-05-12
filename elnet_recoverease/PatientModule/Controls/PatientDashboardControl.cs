@@ -10,6 +10,7 @@ using elnet_recoverease.Data;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using elnet_recoverease.PatientStation.Forms;
+using elnet_recoverease.Shared;
 
 namespace elnet_recoverease.PatientStation.Controls
 {
@@ -132,63 +133,110 @@ namespace elnet_recoverease.PatientStation.Controls
                     var minutesUntil = (scheduledDateTime - DateTime.Now).TotalMinutes;
 
                     if (minutesUntil >= -2 && minutesUntil <= 1)
-                        reminders.Add(new PatientReminder { Priority = -2, Icon = "🔔", Title = $"Time to take: {s.MedicationName}", TimeText = "Click to record now", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                        reminders.Add(new PatientReminder { Priority = -2, Icon = "🔔", Title = $"Time to take: {s.MedicationName}", Message = $"It's time for your {s.DosageUnit} of {s.MedicationName}. Please record it now to maintain your recovery schedule.", TimeText = "Now", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
                     else if (minutesUntil < -5 && minutesUntil > -120)
-                        reminders.Add(new PatientReminder { Priority = -3, Icon = "🚨", Title = $"URGENT: {s.MedicationName} OVERDUE", TimeText = "Action required now", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                        reminders.Add(new PatientReminder { Priority = -3, Icon = "🚨", Title = $"OVERDUE: {s.MedicationName}", Message = $"You missed your {s.ScheduledTime:hh:mm tt} dose of {s.MedicationName}. Please take it as soon as possible.", TimeText = "Overdue", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
                     else if (minutesUntil >= 55 && minutesUntil <= 65)
-                        reminders.Add(new PatientReminder { Priority = 0, Icon = "🕒", Title = $"Preparation: {s.MedicationName}", TimeText = "Due in 1 hour", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                        reminders.Add(new PatientReminder { Priority = 0, Icon = "🕒", Title = $"Preparation: {s.MedicationName}", Message = $"Your next dose of {s.MedicationName} is due in 1 hour. Make sure you have it ready.", TimeText = "Due in 1h", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
                 }
 
                 var nextMed = todaySchedules.FirstOrDefault(s => !s.IsTaken && !s.IsMissed && s.ScheduledTime >= nowTime);
                 if (nextMed != null && !reminders.Any(r => r.Title.Contains(nextMed.MedicationName)))
-                    reminders.Add(new PatientReminder { Priority = 2, Icon = "🟡", Title = $"Upcoming: {nextMed.MedicationName}", TimeText = $"Scheduled at {nextMed.ScheduledTime?.ToString("hh:mm tt")}", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                    reminders.Add(new PatientReminder { Priority = 2, Icon = "🟡", Title = $"Upcoming: {nextMed.MedicationName}", Message = $"Your next scheduled medication is {nextMed.MedicationName} at {nextMed.ScheduledTime:hh:mm tt}.", TimeText = $"{nextMed.ScheduledTime:hh:mm tt}", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
 
                 if (nextAppt != null)
                 {
                     var daysUntil = (nextAppt.AppointmentDate.Value.Date - DateTime.Today).Days;
                     if (daysUntil <= 1)
-                        reminders.Add(new PatientReminder { Priority = 3, Icon = "🔵", Title = daysUntil == 0 ? "Appointment today" : "Appointment tomorrow", TimeText = $"At {nextAppt.AppointmentDate.Value:hh:mm tt}", Action = () => (this.ParentForm as PatientMainForm)?.LoadAppointments() });
+                        reminders.Add(new PatientReminder { Priority = 3, Icon = "🔵", Title = daysUntil == 0 ? "Appointment today" : "Appointment tomorrow", Message = $"You have a consultation scheduled with your doctor at {nextAppt.AppointmentDate.Value:hh:mm tt}. Please be on time.", TimeText = $"{nextAppt.AppointmentDate.Value:hh:mm tt}", Action = () => (this.ParentForm as PatientMainForm)?.LoadAppointments() });
                 }
 
-                LoadReminders(reminders.OrderBy(r => r.Priority).ToList());
+                // 6. Status Alerts (Discharged / Active)
+                if (patient.Status == "Discharged")
+                {
+                    reminders.Add(new PatientReminder { 
+                        Priority = -10, Icon = "🎉", 
+                        Title = "Recovery Milestone: Discharged", 
+                        Message = "Congratulations! Your doctor has officially marked you as Discharged. You have successfully completed this phase of your recovery program. Stay healthy!", 
+                        TimeText = "Completed" 
+                    });
+                }
+                else if (patient.Status == "Active")
+                {
+                    reminders.Add(new PatientReminder { 
+                        Priority = 10, Icon = "✨", 
+                        Title = "Status: Active Care", 
+                        Message = "You are currently in Active Care. Your healthcare team is monitoring your progress through your daily medications and scheduled appointments.", 
+                        TimeText = "Ongoing" 
+                    });
+                }
+
+                _currentReminders = reminders.OrderBy(r => r.Priority).ToList();
+                LoadReminders(_currentReminders);
             }
             catch { }
         }
 
+        private List<PatientReminder> _currentReminders = new List<PatientReminder>();
+
         private void LoadReminders(List<PatientReminder> reminders)
         {
-            SetupReminderPanel(pnlRem1, lblRem1Icon, lblRem1Text, lblRem1Time, reminders.Count > 0 ? reminders[0] : null);
-            SetupReminderPanel(pnlRem2, lblRem2Icon, lblRem2Text, lblRem2Time, reminders.Count > 1 ? reminders[1] : null);
-            SetupReminderPanel(pnlRem3, lblRem3Icon, lblRem3Text, lblRem3Time, reminders.Count > 2 ? reminders[2] : null);
-            SetupReminderPanel(pnlRem4, lblRem4Icon, lblRem4Text, lblRem4Time, reminders.Count > 3 ? reminders[3] : null);
+            SetupReminderPanel(pnlRem1, lblRem1Icon, lblRem1Text, lblRem1Time, reminders.Count > 0 ? 0 : -1);
+            SetupReminderPanel(pnlRem2, lblRem2Icon, lblRem2Text, lblRem2Time, reminders.Count > 1 ? 1 : -1);
+            SetupReminderPanel(pnlRem3, lblRem3Icon, lblRem3Text, lblRem3Time, reminders.Count > 2 ? 2 : -1);
+            SetupReminderPanel(pnlRem4, lblRem4Icon, lblRem4Text, lblRem4Time, reminders.Count > 3 ? 3 : -1);
         }
 
-        private void SetupReminderPanel(Panel pnl, Label icon, Label text, Label time, PatientReminder rem)
+        private void SetupReminderPanel(Panel pnl, Label icon, Label text, Label time, int index)
         {
-            if (rem == null) { pnl.Visible = false; return; }
+            if (index == -1 || index >= _currentReminders.Count) { pnl.Visible = false; return; }
+            var rem = _currentReminders[index];
             pnl.Visible = true;
             icon.Text = rem.Icon;
             text.Text = rem.Title;
             time.Text = rem.TimeText;
-            pnl.Tag = rem;
-            pnl.Click += Reminder_Click;
-            foreach (Control c in pnl.Controls) { c.Tag = rem; c.Click += Reminder_Control_Click; }
+            pnl.Cursor = Cursors.Hand;
+            
+            pnl.Click -= (s, e) => OpenAlertDetails(index);
+            pnl.Click += (s, e) => OpenAlertDetails(index);
+            foreach (Control c in pnl.Controls) {
+                c.Cursor = Cursors.Hand;
+                c.Click -= (s, e) => OpenAlertDetails(index);
+                c.Click += (s, e) => OpenAlertDetails(index);
+            }
 
-            if (rem.Priority == -3) { text.ForeColor = Color.FromArgb(192, 57, 43); pnl.BackColor = Color.FromArgb(255, 240, 240); }
+            if (rem.IsRead) { pnl.BackColor = Color.White; text.ForeColor = Color.FromArgb(71, 85, 105); }
+            else if (rem.Priority == -3) { text.ForeColor = Color.FromArgb(192, 57, 43); pnl.BackColor = Color.FromArgb(255, 240, 240); }
             else if (rem.Priority == -2) { text.ForeColor = Color.FromArgb(230, 126, 34); pnl.BackColor = Color.FromArgb(255, 248, 240); }
             else { text.ForeColor = Color.FromArgb(30, 41, 59); pnl.BackColor = Color.FromArgb(248, 250, 252); }
         }
 
-        private void Reminder_Click(object sender, EventArgs e) { if (sender is Panel pnl && pnl.Tag is PatientReminder rem) rem.Action?.Invoke(); }
-        private void Reminder_Control_Click(object sender, EventArgs e) { if (sender is Control ctrl && ctrl.Tag is PatientReminder rem) rem.Action?.Invoke(); }
+        private void OpenAlertDetails(int index)
+        {
+            if (index < _currentReminders.Count)
+            {
+                var rem = _currentReminders[index];
+                Color pColor = rem.Priority == -3 ? Color.FromArgb(192, 57, 43) : (rem.Priority == -2 ? Color.FromArgb(230, 126, 34) : Color.FromArgb(0, 168, 168));
+                using (var form = new Alert_Details_Form(rem.Icon, rem.Title, rem.Message, rem.TimeText, pColor))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        rem.IsRead = true;
+                        LoadReminders(_currentReminders);
+                    }
+                }
+            }
+        }
 
         private class PatientReminder
         {
             public int Priority { get; set; }
             public string Icon { get; set; }
             public string Title { get; set; }
+            public string Message { get; set; }
             public string TimeText { get; set; }
             public Action Action { get; set; }
+            public bool IsRead { get; set; } = false;
         }
     }
 }

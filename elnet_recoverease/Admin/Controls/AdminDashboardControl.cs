@@ -6,11 +6,15 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
+using elnet_recoverease.Shared;
+using System.Collections.Generic;
 
 namespace elnet_recoverease.Admin.Controls
 {
     public partial class AdminDashboardControl : UserControl
     {
+        private List<AdminAlert> _currentAlerts = new List<AdminAlert>();
+
         public AdminDashboardControl()
         {
             InitializeComponent();
@@ -97,35 +101,79 @@ namespace elnet_recoverease.Admin.Controls
             pnl.Controls.Add(lblPct);
             flpAdherence.Controls.Add(pnl);
         }
-
         private void LoadRecentActivity(elnet_recoverease.Data.AppDbContext db)
         {
             flpActivity.Controls.Clear();
-            var patients = db.Patients.OrderByDescending(p => p.CreatedAt).Take(3).ToList();
-            foreach (var p in patients) AddActivityItem("👤", $"New patient {p.FullName}", "Recently", false);
+            _currentAlerts.Clear();
 
+            // 1. New Patients
+            var patients = db.Patients.OrderByDescending(p => p.CreatedAt).Take(3).ToList();
+            foreach (var p in patients) 
+                _currentAlerts.Add(new AdminAlert { Icon = "👤", Title = $"New patient: {p.FullName}", Message = "A new patient has been successfully registered in the system. Verify their details and assigned doctor.", Time = "Recently", IsImportant = false, Color = Color.FromArgb(44, 82, 130) });
+
+            // 2. New Staff (Lifecycle #1)
+            var newStaff = db.Staff.OrderByDescending(s => s.CreatedAt).Take(2).ToList();
+            foreach (var s in newStaff)
+                _currentAlerts.Add(new AdminAlert { Icon = "👨‍⚕️", Title = $"New staff: {s.FullName}", Message = $"A new {s.Role} has been onboarded to the clinic. Please ensure their credentials and access levels are correctly configured.", Time = "Recently", IsImportant = false, Color = Color.FromArgb(49, 151, 149) });
+
+            // 3. Adherence Warning (Warning #2)
+            var totalMeds = db.MedicationSchedules.Count();
+            if (totalMeds > 0)
+            {
+                var takenMedsCount = db.MedicationSchedules.Count(m => m.IsTaken);
+                var adherencePct = (takenMedsCount * 100.0) / totalMeds;
+                if (adherencePct < 85)
+                {
+                    _currentAlerts.Add(new AdminAlert { 
+                        Icon = "📉", 
+                        Title = "Adherence Slump", 
+                        Message = $"The overall clinic medication adherence has dropped to {adherencePct:F1}%. This is below the recommended 85% threshold. Clinical review of current patient treatment plans is suggested.", 
+                        Time = "Critical", 
+                        IsImportant = true, 
+                        Color = Color.FromArgb(197, 48, 48) 
+                    });
+                }
+            }
+
+            // 4. Missed Medications
             var missedMeds = db.MedicationSchedules
                 .Where(m => m.IsMissed)
                 .OrderByDescending(m => m.ScheduledDate)
-                .Take(2)
-                .Select(m => new { m.PatientID })
+                .Take(3)
+                .Select(m => new { m.PatientID, m.MedicationName, m.ScheduledDate })
                 .ToList();
 
             foreach (var m in missedMeds)
             {
                 var p = db.Patients.Find(m.PatientID);
-                AddActivityItem("💊", $"{p?.FullName ?? "Patient"} missed medication", "Action req.", true);
+                _currentAlerts.Add(new AdminAlert { 
+                    Icon = "💊", 
+                    Title = "Missed medication", 
+                    Message = $"{p?.FullName ?? "Patient"} missed their dose of {m.MedicationName} on {m.ScheduledDate:MMM dd}. Administrative follow-up with the attending doctor is recommended.", 
+                    Time = "Action Required", 
+                    IsImportant = true, 
+                    Color = Color.FromArgb(197, 48, 48) 
+                });
+            }
+
+            for (int i = 0; i < _currentAlerts.Count; i++)
+            {
+                AddActivityItem(i);
             }
         }
 
-        private void AddActivityItem(string icon, string text, string time, bool isImportant)
+        private void AddActivityItem(int index)
         {
+            var alert = _currentAlerts[index];
+            var isImportant = alert.IsImportant;
+
             var pnl = new Panel { 
                 Width = flpActivity.Width - 25, 
                 Height = 65, 
                 Margin = new Padding(0, 0, 0, 8),
-                BackColor = isImportant ? Color.FromArgb(255, 245, 245) : Color.Transparent,
-                Padding = new Padding(5)
+                BackColor = alert.IsRead ? Color.White : (isImportant ? Color.FromArgb(255, 245, 245) : Color.FromArgb(248, 250, 252)),
+                Padding = new Padding(5),
+                Cursor = Cursors.Hand
             };
             
             // Icon Circle
@@ -134,10 +182,9 @@ namespace elnet_recoverease.Admin.Controls
                 Location = new Point(15, 12),
                 BackColor = isImportant ? Color.FromArgb(254, 215, 215) : Color.FromArgb(237, 242, 247),
             };
-            // To make it circular, we would normally use Region, but for simplicity let's just use the bg color
             
             var lblIcon = new Label { 
-                Text = icon, 
+                Text = alert.Icon, 
                 Font = new Font("Segoe UI", 10), 
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -146,15 +193,15 @@ namespace elnet_recoverease.Admin.Controls
             pnlCircle.Controls.Add(lblIcon);
             
             var lblText = new Label { 
-                Text = text, 
+                Text = alert.Title, 
                 AutoSize = true, 
                 Location = new Point(60, 12), 
-                Font = new Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold),
+                Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold),
                 ForeColor = isImportant ? Color.FromArgb(155, 44, 44) : Color.FromArgb(27, 58, 107)
             };
             
             var lblTime = new Label { 
-                Text = time, 
+                Text = alert.Time, 
                 AutoSize = true, 
                 Location = new Point(60, 32), 
                 ForeColor = isImportant ? Color.FromArgb(197, 48, 48) : Color.Gray, 
@@ -164,7 +211,54 @@ namespace elnet_recoverease.Admin.Controls
             pnl.Controls.Add(pnlCircle);
             pnl.Controls.Add(lblText);
             pnl.Controls.Add(lblTime);
+
+            pnl.Click += (s, e) => OpenAlertDetails(index);
+            foreach(Control c in pnl.Controls) {
+                c.Cursor = Cursors.Hand;
+                c.Click += (s, e) => OpenAlertDetails(index);
+                foreach(Control child in c.Controls) {
+                    child.Cursor = Cursors.Hand;
+                    child.Click += (s, e) => OpenAlertDetails(index);
+                }
+            }
+
             flpActivity.Controls.Add(pnl);
+        }
+
+        private void OpenAlertDetails(int index)
+        {
+            if (index < _currentAlerts.Count)
+            {
+                var alert = _currentAlerts[index];
+                using (var form = new Alert_Details_Form(alert.Icon, alert.Title, alert.Message, alert.Time, alert.Color))
+                {
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        alert.IsRead = true;
+                        LoadRecentActivityFromList();
+                    }
+                }
+            }
+        }
+
+        private void LoadRecentActivityFromList()
+        {
+            flpActivity.Controls.Clear();
+            for (int i = 0; i < _currentAlerts.Count; i++)
+            {
+                AddActivityItem(i);
+            }
+        }
+
+        private class AdminAlert
+        {
+            public string Icon { get; set; }
+            public string Title { get; set; }
+            public string Message { get; set; }
+            public string Time { get; set; }
+            public bool IsImportant { get; set; }
+            public Color Color { get; set; }
+            public bool IsRead { get; set; } = false;
         }
 
         private void dgvRecentPatients_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
