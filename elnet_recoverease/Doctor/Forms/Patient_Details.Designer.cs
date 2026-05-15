@@ -175,7 +175,7 @@ namespace elnet_recoverease.Doctor
             this.lblInfoBloodVal = new Label { Location = new Point(420, 145), Font = new Font("Segoe UI", 10), ForeColor = clrTextDark, AutoSize = true };
             this.lblInfoAddressVal = new Label { Location = new Point(640, 145), Font = new Font("Segoe UI", 10), ForeColor = clrTextDark, AutoSize = true };
             this.lblStatusBadge = new Label { Location = new Point(160, 10), Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = Color.White, AutoSize = true, TextAlign = ContentAlignment.MiddleCenter, Padding = new Padding(8, 2, 8, 2) };
-            this.btnActivate = new Button { Text = "↺ Re-activate Patient", Location = new Point(1250, 120), Size = new Size(200, 35), FlatStyle = FlatStyle.Flat, ForeColor = clrTeal, Font = new Font("Segoe UI Bold", 9), Visible = false };
+            this.btnActivate = new Button { Text = "↺ Re-activate Patient", Location = new Point(1250, 120), Size = new Size(200, 35), FlatStyle = FlatStyle.Flat, ForeColor = clrTeal, Font = new Font("Segoe UI", 9), Visible = false };
             this.btnActivate.FlatAppearance.BorderColor = clrTeal;
 
             this.pnlProfileCard.Controls.AddRange(new Control[] { pnlPatientAvatar, lblPatientName, lblPatientId, lblInfoAgeGenVal, lblInfoContactVal, lblInfoBloodVal, lblInfoAddressVal, lblStatusBadge, btnActivate });
@@ -198,19 +198,19 @@ namespace elnet_recoverease.Doctor
             
             var lblPlanTitle = new Label { Text = "📋 Active Treatment Plan", Location = new Point(30, 30), Font = fntTitle, ForeColor = clrNavyActive, AutoSize = true };
             
-            this.lblDiagHeader.Text = "DIAGNOSIS"; this.lblDiagHeader.Location = new Point(35, 80); this.lblDiagHeader.Font = new Font("Segoe UI Bold", 9); this.lblDiagHeader.ForeColor = clrTextMid; this.lblDiagHeader.AutoSize = true;
+            this.lblDiagHeader.Text = "DIAGNOSIS"; this.lblDiagHeader.Location = new Point(35, 80); this.lblDiagHeader.Font = new Font("Segoe UI", 9); this.lblDiagHeader.ForeColor = clrTextMid; this.lblDiagHeader.AutoSize = true;
             this.lblDiagContent.Location = new Point(35, 105); this.lblDiagContent.Font = new Font("Segoe UI Semibold", 11); this.lblDiagContent.ForeColor = clrTextDark; this.lblDiagContent.AutoSize = true;
 
-            this.lblGoalHeader.Text = "GOALS"; this.lblGoalHeader.Location = new Point(35, 160); this.lblGoalHeader.Font = new Font("Segoe UI Bold", 9); this.lblGoalHeader.ForeColor = clrTextMid; this.lblGoalHeader.AutoSize = true;
+            this.lblGoalHeader.Text = "GOALS"; this.lblGoalHeader.Location = new Point(35, 160); this.lblGoalHeader.Font = new Font("Segoe UI", 9); this.lblGoalHeader.ForeColor = clrTextMid; this.lblGoalHeader.AutoSize = true;
             this.lblGoalContent.Location = new Point(35, 185); this.lblGoalContent.Font = new Font("Segoe UI Semibold", 11); this.lblGoalContent.ForeColor = clrTextDark; this.lblGoalContent.AutoSize = true;
 
-            this.lblNoteHeader.Text = "NOTES"; this.lblNoteHeader.Location = new Point(35, 240); this.lblNoteHeader.Font = new Font("Segoe UI Bold", 9); this.lblNoteHeader.ForeColor = clrTextMid; this.lblNoteHeader.AutoSize = true;
+            this.lblNoteHeader.Text = "NOTES"; this.lblNoteHeader.Location = new Point(35, 240); this.lblNoteHeader.Font = new Font("Segoe UI", 9); this.lblNoteHeader.ForeColor = clrTextMid; this.lblNoteHeader.AutoSize = true;
             this.lblNoteContent.Location = new Point(35, 265); this.lblNoteContent.Size = new Size(920, 150); this.lblNoteContent.Font = new Font("Segoe UI", 10.5f); this.lblNoteContent.ForeColor = clrTextDark;
             this.lblNoteContent.BackColor = Color.FromArgb(248, 250, 252);
             this.lblNoteContent.Padding = new Padding(15);
             this.lblNoteContent.Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, 920, 150, 10, 10));
 
-            this.btnUpdatePlan = new Button { Text = "+ Update Treatment Plan", Location = new Point(730, 430), Size = new Size(230, 45), FlatStyle = FlatStyle.Flat, ForeColor = clrTeal, Font = new Font("Segoe UI Bold", 10) };
+            this.btnUpdatePlan = new Button { Text = "+ Update Treatment Plan", Location = new Point(730, 430), Size = new Size(230, 45), FlatStyle = FlatStyle.Flat, ForeColor = clrTeal, Font = new Font("Segoe UI", 10) };
             this.btnUpdatePlan.FlatAppearance.BorderColor = clrTeal;
             this.btnUpdatePlan.FlatAppearance.BorderSize = 2;
             

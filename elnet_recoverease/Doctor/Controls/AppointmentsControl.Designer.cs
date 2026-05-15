@@ -46,7 +46,7 @@ namespace elnet_recoverease.Doctor.Controls
             // Date Filter Group
             System.Windows.Forms.Panel pnlDate = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Fill };
             this.lblFilterDate.Text = "DATE FILTER";
-            this.lblFilterDate.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblFilterDate.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
             this.lblFilterDate.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             this.lblFilterDate.Location = new System.Drawing.Point(0, 5);
             this.lblFilterDate.AutoSize = true;
@@ -60,7 +60,7 @@ namespace elnet_recoverease.Doctor.Controls
             // Status Filter Group
             System.Windows.Forms.Panel pnlStatus = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Fill };
             this.lblFilterStatus.Text = "STATUS";
-            this.lblFilterStatus.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblFilterStatus.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
             this.lblFilterStatus.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             this.lblFilterStatus.Location = new System.Drawing.Point(0, 5);
             this.lblFilterStatus.AutoSize = true;

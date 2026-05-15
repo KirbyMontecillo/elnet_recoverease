@@ -32,12 +32,19 @@ namespace elnet_recoverease.PatientStation.Controls
                 if (elnet_recoverease.Core.UserSession.CurrentPatient == null) return;
                 int patientId = elnet_recoverease.Core.UserSession.CurrentPatient.PatientID;
 
+                // Refresh patient from DB to ensure we have the latest status
+                var freshPatient = await _db.Patients.FindAsync(patientId);
+                if (freshPatient != null)
+                {
+                    elnet_recoverease.Core.UserSession.CurrentPatient = freshPatient;
+                }
+
                 var plans = await _db.TreatmentPlans
                     .Where(p => p.PatientID == patientId)
                     .OrderByDescending(p => p.CreatedAt)
                     .ToListAsync();
 
-                var isDischarged = elnet_recoverease.Core.UserSession.CurrentPatient?.Status == "Discharged";
+                var isDischarged = freshPatient?.Status == "Discharged";
 
                 if (plans.Any())
                 {
@@ -55,6 +62,14 @@ namespace elnet_recoverease.PatientStation.Controls
                 foreach (var p in plans)
                 {
                     string details = p.PlanDetails ?? "No details provided.";
+                    
+                    // Extract just the Goal if it was formatted by the Clinical Session
+                    if (details.Contains("GOAL: "))
+                    {
+                        var goalLine = details.Split('\n').FirstOrDefault(l => l.StartsWith("GOAL: "));
+                        if (goalLine != null) details = goalLine.Replace("GOAL: ", "").Trim();
+                    }
+
                     if (details.Length > 80) details = details.Substring(0, 77) + "...";
 
                     string status = isDischarged ? "Completed" : ((p.EndDate >= DateTime.Now) ? "Active" : "Completed");

@@ -99,7 +99,7 @@ namespace elnet_recoverease.Admin.Controls
             this.lblStatTotalVal.Location = new System.Drawing.Point(18, 55);
             this.lblStatTotalVal.AutoSize = true;
             this.lblStatTotalVal.Text = "0";
-            this.lblStatTotalTitle.Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold);
+            this.lblStatTotalTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblStatTotalTitle.ForeColor = clrTextMuted;
             this.lblStatTotalTitle.Location = new System.Drawing.Point(20, 25);
             this.lblStatTotalTitle.AutoSize = true;
@@ -129,7 +129,7 @@ namespace elnet_recoverease.Admin.Controls
             this.lblStatDoctorsVal.Location = new System.Drawing.Point(18, 55);
             this.lblStatDoctorsVal.AutoSize = true;
             this.lblStatDoctorsVal.Text = "0";
-            this.lblStatDoctorsTitle.Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold);
+            this.lblStatDoctorsTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblStatDoctorsTitle.ForeColor = clrTextMuted;
             this.lblStatDoctorsTitle.Location = new System.Drawing.Point(20, 25);
             this.lblStatDoctorsTitle.AutoSize = true;
@@ -177,7 +177,7 @@ namespace elnet_recoverease.Admin.Controls
             // Header Style
             this.dgvStaff.ColumnHeadersDefaultCellStyle.BackColor = clrNavy;
             this.dgvStaff.ColumnHeadersDefaultCellStyle.ForeColor = clrWhite;
-            this.dgvStaff.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI Bold", 9.5F, System.Drawing.FontStyle.Bold);
+            this.dgvStaff.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
             this.dgvStaff.ColumnHeadersHeight = 45;
             this.dgvStaff.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             

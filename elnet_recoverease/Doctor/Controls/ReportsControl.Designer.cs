@@ -47,7 +47,7 @@ namespace elnet_recoverease.Doctor.Controls
 
             // 1. Title Label
             this.lblSelectReportTitle.Text = "SELECT ANALYTICAL CATEGORY";
-            this.lblSelectReportTitle.Font = new System.Drawing.Font("Segoe UI Bold", 9F, System.Drawing.FontStyle.Bold);
+            this.lblSelectReportTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblSelectReportTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             this.lblSelectReportTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblSelectReportTitle.Height = 40;
@@ -101,7 +101,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.btnGenerateReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGenerateReport.FlatAppearance.BorderSize = 0;
             this.btnGenerateReport.Size = new System.Drawing.Size(180, 42);
-            this.btnGenerateReport.Font = new System.Drawing.Font("Segoe UI Bold", 9F);
+            this.btnGenerateReport.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.btnGenerateReport.Click += new System.EventHandler(this.btnGenerateReport_Click);
 
             pnlFilterActions.Controls.Add(this.btnGenerateReport);
@@ -157,7 +157,7 @@ namespace elnet_recoverease.Doctor.Controls
             };
             var lblTitle = new System.Windows.Forms.Label { 
                 Text = title, 
-                Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold), 
+                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold), 
                 ForeColor = System.Drawing.Color.FromArgb(30, 41, 59),
                 Location = new System.Drawing.Point(0, 75), 
                 Size = new System.Drawing.Size(220, 25),

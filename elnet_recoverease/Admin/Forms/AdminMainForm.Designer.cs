@@ -279,7 +279,7 @@ namespace elnet_recoverease.Admin.Forms
             lblCurrentDate.AutoSize = true;
             lblCurrentDate.Font = new Font("Segoe UI", 10F);
             lblCurrentDate.ForeColor = Color.FromArgb(113, 128, 150);
-            lblCurrentDate.Location = new Point(26, 38);
+            this.lblCurrentDate.Location = new System.Drawing.Point(26, 50);
             lblCurrentDate.Name = "lblCurrentDate";
             lblCurrentDate.Size = new Size(181, 23);
             lblCurrentDate.TabIndex = 2;

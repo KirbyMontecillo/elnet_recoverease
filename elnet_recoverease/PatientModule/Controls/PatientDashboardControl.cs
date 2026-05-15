@@ -25,6 +25,10 @@ namespace elnet_recoverease.PatientStation.Controls
 
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
+                WireReminderClickOnce(pnlRem1, 0);
+                WireReminderClickOnce(pnlRem2, 1);
+                WireReminderClickOnce(pnlRem3, 2);
+                WireReminderClickOnce(pnlRem4, 3);
                 StartRefreshTimer();
             }
         }
@@ -115,6 +119,7 @@ namespace elnet_recoverease.PatientStation.Controls
 
                 // 5. Generate Reminders
                 var reminders = new List<PatientReminder>();
+                string nowStr = DateTime.Now.ToString("MMM dd, hh:mm tt");
 
                 int missedToday = todaySchedules.Count(s => s.IsMissed && !s.IsTaken);
                 if (missedToday > 0)
@@ -122,7 +127,7 @@ namespace elnet_recoverease.PatientStation.Controls
                     reminders.Add(new PatientReminder {
                         Priority = 1, Icon = "🔴",
                         Title = $"You missed {missedToday} doses today",
-                        TimeText = "Action Required"
+                        TimeText = nowStr
                     });
                 }
 
@@ -131,24 +136,30 @@ namespace elnet_recoverease.PatientStation.Controls
                     if (!s.ScheduledTime.HasValue) continue;
                     var scheduledDateTime = DateTime.Today.Add(s.ScheduledTime.Value.ToTimeSpan());
                     var minutesUntil = (scheduledDateTime - DateTime.Now).TotalMinutes;
+                    string schTimeStr = scheduledDateTime.ToString("MMM dd, hh:mm tt");
 
-                    if (minutesUntil >= -2 && minutesUntil <= 1)
-                        reminders.Add(new PatientReminder { Priority = -2, Icon = "🔔", Title = $"Time to take: {s.MedicationName}", Message = $"It's time for your {s.DosageUnit} of {s.MedicationName}. Please record it now to maintain your recovery schedule.", TimeText = "Now", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
-                    else if (minutesUntil < -5 && minutesUntil > -120)
-                        reminders.Add(new PatientReminder { Priority = -3, Icon = "🚨", Title = $"OVERDUE: {s.MedicationName}", Message = $"You missed your {s.ScheduledTime:hh:mm tt} dose of {s.MedicationName}. Please take it as soon as possible.", TimeText = "Overdue", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
-                    else if (minutesUntil >= 55 && minutesUntil <= 65)
-                        reminders.Add(new PatientReminder { Priority = 0, Icon = "🕒", Title = $"Preparation: {s.MedicationName}", Message = $"Your next dose of {s.MedicationName} is due in 1 hour. Make sure you have it ready.", TimeText = "Due in 1h", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                    if (minutesUntil > 0 && minutesUntil <= 30)
+                        reminders.Add(new PatientReminder { Priority = -1, Icon = "🔔", Title = $"Due Soon: {s.MedicationName}", Message = $"Your {s.DosageUnit} of {s.MedicationName} is due in {(int)minutesUntil} minutes. Have it ready.", TimeText = schTimeStr, Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                    else if (minutesUntil <= 0 && minutesUntil >= -30)
+                        reminders.Add(new PatientReminder { Priority = -2, Icon = "⏰", Title = $"Time to take: {s.MedicationName}", Message = $"It's time for your {s.DosageUnit} of {s.MedicationName}. Please record it now to maintain your recovery schedule.", TimeText = schTimeStr, Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                    else if (minutesUntil < -30 && minutesUntil >= -180)
+                        reminders.Add(new PatientReminder { Priority = -3, Icon = "🚨", Title = $"OVERDUE: {s.MedicationName}", Message = $"You missed your {s.ScheduledTime:hh:mm tt} dose of {s.MedicationName}. Please take it as soon as possible.", TimeText = schTimeStr, Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                    else if (minutesUntil > 30 && minutesUntil <= 90)
+                        reminders.Add(new PatientReminder { Priority = 0, Icon = "🕒", Title = $"Preparation: {s.MedicationName}", Message = $"Your next dose of {s.MedicationName} is due soon. Make sure you have it ready.", TimeText = schTimeStr, Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
                 }
 
                 var nextMed = todaySchedules.FirstOrDefault(s => !s.IsTaken && !s.IsMissed && s.ScheduledTime >= nowTime);
                 if (nextMed != null && !reminders.Any(r => r.Title.Contains(nextMed.MedicationName)))
-                    reminders.Add(new PatientReminder { Priority = 2, Icon = "🟡", Title = $"Upcoming: {nextMed.MedicationName}", Message = $"Your next scheduled medication is {nextMed.MedicationName} at {nextMed.ScheduledTime:hh:mm tt}.", TimeText = $"{nextMed.ScheduledTime:hh:mm tt}", Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                {
+                    string schTimeStr = DateTime.Today.Add(nextMed.ScheduledTime.Value.ToTimeSpan()).ToString("MMM dd, hh:mm tt");
+                    reminders.Add(new PatientReminder { Priority = 2, Icon = "🟡", Title = $"Upcoming: {nextMed.MedicationName}", Message = $"Your next scheduled medication is {nextMed.MedicationName} at {nextMed.ScheduledTime:hh:mm tt}.", TimeText = schTimeStr, Action = () => (this.ParentForm as PatientMainForm)?.LoadMedications() });
+                }
 
                 if (nextAppt != null)
                 {
                     var daysUntil = (nextAppt.AppointmentDate.Value.Date - DateTime.Today).Days;
                     if (daysUntil <= 1)
-                        reminders.Add(new PatientReminder { Priority = 3, Icon = "🔵", Title = daysUntil == 0 ? "Appointment today" : "Appointment tomorrow", Message = $"You have a consultation scheduled with your doctor at {nextAppt.AppointmentDate.Value:hh:mm tt}. Please be on time.", TimeText = $"{nextAppt.AppointmentDate.Value:hh:mm tt}", Action = () => (this.ParentForm as PatientMainForm)?.LoadAppointments() });
+                        reminders.Add(new PatientReminder { Priority = 3, Icon = "🔵", Title = daysUntil == 0 ? "Appointment today" : "Appointment tomorrow", Message = $"You have a consultation scheduled with your doctor at {nextAppt.AppointmentDate.Value:hh:mm tt}. Please be on time.", TimeText = nextAppt.AppointmentDate.Value.ToString("MMM dd, hh:mm tt"), Action = () => (this.ParentForm as PatientMainForm)?.LoadAppointments() });
                 }
 
                 // 6. Status Alerts (Discharged / Active)
@@ -158,7 +169,7 @@ namespace elnet_recoverease.PatientStation.Controls
                         Priority = -10, Icon = "🎉", 
                         Title = "Recovery Milestone: Discharged", 
                         Message = "Congratulations! Your doctor has officially marked you as Discharged. You have successfully completed this phase of your recovery program. Stay healthy!", 
-                        TimeText = "Completed" 
+                        TimeText = nowStr 
                     });
                 }
                 else if (patient.Status == "Active")
@@ -167,7 +178,7 @@ namespace elnet_recoverease.PatientStation.Controls
                         Priority = 10, Icon = "✨", 
                         Title = "Status: Active Care", 
                         Message = "You are currently in Active Care. Your healthcare team is monitoring your progress through your daily medications and scheduled appointments.", 
-                        TimeText = "Ongoing" 
+                        TimeText = nowStr 
                     });
                 }
 
@@ -196,19 +207,32 @@ namespace elnet_recoverease.PatientStation.Controls
             text.Text = rem.Title;
             time.Text = rem.TimeText;
             pnl.Cursor = Cursors.Hand;
-            
-            pnl.Click -= (s, e) => OpenAlertDetails(index);
-            pnl.Click += (s, e) => OpenAlertDetails(index);
-            foreach (Control c in pnl.Controls) {
-                c.Cursor = Cursors.Hand;
-                c.Click -= (s, e) => OpenAlertDetails(index);
-                c.Click += (s, e) => OpenAlertDetails(index);
-            }
 
             if (rem.IsRead) { pnl.BackColor = Color.White; text.ForeColor = Color.FromArgb(71, 85, 105); }
             else if (rem.Priority == -3) { text.ForeColor = Color.FromArgb(192, 57, 43); pnl.BackColor = Color.FromArgb(255, 240, 240); }
             else if (rem.Priority == -2) { text.ForeColor = Color.FromArgb(230, 126, 34); pnl.BackColor = Color.FromArgb(255, 248, 240); }
             else { text.ForeColor = Color.FromArgb(30, 41, 59); pnl.BackColor = Color.FromArgb(248, 250, 252); }
+        }
+
+        private void WireReminderClickOnce(Panel pnl, int index)
+        {
+            pnl.Tag = index;
+            pnl.Cursor = Cursors.Hand;
+            pnl.Click += Reminder_Click;
+            foreach (Control c in pnl.Controls)
+            {
+                c.Tag = index;
+                c.Cursor = Cursors.Hand;
+                c.Click += Reminder_Click;
+            }
+        }
+
+        private void Reminder_Click(object sender, EventArgs e)
+        {
+            if (sender is Control c && c.Tag is int index)
+            {
+                OpenAlertDetails(index);
+            }
         }
 
         private void OpenAlertDetails(int index)

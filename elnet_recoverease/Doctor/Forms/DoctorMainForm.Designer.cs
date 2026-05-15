@@ -289,7 +289,7 @@ namespace elnet_recoverease.Doctor.Forms
             lblWelcome.Size = new Size(151, 23);
             lblWelcome.TabIndex = 1;
             lblWelcome.Text = "Welcome back, Dr.";
-            lblWelcome.Click += lblWelcome_Click;
+
             // 
             // lblPageTitle
             // 
@@ -301,7 +301,7 @@ namespace elnet_recoverease.Doctor.Forms
             lblPageTitle.Size = new Size(171, 41);
             lblPageTitle.TabIndex = 2;
             lblPageTitle.Text = "Dashboard";
-            lblPageTitle.Click += lblPageTitle_Click;
+
             // 
             // panelContainer
             // 

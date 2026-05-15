@@ -38,7 +38,7 @@ namespace elnet_recoverease.PatientStation.Forms
                 }
             }
             catch { }
-            
+
             LoadAppointmentData();
         }
 
@@ -54,7 +54,8 @@ namespace elnet_recoverease.PatientStation.Forms
 
             // Header Panel
             Panel pnlHeader = new Panel { Dock = DockStyle.Top, Height = 70, BackColor = Color.FromArgb(27, 58, 107) };
-            Label lblTitle = new Label {
+            Label lblTitle = new Label
+            {
                 Text = "Clinical Record",
                 Font = new Font("Segoe UI", 16f, FontStyle.Bold),
                 ForeColor = Color.White,
@@ -66,7 +67,8 @@ namespace elnet_recoverease.PatientStation.Forms
 
             // Footer Panel
             Panel pnlFooter = new Panel { Dock = DockStyle.Bottom, Height = 60, BackColor = Color.FromArgb(248, 250, 252) };
-            Button btnClose = new Button {
+            Button btnClose = new Button
+            {
                 Text = "Close",
                 Size = new Size(120, 40),
                 Location = new Point(440, 10),
@@ -89,7 +91,8 @@ namespace elnet_recoverease.PatientStation.Forms
 
         private void LoadAppointmentData()
         {
-            FlowLayoutPanel pnlBody = new FlowLayoutPanel {
+            FlowLayoutPanel pnlBody = new FlowLayoutPanel
+            {
                 Dock = DockStyle.Fill,
                 Padding = new Padding(30, 25, 30, 100), // Significant bottom padding
                 FlowDirection = FlowDirection.TopDown,
@@ -131,7 +134,8 @@ namespace elnet_recoverease.PatientStation.Forms
 
         private void AddSectionHeader(FlowLayoutPanel parent, string title, int width)
         {
-            Label lbl = new Label {
+            Label lbl = new Label
+            {
                 Text = title,
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(71, 85, 105),
@@ -139,7 +143,7 @@ namespace elnet_recoverease.PatientStation.Forms
                 AutoSize = true
             };
             parent.Controls.Add(lbl);
-            
+
             // Subtle underline
             Panel line = new Panel { Width = width, Height = 1, BackColor = Color.FromArgb(226, 232, 240), Margin = new Padding(0, 0, 0, 15) };
             parent.Controls.Add(line);
@@ -147,31 +151,34 @@ namespace elnet_recoverease.PatientStation.Forms
 
         private void AddDetailItem(FlowLayoutPanel parent, string label, string value, int width, Color? valueColor = null)
         {
-            FlowLayoutPanel p = new FlowLayoutPanel { 
-                Width = width, 
-                AutoSize = true, 
+            FlowLayoutPanel p = new FlowLayoutPanel
+            {
+                Width = width,
+                AutoSize = true,
                 FlowDirection = FlowDirection.TopDown,
                 Margin = new Padding(0, 0, 0, 15)
             };
-            
-            Label l = new Label { 
-                Text = label, 
-                Font = new Font("Segoe UI", 8f, FontStyle.Bold), 
-                ForeColor = Color.FromArgb(148, 163, 184), 
+
+            Label l = new Label
+            {
+                Text = label,
+                Font = new Font("Segoe UI", 8f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(148, 163, 184),
                 AutoSize = true,
                 Margin = new Padding(0, 0, 0, 2)
             };
-            
-            Label v = new Label { 
-                Text = value, 
-                Font = new Font("Segoe UI", 10f), 
-                ForeColor = valueColor ?? Color.FromArgb(30, 41, 59), 
+
+            Label v = new Label
+            {
+                Text = value,
+                Font = new Font("Segoe UI", 10f),
+                ForeColor = valueColor ?? Color.FromArgb(30, 41, 59),
                 Width = width - 10,
                 AutoSize = true,
                 MaximumSize = new Size(width - 10, 0),
                 Margin = new Padding(0)
             };
-            
+
             p.Controls.Add(l);
             p.Controls.Add(v);
             parent.Controls.Add(p);
@@ -179,9 +186,10 @@ namespace elnet_recoverease.PatientStation.Forms
 
         private void AddPrescriptionBox(FlowLayoutPanel parent, string notes, int width)
         {
-            Panel container = new Panel { 
-                Width = width, 
-                AutoSize = true, 
+            Panel container = new Panel
+            {
+                Width = width,
+                AutoSize = true,
                 BackColor = Color.FromArgb(248, 250, 252),
                 Padding = new Padding(15, 20, 15, 20),
                 BorderStyle = BorderStyle.None,
@@ -201,7 +209,8 @@ namespace elnet_recoverease.PatientStation.Forms
             }
             fullPrescription += notes;
 
-            Label lbl = new Label {
+            Label lbl = new Label
+            {
                 Text = fullPrescription,
                 Font = new Font("Consolas", 10f),
                 ForeColor = Color.FromArgb(30, 41, 59),
@@ -213,9 +222,10 @@ namespace elnet_recoverease.PatientStation.Forms
 
             container.Controls.Add(lbl);
             parent.Controls.Add(container);
-            
+
             // Add a small "Rx" icon/label
-            Label rx = new Label {
+            Label rx = new Label
+            {
                 Text = "℞",
                 Font = new Font("Segoe UI", 16f, FontStyle.Italic),
                 ForeColor = Color.FromArgb(203, 213, 225),
@@ -224,6 +234,11 @@ namespace elnet_recoverease.PatientStation.Forms
             };
             container.Controls.Add(rx);
             rx.BringToFront();
+        }
+
+        private void InitializeComponent()
+        {
+
         }
 
         private void AddVitalsRow(FlowLayoutPanel parent, string label1, string val1, string label2, string val2, int width)

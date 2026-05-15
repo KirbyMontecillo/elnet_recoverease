@@ -110,7 +110,7 @@ namespace elnet_recoverease.Doctor.Controls
             pnlSchedulePanel.Padding = new Padding(20, 70, 20, 20);
 
             lblScheduleTitle.AutoSize = true;
-            lblScheduleTitle.Font = new Font("Segoe UI Bold", 12F, FontStyle.Bold);
+            lblScheduleTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblScheduleTitle.ForeColor = Color.FromArgb(27, 58, 107);
             lblScheduleTitle.Location = new Point(20, 25);
             lblScheduleTitle.Text = "📅 Today's Appointments";
@@ -142,7 +142,7 @@ namespace elnet_recoverease.Doctor.Controls
             pnlAlertsPanel.Padding = new Padding(20, 70, 20, 20);
 
             lblAlertsTitle.AutoSize = true;
-            lblAlertsTitle.Font = new Font("Segoe UI Bold", 12F, FontStyle.Bold);
+            lblAlertsTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             lblAlertsTitle.ForeColor = Color.FromArgb(27, 58, 107);
             lblAlertsTitle.Location = new Point(20, 25);
             lblAlertsTitle.Text = "⚠️ Clinical Alerts";

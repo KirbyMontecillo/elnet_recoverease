@@ -87,6 +87,7 @@ namespace elnet_recoverease.Admin
             // 
             // btnClose
             // 
+            btnClose.DialogResult = DialogResult.Cancel;
             btnClose.FlatAppearance.BorderSize = 0;
             btnClose.FlatStyle = FlatStyle.Flat;
             btnClose.Location = new Point(490, 18);
@@ -94,7 +95,6 @@ namespace elnet_recoverease.Admin
             btnClose.Size = new Size(32, 32);
             btnClose.TabIndex = 2;
             btnClose.Text = "✕";
-            btnClose.DialogResult = DialogResult.Cancel;
             // 
             // pnlDivider1
             // 
@@ -334,13 +334,13 @@ namespace elnet_recoverease.Admin
             // 
             // btnCancel
             // 
+            btnCancel.DialogResult = DialogResult.Cancel;
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.Location = new Point(290, 20);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(90, 36);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.DialogResult = DialogResult.Cancel;
             // 
             // btnSave
             // 
@@ -355,6 +355,7 @@ namespace elnet_recoverease.Admin
             btnSave.TabIndex = 2;
             btnSave.Text = "Save changes";
             btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
             // 
             // Edit_Staff
             // 

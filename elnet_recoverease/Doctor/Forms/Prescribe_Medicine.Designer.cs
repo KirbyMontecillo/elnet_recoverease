@@ -1,4 +1,4 @@
-﻿namespace elnet_recoverease.Doctor
+namespace elnet_recoverease.Doctor
 {
     partial class Prescribe_Medicine
     {

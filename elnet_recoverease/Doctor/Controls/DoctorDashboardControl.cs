@@ -41,6 +41,10 @@ namespace elnet_recoverease.Doctor.Controls
             SetupAlertItem(pnlAlert1, lblAlert1Icon, lblAlert1Text, lblAlert1Time, Color.FromArgb(220, 38, 38));
             SetupAlertItem(pnlAlert2, lblAlert2Icon, lblAlert2Text, lblAlert2Time, Color.FromArgb(220, 38, 38));
             SetupAlertItem(pnlAlert3, lblAlert3Icon, lblAlert3Text, lblAlert3Time, Color.FromArgb(217, 119, 6));
+
+            WireAlertClick(pnlAlert1, 0);
+            WireAlertClick(pnlAlert2, 1);
+            WireAlertClick(pnlAlert3, 2);
         }
 
         private void SetupStatCard(System.Windows.Forms.Panel card, string title, System.Windows.Forms.Label lblTitle, System.Windows.Forms.Label lblValue, System.Windows.Forms.Label lblIcon, string ico, System.Windows.Forms.Label lblSub, string sub, System.Drawing.Color color, int index)
@@ -54,7 +58,7 @@ namespace elnet_recoverease.Doctor.Controls
             var pnlTopStrip = new System.Windows.Forms.Panel { Dock = System.Windows.Forms.DockStyle.Top, Height = 4, BackColor = color };
             
             lblTitle.Text = title;
-            lblTitle.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold);
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
             lblTitle.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             lblTitle.Location = new System.Drawing.Point(20, 18);
             lblTitle.AutoSize = true;
@@ -254,13 +258,14 @@ namespace elnet_recoverease.Doctor.Controls
         {
             var alerts = new List<DoctorAlert>();
             var now = DateTime.Now;
+            string nowStr = now.ToString("MMM dd, hh:mm tt");
 
             // Existing Med Alerts
             foreach (var group in missedMeds.GroupBy(x => x.PatientID))
             {
                 var days = group.Select(x => x.ScheduledDate).Distinct().Count();
                 var latest = group.OrderByDescending(x => x.ScheduledDate).First();
-                string dateStr = latest.ScheduledDate == DateOnly.FromDateTime(DateTime.Today) ? "Today" : latest.ScheduledDate.ToString("MMM dd");
+                string dateStr = $"{latest.ScheduledDate:MMM dd}, " + (latest.ScheduledTime != null ? latest.ScheduledTime.ToString("hh:mm tt") : "12:00 AM");
                 if (days >= 2) alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{group.First().FullName} missed meds", Message = $"Patient has missed their prescribed medication schedule for {days} consecutive days. Immediate follow-up is required to ensure treatment continuity.", TimeText = dateStr, Color = Color.FromArgb(220, 38, 38) });
                 else alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"{group.First().FullName} missed meds", Message = "Patient missed their most recent medication dose. Monitor adherence during the next check-in.", TimeText = dateStr, Color = Color.FromArgb(217, 119, 6) });
             }
@@ -270,26 +275,28 @@ namespace elnet_recoverease.Doctor.Controls
             {
                 if (IsAbnormalBP(session.BloodPressure))
                 {
-                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🩺", Title = $"High BP: {session.PatientName}", Message = $"Clinical session on {session.AppointmentDate:MMM dd} recorded a high blood pressure reading of {session.BloodPressure}. Evaluate if medication adjustment is necessary.", TimeText = session.AppointmentDate?.ToString("MMM dd") ?? "", Color = Color.FromArgb(220, 38, 38) });
+                    string sessionDate = session.AppointmentDate?.ToString("MMM dd, hh:mm tt") ?? nowStr;
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🩺", Title = $"High BP: {session.PatientName}", Message = $"Clinical session on {session.AppointmentDate:MMM dd} recorded a high blood pressure reading of {session.BloodPressure}. Evaluate if medication adjustment is necessary.", TimeText = sessionDate, Color = Color.FromArgb(220, 38, 38) });
                 }
             }
 
             // Missing Plan Alerts
             foreach (var p in patientsNoPlan)
             {
-                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "📝", Title = $"Missing Plan: {p.FullName}", Message = "This active patient does not have a finalized treatment plan. Please update their profile to include clinical goals.", TimeText = "Action Required", Color = Color.FromArgb(217, 119, 6) });
+                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "📝", Title = $"Missing Plan: {p.FullName}", Message = "This active patient does not have a finalized treatment plan. Please update their profile to include clinical goals.", TimeText = nowStr, Color = Color.FromArgb(217, 119, 6) });
             }
 
             // Inactive Patient Alerts (14+ Days)
             foreach (var p in inactivePatients)
             {
-                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🛌", Title = $"Inactivity: {p.FullName}", Message = "This patient hasn't had a consultation or appointment update in over 14 days. Consider scheduling a check-in call.", TimeText = "14+ Days", Color = Color.FromArgb(217, 119, 6) });
+                alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🛌", Title = $"Inactivity: {p.FullName}", Message = "This patient hasn't had a consultation or appointment update in over 14 days. Consider scheduling a check-in call.", TimeText = nowStr, Color = Color.FromArgb(217, 119, 6) });
             }
 
             // Existing Info/Appt Alerts
             foreach(var taken in takenMeds)
             {
-                alerts.Add(new DoctorAlert { Priority = "Info", Icon = "🟢", Title = $"{taken.FullName} took {taken.MedicationName}", Message = "The patient successfully logged their medication intake. Adherence is on track.", TimeText = "Update", Color = Color.FromArgb(39, 174, 96) });
+                string takenStr = $"{taken.ScheduledDate:MMM dd}, " + (taken.ScheduledTime != null ? taken.ScheduledTime.ToString("hh:mm tt") : "12:00 AM");
+                alerts.Add(new DoctorAlert { Priority = "Info", Icon = "🟢", Title = $"{taken.FullName} took {taken.MedicationName}", Message = "The patient successfully logged their medication intake. Adherence is on track.", TimeText = takenStr, Color = Color.FromArgb(39, 174, 96) });
             }
 
             foreach (var appt in appts)
@@ -297,9 +304,9 @@ namespace elnet_recoverease.Doctor.Controls
                 if (appt.AppointmentDate == null) continue;
                 DateTime dt = appt.AppointmentDate;
                 if (appt.Status == "Missed" && dt.Date == DateTime.Today)
-                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{appt.FullName} missed appt", Message = "The scheduled consultation for today was not completed. Verify if the patient needs to reschedule.", TimeText = dt.ToString("hh:mm tt"), Color = Color.FromArgb(220, 38, 38) });
+                    alerts.Add(new DoctorAlert { Priority = "Urgent", Icon = "🔴", Title = $"{appt.FullName} missed appt", Message = "The scheduled consultation for today was not completed. Verify if the patient needs to reschedule.", TimeText = dt.ToString("MMM dd, hh:mm tt"), Color = Color.FromArgb(220, 38, 38) });
                 else if (dt > now && dt <= now.AddHours(2) && appt.Status == "Scheduled")
-                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"Upcoming Appt: {appt.FullName}", Message = "Scheduled consultation is starting in less than 2 hours.", TimeText = "Upcoming", Color = Color.FromArgb(217, 119, 6) });
+                    alerts.Add(new DoctorAlert { Priority = "Warning", Icon = "🟡", Title = $"Upcoming Appt: {appt.FullName}", Message = "Scheduled consultation is starting in less than 2 hours.", TimeText = dt.ToString("MMM dd, hh:mm tt"), Color = Color.FromArgb(217, 119, 6) });
             }
 
             _currentAlerts = alerts.OrderBy(a => a.Priority == "Urgent" ? 0 : a.Priority == "Warning" ? 1 : 2).ToList();
@@ -316,39 +323,79 @@ namespace elnet_recoverease.Doctor.Controls
             return false;
         }
 
+        private FlowLayoutPanel flpAlerts;
+
         private void DisplayAlerts(List<DoctorAlert> alerts)
         {
-            pnlAlert1.Visible = alerts.Count > 0;
-            pnlAlert2.Visible = alerts.Count > 1;
-            pnlAlert3.Visible = alerts.Count > 2;
+            // Hide the old fixed placeholders
+            if (pnlAlert1 != null) pnlAlert1.Visible = false;
+            if (pnlAlert2 != null) pnlAlert2.Visible = false;
+            if (pnlAlert3 != null) pnlAlert3.Visible = false;
 
-            if (alerts.Count > 0) { 
-                lblAlert1Icon.Text = alerts[0].Icon; lblAlert1Text.Text = alerts[0].Title; lblAlert1Time.Text = alerts[0].TimeText;
-                pnlAlert1.BackColor = alerts[0].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
-                WireAlertClick(pnlAlert1, 0);
+            if (flpAlerts == null)
+            {
+                flpAlerts = new FlowLayoutPanel
+                {
+                    Dock = DockStyle.Fill,
+                    AutoScroll = true,
+                    FlowDirection = FlowDirection.TopDown,
+                    WrapContents = false,
+                    Padding = new Padding(0)
+                };
+                pnlAlertsPanel.Controls.Add(flpAlerts);
+                flpAlerts.BringToFront();
             }
-            if (alerts.Count > 1) { 
-                lblAlert2Icon.Text = alerts[1].Icon; lblAlert2Text.Text = alerts[1].Title; lblAlert2Time.Text = alerts[1].TimeText;
-                pnlAlert2.BackColor = alerts[1].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
-                WireAlertClick(pnlAlert2, 1);
-            }
-            if (alerts.Count > 2) { 
-                lblAlert3Icon.Text = alerts[2].Icon; lblAlert3Text.Text = alerts[2].Title; lblAlert3Time.Text = alerts[2].TimeText;
-                pnlAlert3.BackColor = alerts[2].IsRead ? Color.White : Color.FromArgb(245, 248, 250);
-                WireAlertClick(pnlAlert3, 2);
+
+            flpAlerts.Controls.Clear();
+
+            int index = 0;
+            foreach (var alert in alerts)
+            {
+                var card = new Panel 
+                { 
+                    Width = pnlAlertsPanel.Width - 60, 
+                    Height = 70, 
+                    Margin = new Padding(0, 0, 0, 10),
+                    BackColor = alert.IsRead ? Color.White : Color.FromArgb(245, 248, 250)
+                };
+                
+                var colorLine = new Panel { Width = 4, Dock = DockStyle.Left, BackColor = alert.Color };
+                card.Controls.Add(colorLine);
+
+                var icon = new Label { Text = alert.Icon, Location = new Point(15, 23), Font = new Font("Segoe UI", 12f), AutoSize = true };
+                var title = new Label { Text = alert.Title, Location = new Point(55, 15), Font = new Font("Segoe UI", 9.5f, FontStyle.Bold), ForeColor = Color.FromArgb(30, 43, 60), AutoSize = true };
+                var time = new Label { Text = alert.TimeText, Location = new Point(55, 40), Font = new Font("Segoe UI", 8f), ForeColor = Color.Gray, AutoSize = true };
+
+                card.Controls.Add(icon);
+                card.Controls.Add(title);
+                card.Controls.Add(time);
+
+                WireAlertClick(card, index);
+                foreach (Control c in card.Controls) WireAlertClick(c, index);
+
+                flpAlerts.Controls.Add(card);
+                index++;
             }
         }
 
         private void WireAlertClick(Control container, int index)
         {
+            container.Tag = index;
             container.Cursor = Cursors.Hand;
-            container.Click -= (s, e) => OpenAlertDetails(index);
-            container.Click += (s, e) => OpenAlertDetails(index);
+            container.Click += Alert_Click;
             foreach (Control c in container.Controls)
             {
+                c.Tag = index;
                 c.Cursor = Cursors.Hand;
-                c.Click -= (s, e) => OpenAlertDetails(index);
-                c.Click += (s, e) => OpenAlertDetails(index);
+                c.Click += Alert_Click;
+            }
+        }
+
+        private void Alert_Click(object sender, EventArgs e)
+        {
+            if (sender is Control c && c.Tag is int index)
+            {
+                OpenAlertDetails(index);
             }
         }
 

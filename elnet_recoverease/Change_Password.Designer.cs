@@ -40,7 +40,7 @@ namespace elnet_recoverease
             System.Drawing.Color clrMain = System.Drawing.Color.FromArgb(45, 55, 72);
             System.Drawing.Color clrSec = System.Drawing.Color.FromArgb(113, 128, 150);
             System.Drawing.Color clrBorder = System.Drawing.Color.FromArgb(226, 232, 240);
-            System.Drawing.Font fntTitle = new System.Drawing.Font("Segoe UI Bold", 16F, System.Drawing.FontStyle.Bold);
+            System.Drawing.Font fntTitle = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             System.Drawing.Font fntLabel = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold);
             System.Drawing.Font fntInput = new System.Drawing.Font("Segoe UI", 11F);
 
@@ -65,7 +65,7 @@ namespace elnet_recoverease
 
             // Footer
             this.pnlFooter.Dock = System.Windows.Forms.DockStyle.Bottom; this.pnlFooter.Height = 85;
-            this.btnUpdate.Text = "Update Password"; this.btnUpdate.BackColor = clrTeal; this.btnUpdate.ForeColor = System.Drawing.Color.White; this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnUpdate.FlatAppearance.BorderSize = 0; this.btnUpdate.Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold); this.btnUpdate.Location = new System.Drawing.Point(210, 22); this.btnUpdate.Size = new System.Drawing.Size(164, 40); this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnUpdate.Text = "Update Password"; this.btnUpdate.BackColor = clrTeal; this.btnUpdate.ForeColor = System.Drawing.Color.White; this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnUpdate.FlatAppearance.BorderSize = 0; this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold); this.btnUpdate.Location = new System.Drawing.Point(210, 22); this.btnUpdate.Size = new System.Drawing.Size(164, 40); this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCancel.Text = "Cancel"; this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat; this.btnCancel.FlatAppearance.BorderColor = clrBorder; this.btnCancel.Location = new System.Drawing.Point(110, 22); this.btnCancel.Size = new System.Drawing.Size(90, 40); this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pnlFooter.Controls.AddRange(new System.Windows.Forms.Control[] { this.btnUpdate, this.btnCancel });
 

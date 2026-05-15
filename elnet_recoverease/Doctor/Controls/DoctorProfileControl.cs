@@ -55,6 +55,10 @@ namespace elnet_recoverease.Doctor.Controls
             btnUploadPic.FlatAppearance.BorderColor = Color.FromArgb(0, 168, 168);
             btnUploadPic.Visible = false;
             btnUploadPic.BringToFront();
+
+            // Wire up the event
+            btnUploadPic.Click -= BtnUploadPic_Click; // Prevents double wiring
+            btnUploadPic.Click += BtnUploadPic_Click;
         }
 
         private void BtnLogout_Click(object sender, EventArgs e)

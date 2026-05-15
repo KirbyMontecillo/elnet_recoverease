@@ -7,6 +7,13 @@ namespace elnet_recoverease.Shared
 {
     public partial class Alert_Details_Form : Form
     {
+        // Properties to hold the data
+        public string AlertIcon { get; set; }
+        public string AlertTitle { get; set; }
+        public string AlertMessage { get; set; }
+        public string AlertTime { get; set; }
+        public Color PriorityColor { get; set; }
+
         protected override CreateParams CreateParams
         {
             get
@@ -18,29 +25,48 @@ namespace elnet_recoverease.Shared
             }
         }
 
-        public Alert_Details_Form(string icon, string title, string message, string time, Color priorityColor)
+        // Standard parameterless constructor for the Designer
+        public Alert_Details_Form()
         {
-            InitializeComponent(icon, title, message, time, priorityColor);
-            this.FormBorderStyle = FormBorderStyle.None;
+            InitializeComponent();
         }
 
-        private void InitializeComponent(string icon, string title, string message, string time, Color priorityColor)
+        // Modern constructor used by your code
+        public Alert_Details_Form(string icon, string title, string message, string time, Color priorityColor) : this()
+        {
+            this.AlertIcon = icon;
+            this.AlertTitle = title;
+            this.AlertMessage = message;
+            this.AlertTime = time;
+            this.PriorityColor = priorityColor;
+            
+            // Apply the data to the UI after initialization
+            ApplyAlertData();
+        }
+
+        private void InitializeComponent()
         {
             this.Size = new Size(400, 300);
             this.BackColor = Color.White;
             this.StartPosition = FormStartPosition.CenterParent;
+            this.FormBorderStyle = FormBorderStyle.None;
+        }
+
+        private void ApplyAlertData()
+        {
+            this.Controls.Clear();
 
             var pnlHeader = new Panel { Dock = DockStyle.Top, Height = 60, BackColor = Color.FromArgb(248, 250, 252) };
-            var lblIcon = new Label { Text = icon, Font = new Font("Segoe UI", 18), Location = new Point(20, 15), AutoSize = true };
-            var lblTitle = new Label { Text = "Alert Details", Font = new Font("Segoe UI Bold", 12F, FontStyle.Bold), Location = new Point(75, 20), ForeColor = Color.FromArgb(30, 41, 59), AutoSize = true };
+            var lblIcon = new Label { Text = AlertIcon, Font = new Font("Segoe UI", 18), Location = new Point(20, 15), AutoSize = true };
+            var lblTitle = new Label { Text = "Alert Details", Font = new Font("Segoe UI", 12F, FontStyle.Bold), Location = new Point(75, 20), ForeColor = Color.FromArgb(30, 41, 59), AutoSize = true };
             pnlHeader.Controls.Add(lblIcon);
             pnlHeader.Controls.Add(lblTitle);
 
-            var lblSubject = new Label { Text = title, Font = new Font("Segoe UI Bold", 11F, FontStyle.Bold), Location = new Point(20, 80), Size = new Size(360, 50), ForeColor = priorityColor };
-            var lblTime = new Label { Text = $"Received: {time}", Font = new Font("Segoe UI", 9F), Location = new Point(20, 135), ForeColor = Color.Gray, AutoSize = true };
+            var lblSubject = new Label { Text = AlertTitle, Font = new Font("Segoe UI", 11F, FontStyle.Bold), Location = new Point(20, 80), Size = new Size(360, 50), ForeColor = PriorityColor };
+            var lblTime = new Label { Text = $"Received: {AlertTime}", Font = new Font("Segoe UI", 9F), Location = new Point(20, 135), ForeColor = Color.Gray, AutoSize = true };
             
             var lblInfo = new Label { 
-                Text = message, 
+                Text = AlertMessage, 
                 Font = new Font("Segoe UI", 10F), 
                 Location = new Point(20, 165), 
                 Size = new Size(360, 60), 
@@ -54,7 +80,7 @@ namespace elnet_recoverease.Shared
                 BackColor = Color.FromArgb(0, 168, 168), 
                 ForeColor = Color.White, 
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI Bold", 9F, FontStyle.Bold)
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
             };
             btnMarkRead.FlatAppearance.BorderSize = 0;
             btnMarkRead.Click += (s, e) => { this.DialogResult = DialogResult.OK; this.Close(); };
@@ -66,7 +92,7 @@ namespace elnet_recoverease.Shared
                 BackColor = Color.White, 
                 ForeColor = Color.Gray, 
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI Bold", 9F, FontStyle.Bold)
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
             };
             btnClose.FlatAppearance.BorderColor = Color.FromArgb(226, 232, 240);
             btnClose.Click += (s, e) => this.Close();

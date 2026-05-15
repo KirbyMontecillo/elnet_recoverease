@@ -9,10 +9,11 @@ namespace elnet_recoverease.Admin
 {
     public partial class Edit_Medicine : Form
     {
-        [DllImport("user32.DLL", EntryPoint = "ReleaseCapture")]
-        private extern static void ReleaseCapture();
-        [DllImport("user32.DLL", EntryPoint = "SendMessage")]
-        private extern static void SendMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
+        [LibraryImport("user32.dll", EntryPoint = "ReleaseCapture")]
+        private static partial void ReleaseCapture();
+        
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+        private static partial void SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         private const int CS_DROPSHADOW = 0x00020000;
         protected override CreateParams CreateParams
@@ -46,29 +47,29 @@ namespace elnet_recoverease.Admin
 
         private void SetupEvents()
         {
-            this.pnlHeader.MouseDown += new MouseEventHandler(this.pnlHeader_MouseDown);
-            this.btnClose.Click += new EventHandler(this.btnClose_Click);
-            this.btnCancel.Click += new EventHandler(this.btnCancel_Click);
-            this.btnSave.Click += new EventHandler(this.btnSave_Click);
+            this.pnlHeader.MouseDown += new MouseEventHandler(this.PnlHeader_MouseDown);
+            this.btnClose.Click += new EventHandler(this.BtnClose_Click);
+            this.btnCancel.Click += new EventHandler(this.BtnCancel_Click);
+            this.btnSave.Click += new EventHandler(this.BtnSave_Click);
         }
 
-        private void pnlHeader_MouseDown(object sender, MouseEventArgs e)
+        private void PnlHeader_MouseDown(object sender, MouseEventArgs e)
         {
             ReleaseCapture();
-            SendMessage(this.Handle, 0x112, 0xf012, 0);
+            SendMessage(this.Handle, 0x112, (IntPtr)0xf012, IntPtr.Zero);
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             SaveChanges();
         }

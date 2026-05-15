@@ -95,7 +95,7 @@ namespace elnet_recoverease.Doctor.Controls
             this.pnlPatientHeader.BackColor = clrWhite;
             this.pnlPatientHeader.Padding = new System.Windows.Forms.Padding(25);
             this.lblPatientName.Text = "Patient Name";
-            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI Bold", 20F, System.Drawing.FontStyle.Bold);
+            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
             this.lblPatientName.Location = new System.Drawing.Point(25, 25);
             this.lblPatientName.AutoSize = true;
             this.lblPatientId.Text = "ID: 0000";

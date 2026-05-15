@@ -176,12 +176,12 @@ namespace elnet_recoverease.Data
             {
                 UserID = 1,
                 Username = "admin",
-                PasswordHash = "admin123", // In a real app, use BCrypt or similar hashing
+                PasswordHash = "admin123", 
                 Role = "Admin",
                 IsFirstLogin = false
             });
 
-            // Seed Initial Staff Profile for Admin
+
             modelBuilder.Entity<Staff>().HasData(new Staff
             {
                 StaffID = 1,

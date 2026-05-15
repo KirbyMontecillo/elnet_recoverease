@@ -83,7 +83,7 @@ namespace elnet_recoverease.PatientStation.Controls
             // Header Card
             this.pnlHeaderCard.BackColor = clrWhite;
             this.pnlHeaderCard.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlHeaderCard.Height = 160;
+            this.pnlHeaderCard.Height = 180;
             this.pnlHeaderCard.Padding = new System.Windows.Forms.Padding(32);
             
             this.pnlAvatarLarge.BackColor = clrTeal;
@@ -97,7 +97,7 @@ namespace elnet_recoverease.PatientStation.Controls
             this.pnlAvatarLarge.Controls.Add(this.lblAvatarLargeInitials);
 
             this.lblPatientName.Text = "Patient Name"; 
-            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI Bold", 20F, System.Drawing.FontStyle.Bold); 
+            this.lblPatientName.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold); 
             this.lblPatientName.ForeColor = clrNavy;
             this.lblPatientName.Location = new System.Drawing.Point(145, 38); 
             this.lblPatientName.AutoSize = true;
@@ -105,12 +105,12 @@ namespace elnet_recoverease.PatientStation.Controls
             this.lblPatientId.Text = "P-0000"; 
             this.lblPatientId.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold); 
             this.lblPatientId.ForeColor = clrTextMid; 
-            this.lblPatientId.Location = new System.Drawing.Point(148, 75); 
+            this.lblPatientId.Location = new System.Drawing.Point(148, 85); 
             this.lblPatientId.AutoSize = true;
 
             this.lblPatientAge.Text = "Age / Gender"; 
             this.lblPatientAge.Font = new System.Drawing.Font("Segoe UI", 10F); 
-            this.lblPatientAge.Location = new System.Drawing.Point(148, 100); 
+            this.lblPatientAge.Location = new System.Drawing.Point(148, 110); 
             this.lblPatientAge.AutoSize = true;
             
             // lblStatus
@@ -118,7 +118,7 @@ namespace elnet_recoverease.PatientStation.Controls
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.lblStatus.ForeColor = System.Drawing.Color.White;
             this.lblStatus.BackColor = clrTeal;
-            this.lblStatus.Location = new System.Drawing.Point(148, 125);
+            this.lblStatus.Location = new System.Drawing.Point(148, 135);
             this.lblStatus.Padding = new System.Windows.Forms.Padding(8, 2, 8, 2);
             this.lblStatus.Size = new System.Drawing.Size(80, 22);
             this.lblStatus.Text = "ACTIVE";
@@ -180,7 +180,7 @@ namespace elnet_recoverease.PatientStation.Controls
 
             var acc1 = new System.Windows.Forms.Panel { BackColor = clrNavy, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
             this.lblPInfoTitle.Text = "Personal Information"; 
-            this.lblPInfoTitle.Font = new System.Drawing.Font("Segoe UI Bold", 13F, System.Drawing.FontStyle.Bold); 
+            this.lblPInfoTitle.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold); 
             this.lblPInfoTitle.ForeColor = clrNavy; 
             this.lblPInfoTitle.Location = new System.Drawing.Point(24, 28); 
             this.lblPInfoTitle.AutoSize = true;
@@ -191,7 +191,7 @@ namespace elnet_recoverease.PatientStation.Controls
             SetupProfileLabel(this.lblAddressLbl, this.lblAddressVal, "Home Address", 150);
             
             this.lblEmergencyLbl.Text = "EMERGENCY CONTACT"; 
-            this.lblEmergencyLbl.Font = new System.Drawing.Font("Segoe UI Bold", 9F, System.Drawing.FontStyle.Bold); 
+            this.lblEmergencyLbl.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold); 
             this.lblEmergencyLbl.ForeColor = clrTeal; 
             this.lblEmergencyLbl.Location = new System.Drawing.Point(24, 230); 
             this.lblEmergencyLbl.AutoSize = true;
@@ -210,7 +210,7 @@ namespace elnet_recoverease.PatientStation.Controls
 
             var acc2 = new System.Windows.Forms.Panel { BackColor = clrTeal, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
             this.lblMedOverviewTitle.Text = "Medical Records Summary"; 
-            this.lblMedOverviewTitle.Font = new System.Drawing.Font("Segoe UI Bold", 13F, System.Drawing.FontStyle.Bold); 
+            this.lblMedOverviewTitle.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold); 
             this.lblMedOverviewTitle.ForeColor = clrNavy; 
             this.lblMedOverviewTitle.Location = new System.Drawing.Point(24, 28); 
             this.lblMedOverviewTitle.AutoSize = true;
@@ -220,7 +220,7 @@ namespace elnet_recoverease.PatientStation.Controls
             SetupProfileLabel(this.lblWeightLbl, this.lblWeightVal, "Weight (kg)", 80, 280);
             
             this.lblAttendingDoctorLbl.Text = "ASSIGNED CLINICIAN"; 
-            this.lblAttendingDoctorLbl.Font = new System.Drawing.Font("Segoe UI Bold", 9F, System.Drawing.FontStyle.Bold); 
+            this.lblAttendingDoctorLbl.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold); 
             this.lblAttendingDoctorLbl.ForeColor = clrTeal; 
             this.lblAttendingDoctorLbl.Location = new System.Drawing.Point(24, 230); 
             this.lblAttendingDoctorLbl.AutoSize = true;
@@ -253,7 +253,7 @@ namespace elnet_recoverease.PatientStation.Controls
             if (lbl != null)
             {
                 lbl.Text = lblText.ToUpper(); 
-                lbl.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold); 
+                lbl.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold); 
                 lbl.ForeColor = System.Drawing.Color.FromArgb(148, 163, 184); 
                 lbl.Location = new System.Drawing.Point(x, y); 
                 lbl.AutoSize = true;

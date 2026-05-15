@@ -219,7 +219,7 @@ namespace elnet_recoverease.Admin.Controls
             this.dgvMeds.RowHeadersVisible = false;
             this.dgvMeds.RowTemplate.Height = 65;
             this.dgvMeds.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvMeds.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMeds_CellContentClick);
+            this.dgvMeds.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvMeds_CellContentClick);
 
             this.colMed.HeaderText = "Medication";
             this.colMed.Name = "colMed";
@@ -274,7 +274,7 @@ namespace elnet_recoverease.Admin.Controls
             this.txtSearch.Location = new System.Drawing.Point(100, 15);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(200, 31);
-            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.TextChanged += new System.EventHandler(this.TxtSearch_TextChanged);
             
             this.cmbFormFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFormFilter.Font = new System.Drawing.Font("Segoe UI", 10.5F);
@@ -282,7 +282,7 @@ namespace elnet_recoverease.Admin.Controls
             this.cmbFormFilter.Location = new System.Drawing.Point(330, 15);
             this.cmbFormFilter.Name = "cmbFormFilter";
             this.cmbFormFilter.Size = new System.Drawing.Size(200, 31);
-            this.cmbFormFilter.SelectedIndexChanged += new System.EventHandler(this.cmbFormFilter_SelectedIndexChanged);
+            this.cmbFormFilter.SelectedIndexChanged += new System.EventHandler(this.CmbFormFilter_SelectedIndexChanged);
 
             // pnlListHeader
             this.pnlListHeader.Controls.Add(this.lblListTitle);
@@ -311,7 +311,7 @@ namespace elnet_recoverease.Admin.Controls
             this.btnAddMed.Size = new System.Drawing.Size(130, 50);
             this.btnAddMed.Text = "+ Add new";
             this.btnAddMed.UseVisualStyleBackColor = false;
-            this.btnAddMed.Click += new System.EventHandler(this.btnAddMed_Click);
+            this.btnAddMed.Click += new System.EventHandler(this.BtnAddMed_Click);
 
             // MedicationListControl
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);

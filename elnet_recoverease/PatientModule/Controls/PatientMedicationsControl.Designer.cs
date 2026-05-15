@@ -127,7 +127,7 @@ namespace elnet_recoverease.PatientStation.Controls
             this.dgvMeds.ColumnHeadersDefaultCellStyle = new System.Windows.Forms.DataGridViewCellStyle {
                 BackColor = System.Drawing.Color.FromArgb(248, 250, 252),
                 ForeColor = System.Drawing.Color.FromArgb(100, 116, 139),
-                Font = new System.Drawing.Font("Segoe UI Bold", 9F, System.Drawing.FontStyle.Bold),
+                Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold),
                 Padding = new System.Windows.Forms.Padding(10, 5, 0, 5),
                 Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
             };
@@ -214,7 +214,7 @@ namespace elnet_recoverease.PatientStation.Controls
             btn.Width = 100;
             btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
-            btn.Font = new System.Drawing.Font("Segoe UI Bold", 8F, System.Drawing.FontStyle.Bold);
+            btn.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             btn.Cursor = System.Windows.Forms.Cursors.Hand;
             btn.BackColor = isActive ? System.Drawing.Color.FromArgb(27, 58, 107) : System.Drawing.Color.FromArgb(238, 243, 247);
             btn.ForeColor = isActive ? System.Drawing.Color.White : System.Drawing.Color.FromArgb(30, 41, 59);
@@ -230,7 +230,7 @@ namespace elnet_recoverease.PatientStation.Controls
             var acc = new System.Windows.Forms.Panel { BackColor = color, Dock = System.Windows.Forms.DockStyle.Top, Height = 4 };
             
             title.Text = titleText; 
-            title.Font = new System.Drawing.Font("Segoe UI Bold", 8.5F, System.Drawing.FontStyle.Bold); 
+            title.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold); 
             title.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139); 
             title.Location = new System.Drawing.Point(20, 28); 
             title.AutoSize = true;

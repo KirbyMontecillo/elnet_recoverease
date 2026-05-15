@@ -31,12 +31,12 @@ namespace elnet_recoverease.Admin.Controls
 
         private void InitializeReportCards()
         {
-            AddReportCard("Patient Demographics", "Distribution by age, gender, and status", "👥", System.Drawing.Color.FromArgb(230, 246, 255), System.Drawing.Color.FromArgb(2, 132, 199));
+            AddReportCard("Patients", "Complete master list of clinical patients", "👥", System.Drawing.Color.FromArgb(230, 246, 255), System.Drawing.Color.FromArgb(2, 132, 199));
             AddReportCard("Medication Inventory", "Current stock levels and utilization", "💊", System.Drawing.Color.FromArgb(254, 243, 199), System.Drawing.Color.FromArgb(217, 119, 6));
             AddReportCard("Doctor Performance", "Patient load and adherence rates", "🩺", System.Drawing.Color.FromArgb(220, 252, 231), System.Drawing.Color.FromArgb(22, 163, 74));
-            AddReportCard("Missed Medications", "Non-adherence logs and critical alerts", "⚠️", System.Drawing.Color.FromArgb(254, 226, 226), System.Drawing.Color.FromArgb(220, 38, 38));
-            AddReportCard("System Audit Log", "User activities and security events", "📋", System.Drawing.Color.FromArgb(243, 244, 246), System.Drawing.Color.FromArgb(75, 85, 99));
-            AddReportCard("Financial Summary", "Revenue from treatments and consultations", "💰", System.Drawing.Color.FromArgb(243, 232, 255), System.Drawing.Color.FromArgb(147, 51, 234));
+            AddReportCard("Staffs / Doctor", "Staff directory and professional specialties", "🆔", System.Drawing.Color.FromArgb(243, 232, 255), System.Drawing.Color.FromArgb(147, 51, 234));
+            AddReportCard("Appointment Summary", "Clinical schedules and visit statuses", "🗓️", System.Drawing.Color.FromArgb(255, 237, 213), System.Drawing.Color.FromArgb(234, 88, 12));
+            AddReportCard("Patient Adherence", "Medication compliance and missed schedules", "📅", System.Drawing.Color.FromArgb(254, 226, 226), System.Drawing.Color.FromArgb(239, 68, 68));
         }
 
         private void AddReportCard(string title, string desc, string icon, System.Drawing.Color bgColor, System.Drawing.Color iconColor)
@@ -62,7 +62,7 @@ namespace elnet_recoverease.Admin.Controls
 
             System.Windows.Forms.Label lblTitle = new System.Windows.Forms.Label {
                 Text = title,
-                Font = new System.Drawing.Font("Segoe UI Bold", 10F, System.Drawing.FontStyle.Bold),
+                Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold),
                 Location = new System.Drawing.Point(15, 75),
                 AutoSize = true
             };

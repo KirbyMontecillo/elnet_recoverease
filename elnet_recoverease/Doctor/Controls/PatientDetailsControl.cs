@@ -55,8 +55,12 @@ namespace elnet_recoverease.Doctor.Controls
                     .Where(a => a.PatientID == _patientId && a.Status == "Completed")
                     .OrderByDescending(a => a.AppointmentDate).ToList();
 
-                var medIds = db.MedicationSchedules.Where(ms => ms.PatientID == _patientId).Select(ms => ms.MedicationID).Distinct().ToList();
-                var meds = db.Medications.Where(m => medIds.Contains(m.MedicationID)).ToList();
+                var recentMeds = db.MedicationSchedules
+                    .Where(ms => ms.PatientID == _patientId)
+                    .AsEnumerable() // GroupBy on client side if EF Core complains, but let's try server side first. Actually, AsEnumerable is safer for GroupBy in EF Core.
+                    .GroupBy(ms => ms.MedicationName)
+                    .Select(g => g.OrderByDescending(ms => ms.ScheduledDate).First())
+                    .ToList();
 
                 lblPatientName.Text = _patient.FullName;
                 lblPatientId.Text = $"Patient ID: {_patient.PatientID:D4}";
@@ -102,7 +106,7 @@ namespace elnet_recoverease.Doctor.Controls
                 // Update Labels and Panels (Reuse logic from Form version)
                 PopulateMedInfo(appts.FirstOrDefault());
                 PopulateVitals(appts.FirstOrDefault());
-                PopulateMedCards(meds);
+                PopulateMedCards(recentMeds);
                 SetupAppointmentGrid(appts);
                 LoadDiagnosisInfo(db);
             }
@@ -112,11 +116,80 @@ namespace elnet_recoverease.Doctor.Controls
         {
             var latestPlan = db.TreatmentPlans.Where(tp => tp.PatientID == _patientId).OrderByDescending(tp => tp.CreatedAt).FirstOrDefault();
             pnlDiagGoals.Controls.Clear();
-            pnlDiagGoals.Controls.Add(new Label { Text = "📋 Clinical Observations", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
+            pnlDiagGoals.Controls.Add(new Label { Text = "📋 Treatment Plan", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
 
-            string content = latestPlan?.PlanDetails ?? "No active treatment plan recorded.";
-            var lbl = new Label { Text = content, Location = new Point(25, 70), Size = new Size(pnlDiagGoals.Width - 50, 250), Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(71, 85, 105) };
-            pnlDiagGoals.Controls.Add(lbl);
+            if (latestPlan == null)
+            {
+                pnlDiagGoals.Controls.Add(new Label { Text = "No active treatment plan recorded.", Location = new Point(25, 70), Size = new Size(pnlDiagGoals.Width - 50, 50), Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(71, 85, 105) });
+                return;
+            }
+
+            string details = latestPlan.PlanDetails ?? "";
+            
+            // Support both formats (from Clinical_Session and Treatment_Plan_Form)
+            string diag = ExtractSection(details, "DIAGNOSIS/ASSESSMENT:", "CHIEF COMPLAINT:");
+            if (string.IsNullOrEmpty(diag)) diag = ExtractSection(details, "DIAGNOSIS:", "GOALS:");
+            
+            string chief = ExtractSection(details, "CHIEF COMPLAINT:", "GOAL:");
+            
+            string goal = ExtractSection(details, "GOAL:", "PLAN & MANAGEMENT:");
+            if (string.IsNullOrEmpty(goal)) goal = ExtractSection(details, "GOALS:", "NOTES:");
+            
+            string planNotes = ExtractSection(details, "PLAN & MANAGEMENT:", null);
+            if (string.IsNullOrEmpty(planNotes)) planNotes = ExtractSection(details, "NOTES:", null);
+
+            if (string.IsNullOrEmpty(diag) && string.IsNullOrEmpty(goal) && string.IsNullOrEmpty(planNotes) && string.IsNullOrEmpty(chief)) 
+            {
+                var txt = new TextBox { Text = details, Location = new Point(25, 70), Size = new Size(pnlDiagGoals.Width - 50, 250), Font = new Font("Segoe UI", 9.5f), ForeColor = Color.FromArgb(71, 85, 105), Multiline = true, ReadOnly = true, BorderStyle = BorderStyle.None, BackColor = Color.White };
+                pnlDiagGoals.Controls.Add(txt);
+                return;
+            }
+
+            int y = 70;
+            y = AddPlanSection(pnlDiagGoals, "DIAGNOSIS / ASSESSMENT", diag, 25, y);
+            y = AddPlanSection(pnlDiagGoals, "CHIEF COMPLAINT", chief, 25, y);
+            y = AddPlanSection(pnlDiagGoals, "TREATMENT GOAL", goal, 25, y);
+            y = AddPlanSection(pnlDiagGoals, "TARGET DATE", latestPlan.EndDate.ToString("MMM dd, yyyy"), 25, y);
+            y = AddPlanSection(pnlDiagGoals, "PLAN & MANAGEMENT NOTES", planNotes, 25, y);
+        }
+
+        private string ExtractSection(string text, string startKeyword, string endKeyword)
+        {
+            if (string.IsNullOrEmpty(text) || !text.Contains(startKeyword)) return "";
+            
+            int startIndex = text.IndexOf(startKeyword) + startKeyword.Length;
+            int endIndex = endKeyword != null ? text.IndexOf(endKeyword) : text.Length;
+            
+            if (endIndex == -1 || endIndex < startIndex) endIndex = text.Length;
+            
+            return text.Substring(startIndex, endIndex - startIndex).Trim();
+        }
+
+        private int AddPlanSection(Panel parent, string title, string content, int x, int y)
+        {
+            if (string.IsNullOrWhiteSpace(content)) return y;
+
+            var lblTitle = new Label { Text = title, Location = new Point(x, y), Font = new Font("Segoe UI", 8.5f, FontStyle.Bold), ForeColor = Color.Gray, AutoSize = true };
+            parent.Controls.Add(lblTitle);
+            y += 20;
+
+            var txtContent = new TextBox { 
+                Text = content, 
+                Location = new Point(x, y), 
+                Width = parent.Width - 50, 
+                Font = new Font("Segoe UI", 10.5f), 
+                ForeColor = Color.FromArgb(30, 43, 60), 
+                Multiline = true, 
+                ReadOnly = true, 
+                BorderStyle = BorderStyle.None, 
+                BackColor = Color.White 
+            };
+            
+            Size sz = TextRenderer.MeasureText(content, txtContent.Font, new Size(txtContent.Width, int.MaxValue), TextFormatFlags.WordBreak);
+            txtContent.Height = Math.Max(25, sz.Height + 5);
+
+            parent.Controls.Add(txtContent);
+            return y + txtContent.Height + 15;
         }
 
         private void PopulateMedInfo(Appointment latest)
@@ -154,7 +227,7 @@ namespace elnet_recoverease.Doctor.Controls
             parent.Controls.Add(pnl);
         }
 
-        private void PopulateMedCards(List<Medication> meds)
+        private void PopulateMedCards(List<MedicationSchedule> meds)
         {
             pnlCurrentMeds.Controls.Clear();
             pnlCurrentMeds.Controls.Add(new Label { Text = "💊 Prescriptions", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
@@ -162,7 +235,11 @@ namespace elnet_recoverease.Doctor.Controls
             foreach (var m in meds) {
                 var card = new Panel { Width = pnlCurrentMeds.Width - 50, Height = 70, Location = new Point(25, y), BackColor = Color.FromArgb(245, 248, 250), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
                 card.Controls.Add(new Label { Text = m.MedicationName, Location = new Point(15, 15), AutoSize = true, Font = new Font("Segoe UI", 10, FontStyle.Bold) });
+                card.Controls.Add(new Label { Text = $"{m.DosageUnit} | {m.Frequency}", Location = new Point(15, 40), AutoSize = true, Font = new Font("Segoe UI", 8.5f), ForeColor = Color.Gray });
                 pnlCurrentMeds.Controls.Add(card); y += 80;
+            }
+            if (meds.Count == 0) {
+                pnlCurrentMeds.Controls.Add(new Label { Text = "No recent prescriptions.", Location = new Point(25, 75), AutoSize = true, ForeColor = Color.Gray });
             }
         }
 
@@ -172,10 +249,10 @@ namespace elnet_recoverease.Doctor.Controls
             pnlApptHistory.Controls.Clear();
             pnlApptHistory.Controls.Add(new Label { Text = "🗓️ History", Location = new Point(25, 25), Font = new Font("Segoe UI", 12, FontStyle.Bold), ForeColor = Color.FromArgb(27, 58, 107), AutoSize = true });
             var dgv = new DataGridView { Location = new Point(25, 70), Size = new Size(pnlApptHistory.Width - 50, 200), BackgroundColor = Color.White, BorderStyle = BorderStyle.None, SelectionMode = DataGridViewSelectionMode.FullRowSelect, RowHeadersVisible = false, AllowUserToAddRows = false, ReadOnly = true, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right };
-            dgv.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd, yyyy"), Status = a.Status, Action = "View Details" }).ToList();
+            dgv.DataSource = appts.Select(a => new { Date = a.AppointmentDate?.ToString("MMM dd, yyyy"), Diagnosis = a.Diagnosis ?? "No diagnosis", Status = a.Status, Action = "View Details" }).ToList();
             
             dgv.CellContentClick += (s, e) => {
-                if (e.RowIndex >= 0 && _currentAppts != null) {
+                if (e.RowIndex >= 0 && dgv.Columns[e.ColumnIndex].HeaderText == "Action" && _currentAppts != null) {
                     var appt = _currentAppts[e.RowIndex];
                     using (var session = new Clinical_Session(appt.AppointmentID)) {
                         session.ShowDialog();

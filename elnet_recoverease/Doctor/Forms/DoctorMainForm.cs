@@ -33,17 +33,17 @@ namespace elnet_recoverease.Doctor.Forms
             // Default View
             LoadDashboard();
 
-            this.btnLogout.Click += new EventHandler(btnLogout_Click);
+            this.btnLogout.Click += new EventHandler(BtnLogout_Click);
 
             // 1. Setup UI First (Create controls)
             SetupSidebar();
 
             // 2. Wire Up Sidebar Events (Attach handlers to created controls)
-            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(btnNavDashboard_Click));
-            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(btnNavPatients_Click));
-            NavigationHelper.WireNavButton(this.btnNavAppointments, new EventHandler(btnNavAppointments_Click));
-            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(btnNavReports_Click));
-            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(btnNavProfile_Click));
+            NavigationHelper.WireNavButton(this.btnNavDashboard, new EventHandler(BtnNavDashboard_Click));
+            NavigationHelper.WireNavButton(this.btnNavPatients, new EventHandler(BtnNavPatients_Click));
+            NavigationHelper.WireNavButton(this.btnNavAppointments, new EventHandler(BtnNavAppointments_Click));
+            NavigationHelper.WireNavButton(this.btnNavReports, new EventHandler(BtnNavReports_Click));
+            NavigationHelper.WireNavButton(this.btnNavProfile, new EventHandler(BtnNavProfile_Click));
         }
 
         private void SetupSidebar()
@@ -58,7 +58,7 @@ namespace elnet_recoverease.Doctor.Forms
             SetupNavItem(btnNavProfile, lblNavProfileIcon, lblNavProfileText, "👤", "My Profile", false, activeColor, whiteColor);
         }
 
-        private void SetupNavItem(Panel pnl, Label ico, Label txt, string icoChar, string label, bool isActive, Color activeColor, Color whiteColor)
+        private static void SetupNavItem(Panel pnl, Label ico, Label txt, string icoChar, string label, bool isActive, Color activeColor, Color whiteColor)
         {
             pnl.SuspendLayout();
             pnl.Cursor = Cursors.Hand;
@@ -138,13 +138,13 @@ namespace elnet_recoverease.Doctor.Forms
             }
         }
 
-        private void btnNavDashboard_Click(object sender, EventArgs e) => LoadDashboard();
-        private void btnNavPatients_Click(object sender, EventArgs e) => LoadPatientList();
-        private void btnNavAppointments_Click(object sender, EventArgs e) => LoadAppointments();
-        private void btnNavReports_Click(object sender, EventArgs e) => LoadReports();
-        private void btnNavProfile_Click(object sender, EventArgs e) => LoadProfile();
+        private void BtnNavDashboard_Click(object sender, EventArgs e) => LoadDashboard();
+        private void BtnNavPatients_Click(object sender, EventArgs e) => LoadPatientList();
+        private void BtnNavAppointments_Click(object sender, EventArgs e) => LoadAppointments();
+        private void BtnNavReports_Click(object sender, EventArgs e) => LoadReports();
+        private void BtnNavProfile_Click(object sender, EventArgs e) => LoadProfile();
 
-        private void btnLogout_Click(object sender, EventArgs e)
+        private void BtnLogout_Click(object sender, EventArgs e)
         {
             NavigationHelper.Logout(this);
         }
@@ -180,14 +180,6 @@ namespace elnet_recoverease.Doctor.Forms
             LoadControl(new PatientDetailsControl(patientId), "Patient Record", btnNavPatients);
         }
 
-        private void lblWelcome_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void lblPageTitle_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

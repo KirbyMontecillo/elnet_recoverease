@@ -161,7 +161,9 @@ namespace elnet_recoverease.Admin.Controls
 
                 using (var db = new AppDbContext())
                 {
-                    if (reportType == "Staff Directory")
+                    string rType = reportType.Trim().ToLower();
+
+                    if (rType == "staffs / doctor" || rType == "staff directory")
                     {
                         var query = db.Staff.AsQueryable();
                         if (!isAllDoctors) query = query.Where(s => s.Role.ToLower() == doctorLower || s.FullName.ToLower().Contains(doctorLower));
@@ -169,17 +171,22 @@ namespace elnet_recoverease.Admin.Controls
                         contentHtml = BuildTableHtml(new[] { "Name", "Role", "Specialty", "Contact", "Status" },
                             staff.Select(s => new[] { s.FullName, s.Role, s.Specialty, s.ContactNumber, s.Status }).ToList());
                     }
-                    else if (reportType == "Patient Master List")
+                    else if (rType == "medication inventory")
                     {
-                        // Filter by Registration Date and Attending Doctor
-                        var query = db.Patients.Where(p => p.CreatedAt >= from.Date && p.CreatedAt <= rangeEnd);
+                        var meds = db.Medications.OrderBy(m => m.MedicationName).ToList();
+                        contentHtml = BuildTableHtml(new[] { "Medication Name", "Category", "Form", "Dosage", "Frequency", "Status" },
+                            meds.Select(m => new[] { m.MedicationName, m.Category, m.Form, m.DosageUnit, m.Frequency, m.Status }).ToList());
+                    }
+                    else if (rType == "patient demographics" || rType == "patient master list" || rType == "patients")
+                    {
+                        var query = db.Patients.AsQueryable();
                         if (!isAllDoctors) query = query.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
                         
                         var patients = query.OrderBy(p => p.FullName).ToList();
                         contentHtml = BuildTableHtml(new[] { "ID", "Name", "Birthday", "Gender", "Doctor", "Status" },
                             patients.Select(p => new[] { p.PatientCode ?? p.PatientID.ToString(), p.FullName, p.DateOfBirth.ToShortDateString(), p.Gender, p.AttendingDoctor, p.Status }).ToList());
                     }
-                    else if (reportType == "Appointment Summary")
+                    else if (rType == "appointment summary")
                     {
                         var query = db.Appointments.Where(a => a.AppointmentDate >= from.Date && a.AppointmentDate <= rangeEnd);
                         var appointments = (from a in query
@@ -191,7 +198,7 @@ namespace elnet_recoverease.Admin.Controls
                         contentHtml = BuildTableHtml(new[] { "Date", "Patient Name", "Notes", "Status" },
                             appointments.Select(x => new[] { x.AppointmentDate?.ToString("MM/dd/yyyy HH:mm") ?? "N/A", x.FullName, x.Notes, x.Status }).ToList());
                     }
-                    else if (reportType == "Missed Medication Report")
+                    else if (rType == "missed medications" || rType == "missed medication report")
                     {
                         var query = db.MedicationSchedules.Where(m => m.IsMissed && m.ScheduledDate >= fromDateOnly && m.ScheduledDate <= toDateOnly);
                         var data = (from m in query
@@ -203,7 +210,7 @@ namespace elnet_recoverease.Admin.Controls
                         contentHtml = BuildTableHtml(new[] { "Date", "Time", "Patient Name", "Medication", "Dosage", "Reason/Notes" },
                             data.Select(x => new[] { x.ScheduledDate.ToShortDateString(), x.ScheduledTime?.ToString("HH:mm") ?? "N/A", x.FullName, x.MedicationName, x.DosageUnit, x.Notes }).ToList());
                     }
-                    else if (reportType == "Patient Adherence Report")
+                    else if (rType == "doctor performance" || rType == "patient adherence report" || rType == "patient adherence")
                     {
                         var patientsQuery = db.Patients.AsQueryable();
                         if (!isAllDoctors) patientsQuery = patientsQuery.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
@@ -223,43 +230,13 @@ namespace elnet_recoverease.Admin.Controls
 
                         contentHtml = BuildTableHtml(new[] { "Patient Name", "Doctor", "Total Doses", "Taken", "Missed", "Adherence Rate" }, reportData);
                     }
-                    else if (reportType == "Treatment Plan Progress")
+                    else if (rType == "system audit log" || rType == "system activity audit")
                     {
-                        var query = db.Patients.AsQueryable();
-                        if (!isAllDoctors) query = query.Where(p => p.AttendingDoctor != null && p.AttendingDoctor.ToLower() == doctorLower);
-                        
-                        var patients = query.OrderBy(p => p.FullName).ToList();
-                        var schedules = db.MedicationSchedules.Where(s => s.ScheduledDate >= fromDateOnly && s.ScheduledDate <= toDateOnly).ToList();
-
-                        var reportData = patients.Select(p => {
-                            var pSchedules = schedules.Where(s => s.PatientID == p.PatientID).ToList();
-                            int total = pSchedules.Count;
-                            int taken = pSchedules.Count(s => s.IsTaken);
-                            double rate = total > 0 ? (taken * 100.0 / total) : 100; // Assume 100 if no meds scheduled yet
-                            
-                            string risk = "Normal";
-                            string est = "95%";
-                            
-                            if (total > 0) {
-                                if (rate >= 90) { risk = "<span style='color:#059669; font-weight:bold;'>Normal</span>"; est = "95%"; }
-                                else if (rate >= 70) { risk = "<span style='color:#0891b2; font-weight:bold;'>Low Risk</span>"; est = "80%"; }
-                                else if (rate >= 50) { risk = "<span style='color:#d97706; font-weight:bold;'>Medium Risk</span>"; est = "60%"; }
-                                else { risk = "<span style='color:#dc2626; font-weight:bold;'>High Risk</span>"; est = "30%"; }
-                            }
-
-                            return new[] { p.FullName, p.AttendingDoctor ?? "N/A", p.Status ?? "Active", risk, est };
-                        }).ToList();
-
-                        contentHtml = BuildTableHtml(new[] { "Patient", "Doctor", "Plan Status", "Risk Level", "Recovery Est." }, reportData);
-                    }
-                    else if (reportType == "System Activity Audit")
-                    {
-                        // Placeholder for audit logs
                         contentHtml = "<div class='no-data'>System activity audit logs are currently being synchronized. Check back shortly.</div>";
                     }
                     else
                     {
-                        contentHtml = $"<div style='padding:50px; text-align:center;'><h3>{reportType}</h3><p>Selected Filter: {from:MM/dd/yy} - {to:MM/dd/yy} | {doctor}</p></div>";
+                        contentHtml = $"<div style='padding:50px; text-align:center;'><h3>{reportType}</h3><p>Selected Filter: {from:MM/dd/yy} - {to:MM/dd/yy} | {doctor}</p><p>No specific layout defined for this report type.</p></div>";
                     }
                 }
 

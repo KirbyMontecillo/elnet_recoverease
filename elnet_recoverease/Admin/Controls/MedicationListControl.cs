@@ -45,19 +45,19 @@ namespace elnet_recoverease.Admin.Controls
             LoadMedicationData();
         }
 
-        private void txtSearch_TextChanged(object sender, EventArgs e)
+        private void TxtSearch_TextChanged(object sender, EventArgs e)
         {
             // Reset timer on every keystroke
             _searchTimer.Stop();
             _searchTimer.Start();
         }
 
-        private void cmbFormFilter_SelectedIndexChanged(object sender, EventArgs e)
+        private void CmbFormFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
             FilterMedications();
         }
 
-        private void btnAddMed_Click(object sender, EventArgs e)
+        private void BtnAddMed_Click(object sender, EventArgs e)
         {
             using (var form = new Edit_Medicine())
             {
@@ -65,7 +65,7 @@ namespace elnet_recoverease.Admin.Controls
             }
         }
 
-        private void dgvMeds_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void DgvMeds_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
             int medId = (int)dgvMeds.Rows[e.RowIndex].Tag;
@@ -137,7 +137,9 @@ namespace elnet_recoverease.Admin.Controls
             string formFilter = cmbFormFilter.SelectedItem?.ToString() ?? "All forms";
 
             var filtered = _allMeds.Where(m =>
-                (string.IsNullOrEmpty(search) || m.MedicationName.ToLower().Contains(search) || m.Category.ToLower().Contains(search)) &&
+                (string.IsNullOrEmpty(search) || 
+                 (m.MedicationName?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) || 
+                 (m.Category?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)) &&
                 (formFilter == "All forms" || m.Form == formFilter)
             ).ToList();
 

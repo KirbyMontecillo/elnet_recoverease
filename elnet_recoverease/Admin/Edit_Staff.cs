@@ -69,7 +69,6 @@ namespace elnet_recoverease.Admin
             this.cmbRole.SelectedIndexChanged += new EventHandler(Role_SelectedIndexChanged);
             this.btnClose.Click += new EventHandler(HandleClose);
             this.btnCancel.Click += new EventHandler(HandleClose);
-            this.btnSave.Click += new EventHandler(HandleSave);
         }
 
         private void Header_MouseDown(object sender, MouseEventArgs e)
@@ -92,7 +91,7 @@ namespace elnet_recoverease.Admin
             this.Close();
         }
 
-        private void HandleSave(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             SaveChanges();
         }

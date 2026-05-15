@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace elnet_recoverease.Models
 {
@@ -8,9 +9,14 @@ namespace elnet_recoverease.Models
         public string? MedicationName { get; set; }
         public string? Category { get; set; }
         public string? DosageUnit { get; set; }
+        
+        [NotMapped]
+        public string? Dosage { get { return DosageUnit; } set { DosageUnit = value; } } // Fix for Dosage vs DosageUnit mismatch
         public string? Form { get; set; } // Tablet, Capsule, Syrup, etc.
         public string? Frequency { get; set; } // Once daily, 2x daily, etc.
         public string? Description { get; set; }
         public string? Status { get; set; } = "Active"; // Available, Discontinued, etc.
+
+        public override string ToString() => MedicationName ?? "";
     }
 }
